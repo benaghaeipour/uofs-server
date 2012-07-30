@@ -10,9 +10,11 @@
 //   public/stylesheets/
 //   views/
 //
-var express = require('express');
-var fs = require('fs');
+var express = require('express'),
+    fs = require('fs'),
+    util = require('util');
 var app = module.exports = express.createServer();
+
 // Configuration
 app.configure(function(){
   
@@ -33,7 +35,7 @@ app.get('/', function(req, res){
 });
 
 app.post('/', function(req, res){
-  fs.writeFile('/sounds/'+Date()+'.txt', 'Hello Node', function (err) {
+  fs.writeFile('/sounds/'+Date()+'.txt', util.format(%j,req), function (err) {
     if (err){
       res.send(err);
     }else{
