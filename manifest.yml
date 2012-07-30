@@ -1,0 +1,13 @@
+--- 
+applications: 
+  .: 
+    name: uos-sound
+    framework: 
+      name: node
+      info: 
+        mem: 64M
+        description: Node.js Application
+        exec: 
+    url: uos-sound.cloudfoundry.com
+    mem: 64M
+    instances: 1

@@ -42,4 +42,4 @@ app.post('/', function(req, res){
   });
 });
 
-app.listen(process.env.PORT);
+app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
