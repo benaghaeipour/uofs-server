@@ -10,9 +10,9 @@
 //   public/stylesheets/
 //   views/
 //
-var express = require('express'),
-    fs = require('fs'),
-    util = require('util');
+var express = require('express');
+var fs = require('fs');
+var util = require('util');
 var app = module.exports = express.createServer();
 
 // Configuration
@@ -35,7 +35,7 @@ app.get('/', function(req, res){
 });
 
 app.post('/', function(req, res){
-  fs.writeFile('/sounds/'+Date()+'.txt', util.format(%j,req), function (err) {
+  fs.writeFile('/sounds/'+Date()+'.txt', util.format('%j',req), function (err) {
     if (err){
       res.send(err);
     }else{
@@ -43,5 +43,13 @@ app.post('/', function(req, res){
     }
   });
 });
+
+fs.writeFile('/sounds/test_'+Date()+'.txt', function (err) {
+    if (err){
+      res.send(err);
+    }else{
+      res.send('OK');      
+    }
+  });
 
 app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
