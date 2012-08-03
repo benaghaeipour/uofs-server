@@ -44,11 +44,17 @@ app.post('/', function(req, res){
   });
 });
 
-fs.writeFile('/sounds/test_'+Date()+'.txt', function (err) {
+
+if(!fs.existsSync('sounds'))
+{
+    fs.mkdirSync('sounds');  
+};  
+
+fs.appendFile('sounds/test.txt', util.format('%j',Date())+'\n' ,function (err) {
     if (err){
-      res.send(err);
+      console.log(err);
     }else{
-      res.send('OK');      
+      console.log('File creation : OK');      
     }
   });
 
