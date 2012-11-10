@@ -13,16 +13,16 @@
 var express = require('express');
 var fs = require('fs');
 var util = require('util');
-var app = module.exports = express.createServer();
+var app = express();
 
 // Configuration
-app.configure(function(){
-  
-  app.use(express.bodyParser());
+app.configure(function(){  
+  app.use(express.logger({ immediate: true }));
   app.use(express.methodOverride());
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
 });
+
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
 });
@@ -30,32 +30,41 @@ app.configure('production', function(){
   app.use(express.errorHandler());
 });
 // *******************************************************
-app.get('/', function(req, res){
-  res.send('hello world');
+
+
+app.get('/:student?/:lesson?/:page?/:block?/:word?/', function(req, res){
+  if(!req.params.word){
+    // returns only 1-5 sounds in an array OR an error
+    console.log('no word var');
+  }
+  
+  res.send();
 });
 
-app.post('/', function(req, res){
-  fs.writeFile('/sounds/'+Date()+'.txt', util.format('%j',req), function (err) {
-    if (err){
-      res.send(err);
-    }else{
-      res.send('OK');      
-    }
+app.post('/:student/:lesson/:page/:block/:word/', function(req, res){
+  // REST interface /student/lesson/page/block/word/
+  console.log('fs path - %s, %n', req.path, req.params.length);
+  
+  if(!req.params.word){
+    console.log('no word param');
+    res.status(500);
+    res.send('Missing word variable in REST call');
+  } 
+  else{
+    res.status(200)  ;
+    res.send();
+  }
+  
+  // optional, verify that student number is valid
+  // pip req data into a file
+  var save = fs.createWriteStream('sounds/aSound.bytearray');
+  req.pipe(save);
+  req.on('end', function(){
+    util.log('saved sound to disk')
+    save.destroy();  
   });
 });
-
-
-if(!fs.existsSync('sounds'))
-{
-    fs.mkdirSync('sounds');  
-};  
-
-fs.appendFile('sounds/test.txt', util.format('%j',Date())+'\n' ,function (err) {
-    if (err){
-      console.log(err);
-    }else{
-      console.log('File creation : OK');      
-    }
-  });
 
 app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
+
+console.log('listening on %j, %j', process.env.PORT , process.env.IP );
