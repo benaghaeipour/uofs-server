@@ -62,14 +62,30 @@ app.param('word', function(req, res, next, word){
   next();
 });
 
+app.all('*', function(req, res, next, word){
+  res.set('Content-Type','application/octet-stream');
+});
+
+
 // *******************************************************
 //          Actually do save/get file
 app.get('/:student?/:lesson?/:page?/:block?/:word?/', function(req, res){
   //unless otherwise changes the status code should be 200 - ok 
-  res.status(200);
-  console.log(req.url);
+  var sound = fs.createReadStream('sounds' + req.url + 'sound');
   
-  res.send();
+  res.status(200);
+  sound.pipe(res);
+  
+  sound.on('end', function(){
+    util.log('sound sent to client');
+    sound.destroy();  
+  });
+  
+  sound.on('error', function(err){
+    util.log('err');
+    sound.destroy();  
+  });
+  
 });
 
 app.post('/:student/:lesson/:page/:block/:word/', function(req, res){
@@ -87,12 +103,22 @@ app.post('/:student/:lesson/:page/:block/:word/', function(req, res){
   }
   
   // pipe req data into a file
-  var save = fs.createWriteStream('sounds/aSound.bytearray');
-  req.pipe(save);
-  req.on('end', function(){
-    util.log('saved sound to disk')
-    save.destroy();  
+  var sound = fs.createWriteStream('sounds' + req.url + 'sound',
+  {
+    flags: 'w',
   });
+  
+  req.pipe(sound);
+  req.on('end', function(){
+    util.log('saved sound to disk');
+    sound.destroy();  
+  });
+  
+  req.on('error', function(err){
+    util.log('err');
+    sound.destroy();  
+  });
+  
 });
 
 app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
