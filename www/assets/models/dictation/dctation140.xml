@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>It did not take the teacher long to subdue the riotous behaviour in the playground.</text>
+         <clipLoc>assets/sound/dictation/140/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/140/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/140/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>To apply for the vacant position in the firm the employee had to submit a new application.</text>
+         <clipLoc>assets/sound/dictation/140/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/140/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/140/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The elaborately built sand castle rapidly disappeared as it was submerged by the incoming tide.</text>
+         <clipLoc>assets/sound/dictation/140/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/140/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/140/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>The officer realised the submarine had become entangled in the fishing nets as it left the estuary.</text>
+         <clipLoc>assets/sound/dictation/140/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/140/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/140/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The result of the match was unexpected because the team had been forced to replace the injured man with a substitute.</text>
+         <clipLoc>assets/sound/dictation/140/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/140/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/140/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

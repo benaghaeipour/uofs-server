@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>The telephone rang with the unexpected news at precisely 10 o'clock.</text>
+         <clipLoc>assets/sound/dictation/134/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/134/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/134/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Eventually the child managed to open the door which he had locked unintentionally.</text>
+         <clipLoc>assets/sound/dictation/134/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/134/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/134/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Gradually the rain subsided and the sun shone brilliantly for an hour.</text>
+         <clipLoc>assets/sound/dictation/134/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/134/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/134/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>As usual the class was asked to work individually and only ask for help when it was needed.</text>
+         <clipLoc>assets/sound/dictation/134/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/134/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/134/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>"Does perpetual motion really go on for ever?" questioned the science student.</text>
+         <clipLoc>assets/sound/dictation/134/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/134/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/134/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

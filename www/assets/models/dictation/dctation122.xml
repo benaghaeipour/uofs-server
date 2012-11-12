@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>As Peter advanced towards the entrance, the modern building towered over him like a giant.</text>
+         <clipLoc>assets/sound/dictation/122/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/122/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/122/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>As they entered the village it was pleasant to listen to the distant sound of bells.</text>
+         <clipLoc>assets/sound/dictation/122/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/122/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/122/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>At that instant the servant appeared to help the special visitor with her luggage.</text>
+         <clipLoc>assets/sound/dictation/122/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/122/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/122/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>After making her entrance, the dancer found it difficult to keep her balance during the slow movement of the ballet.</text>
+         <clipLoc>assets/sound/dictation/122/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/122/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/122/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>On his journey John made the acquaintance of a fellow passenger who had a very pleasant appearance.</text>
+         <clipLoc>assets/sound/dictation/122/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/122/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/122/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

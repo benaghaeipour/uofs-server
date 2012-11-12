@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>Her friend was not particularly sympathetic after she had visited the physician.</text>
+         <clipLoc>assets/sound/dictation/129/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/129/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/129/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The industrial tribunal adopted a systematic approach which enabled the meeting to finish earlier than was expected.</text>
+         <clipLoc>assets/sound/dictation/129/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/129/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/129/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>He wondered what type of psychological evaluation had been used in the research as the results were inconclusive.</text>
+         <clipLoc>assets/sound/dictation/129/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/129/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/129/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>As the evidence was presented at the trial, the mysterious cycle of events gradually unfolded.</text>
+         <clipLoc>assets/sound/dictation/129/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/129/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/129/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The sticky substance on the surface of the jar was honey not syrup.</text>
+         <clipLoc>assets/sound/dictation/129/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/129/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/129/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

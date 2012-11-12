@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>There was no guarantee that the increased income would keep the business going.</text>
+         <clipLoc>assets/sound/dictation/117/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/117/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/117/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>After a busy day sightseeing the guests returned to the hotel earlier than they had intended.</text>
+         <clipLoc>assets/sound/dictation/117/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/117/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/117/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>It was not difficult to guess why he wanted to buy a new guitar.</text>
+         <clipLoc>assets/sound/dictation/117/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/117/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/117/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>The athlete could not disguise the discomfort caused by the ache in his legs after he had run eighty times round the circuit.</text>
+         <clipLoc>assets/sound/dictation/117/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/117/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/117/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The building had caught the full force of the gale and the builder was busy for months afterwards repairing the damage.</text>
+         <clipLoc>assets/sound/dictation/117/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/117/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/117/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

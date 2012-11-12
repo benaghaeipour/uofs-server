@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>The doctor was influential in finding financial assistance for the old lady.</text>
+         <clipLoc>assets/sound/dictation/121/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/121/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/121/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Circumstantial evidence should not be sufficient to convict a criminal in a court of law.</text>
+         <clipLoc>assets/sound/dictation/121/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/121/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/121/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Artificial additives in food are no longer thought to be beneficial.</text>
+         <clipLoc>assets/sound/dictation/121/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/121/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/121/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>The initial financial outlay for the scheme was advanced by a local charitable trust.</text>
+         <clipLoc>assets/sound/dictation/121/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/121/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/121/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The information that he gave her was supposed to have been completely confidential, especially as it concerned her family.</text>
+         <clipLoc>assets/sound/dictation/121/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/121/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/121/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

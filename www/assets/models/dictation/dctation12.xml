@@ -1,0 +1,35 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>The moth is in there on that rug.</text>
+         <clipLoc>assets/sound/dictation/12/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/12/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/12/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Come and have a cup of hot milk.</text>
+         <clipLoc>assets/sound/dictation/12/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/12/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/12/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>I think that this is a moth.</text>
+         <clipLoc>assets/sound/dictation/12/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/12/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/12/d3b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Put this rag in the bath.</text>
+         <clipLoc>assets/sound/dictation/12/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/12/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/12/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>I will give him a big hug if he will come.</text>
+         <clipLoc>assets/sound/dictation/12/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/12/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/12/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

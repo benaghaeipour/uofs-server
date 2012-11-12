@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>The independence celebration was a wonderful event and was watched by both local people and foreign visitors.</text>
+         <clipLoc>assets/sound/dictation/123/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/123/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/123/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The conference sat in stunned silence as they learned of the death of one of their associate members.</text>
+         <clipLoc>assets/sound/dictation/123/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/123/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/123/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The teacher frequently found it difficult to tell the difference between the identical twins.</text>
+         <clipLoc>assets/sound/dictation/123/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/123/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/123/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>It is essential to put a full stop at the end of every sentence and to recognise when to use commas.</text>
+         <clipLoc>assets/sound/dictation/123/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/123/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/123/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The judge was not content to accept the evidence which was put before him and demanded another appearance from the witness.</text>
+         <clipLoc>assets/sound/dictation/123/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/123/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/123/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

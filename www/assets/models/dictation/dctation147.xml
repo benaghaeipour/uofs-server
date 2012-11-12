@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>The auctioneer decided to seek an independent assessment following the poor valuation of the picture.</text>
+         <clipLoc>assets/sound/dictation/147/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/147/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/147/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>There has been considerable resistance from ecologists to the excessive farming of oceans.</text>
+         <clipLoc>assets/sound/dictation/147/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/147/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/147/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>It always seems to be the general population who suffer most in times of violence and war.</text>
+         <clipLoc>assets/sound/dictation/147/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/147/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/147/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>She probably did not notice the difference as the fake jewellery looked completely authentic.</text>
+         <clipLoc>assets/sound/dictation/147/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/147/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/147/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The gigantic explosion was followed by the sound of falling debris, after which  there was complete silence.</text>
+         <clipLoc>assets/sound/dictation/147/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/147/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/147/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

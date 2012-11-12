@@ -1,0 +1,35 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>The band has gone off in the car.</text>
+         <clipLoc>assets/sound/dictation/14/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/14/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/14/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>I can lend him the silk hat.</text>
+         <clipLoc>assets/sound/dictation/14/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/14/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/14/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Tom has gone on to the end of the sand.</text>
+         <clipLoc>assets/sound/dictation/14/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/14/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/14/d3b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Ben has a thin little dog.</text>
+         <clipLoc>assets/sound/dictation/14/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/14/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/14/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Mum has got wet in the pond.</text>
+         <clipLoc>assets/sound/dictation/14/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/14/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/14/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>The weapon was completely concealed under the soldier's uniform when he embarked on his secret mission.</text>
+         <clipLoc>assets/sound/dictation/139/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/139/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/139/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>As the musician stood up to conduct the choir the anticipation in the audience increased.</text>
+         <clipLoc>assets/sound/dictation/139/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/139/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/139/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The conference debated the relevant conservation issues at length.</text>
+         <clipLoc>assets/sound/dictation/139/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/139/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/139/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>It was only when the contract had been completed that the cost was fully realised.</text>
+         <clipLoc>assets/sound/dictation/139/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/139/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/139/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The severe weather on the continent gradually spread across the English Channel causing considerable concern.</text>
+         <clipLoc>assets/sound/dictation/139/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/139/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/139/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

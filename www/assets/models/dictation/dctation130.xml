@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>It is difficult to imagine what life would be like without electricity.</text>
+         <clipLoc>assets/sound/dictation/130/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/130/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/130/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The teacher tried hard to impress on his students the importance of revising systematically for the exam.</text>
+         <clipLoc>assets/sound/dictation/130/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/130/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/130/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>It was impossible to imagine how she felt when her room was burgled and she lost all her jewellery.</text>
+         <clipLoc>assets/sound/dictation/130/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/130/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/130/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>The child became impatient when his mother would not allow him to open his birthday presents immediately.</text>
+         <clipLoc>assets/sound/dictation/130/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/130/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/130/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The improvement in the athlete's track record particularly impressed the selectors.</text>
+         <clipLoc>assets/sound/dictation/130/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/130/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/130/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>
