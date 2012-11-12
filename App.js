@@ -2,25 +2,25 @@
 // expressjs template
 //
 // assumes: npm install express
-// defaults to jade engine, install others as needed
 //
 // assumes these subfolders:
 //   public/
-//   public/javascripts/
-//   public/stylesheets/
-//   views/
 //
+var httpProxy = require('http-proxy');
+var phpProxy = httpProxy.createServer(80, 'unitsofsound.net/v6php/');
 var express = require('express');
 var fs = require('fs');
 var util = require('util');
 var app = express();
 
-// Configuration
+// *******************************************************
+//          Configuration
 app.configure(function(){  
   app.use(express.logger({ immediate: true }));
   app.use(express.methodOverride());
   app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
+  app.use(express.static(__dirname + '/www'));
+  app.use('/v6php', phpProxy);
 });
 
 app.configure('development', function(){
@@ -29,21 +29,52 @@ app.configure('development', function(){
 app.configure('production', function(){
   app.use(express.errorHandler());
 });
+
 // *******************************************************
+//          Validate rest call
 
+app.param('student', function(req, res, next, student){
+  util.log('validating student - ' + student);
+  next();
+});
 
-app.get('/:student?/:lesson?/:page?/:block?/:word?/', function(req, res){
-  if(!req.params.word){
-    // returns only 1-5 sounds in an array OR an error
-    console.log('no word var');
+app.param('lesson', function(req, res, next, lesson){
+  util.log('validating lesson - ' + lesson);
+  next();
+});
+
+app.param('page', function(req, res, next, page){
+  util.log('validating page - ' + page);
+  next();
+});
+
+app.param('block', function(req, res, next, block){
+  util.log('validating block - ' + block);
+  next();
+});
+
+app.param('word', function(req, res, next, word){
+  util.log('validating word - ' + word);
+  if(word > 5){
+    req.status(500);
+    next(new Error('requested word is out of range 1-5'));
   }
+  next();
+});
+
+// *******************************************************
+//          Actually do save/get file
+app.get('/:student?/:lesson?/:page?/:block?/:word?/', function(req, res){
+  //unless otherwise changes the status code should be 200 - ok 
+  res.status(200);
+  console.log(req.url);
   
   res.send();
 });
 
 app.post('/:student/:lesson/:page/:block/:word/', function(req, res){
   // REST interface /student/lesson/page/block/word/
-  console.log('fs path - %s, %n', req.path, req.params.length);
+  console.log('fs path - %s, %i', req.path, req.params.length);
   
   if(!req.params.word){
     console.log('no word param');
@@ -51,12 +82,11 @@ app.post('/:student/:lesson/:page/:block/:word/', function(req, res){
     res.send('Missing word variable in REST call');
   } 
   else{
-    res.status(200)  ;
+    res.status(200);
     res.send();
   }
   
-  // optional, verify that student number is valid
-  // pip req data into a file
+  // pipe req data into a file
   var save = fs.createWriteStream('sounds/aSound.bytearray');
   req.pipe(save);
   req.on('end', function(){
