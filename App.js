@@ -8,119 +8,168 @@
 //
 var httpProxy = require('http-proxy');
 var phpProxy = httpProxy.createServer(80, 'unitsofsound.net/v6php/');
+var mongojs = require('mongojs');
 var express = require('express');
-var fs = require('fs');
 var util = require('util');
 var app = express();
+var PostBuffer = require('bufferstream/postbuffer');
+
 
 // *******************************************************
-//          Configuration
+//          Database Configuration
+var db = mongojs('c9:c9@alex.mongohq.com:10051/dev', ['recordings', 'logs']);
+
+// *******************************************************
+//          Server Configuration
 app.configure(function(){  
-  app.use(express.logger({ immediate: true }));
+  app.use(express.logger(':date - :remote-addr [req] :method :url :status [res] :res[content-length] - :response-time ms'));
   app.use(express.methodOverride());
   app.use(app.router);
   app.use(express.static(__dirname + '/www'));
   app.use('/v6php', phpProxy);
 });
 
-app.configure('development', function(){
+console.log('Configuring Application for NODE_ENV:'+process.env.NODE_ENV);
+
+app.configure('C9', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  
 });
-app.configure('production', function(){
+app.configure('AppFog', function(){
   app.use(express.errorHandler());
 });
 
 // *******************************************************
 //          Validate rest call
 
+app.all('*', function(req, res, next){
+  //res.set('Content-Type','html/text'); 
+  next();
+});
+
 app.param('student', function(req, res, next, student){
-  util.log('validating student - ' + student);
+  req.params.student = parseInt(student);
   next();
 });
 
 app.param('lesson', function(req, res, next, lesson){
-  util.log('validating lesson - ' + lesson);
-  next();
+  req.params.lesson = parseInt(lesson);
+  if(lesson > 160){
+    res.status(400);
+    next(new Error('requested lesson is out of range 1-160'));
+  }else{
+    next();  
+  }
 });
 
 app.param('page', function(req, res, next, page){
-  util.log('validating page - ' + page);
-  next();
+  req.params.page = parseInt(page);
+  if(page > 10){
+    res.status(400);
+    next(new Error('requested page is out of range 1-10'));
+  }else{
+    next();  
+  }
 });
 
 app.param('block', function(req, res, next, block){
-  util.log('validating block - ' + block);
-  next();
+  req.params.block = parseInt(block);
+  if(block > 8){
+    res.status(400);
+    next(new Error('requested block is out of range 1-8'));
+  }else{
+    next();  
+  }
 });
 
 app.param('word', function(req, res, next, word){
-  util.log('validating word - ' + word);
+  req.params.word = parseInt(word);
   if(word > 5){
-    req.status(500);
+    res.status(400);
     next(new Error('requested word is out of range 1-5'));
+  }else{
+    next();  
   }
-  next();
 });
-
-app.all('*', function(req, res, next, word){
-  res.set('Content-Type','application/octet-stream');
-});
-
 
 // *******************************************************
 //          Actually do save/get file
-app.get('/:student?/:lesson?/:page?/:block?/:word?/', function(req, res){
-  //unless otherwise changes the status code should be 200 - ok 
-  var sound = fs.createReadStream('sounds' + req.url + 'sound');
-  
-  res.status(200);
-  sound.pipe(res);
-  
-  sound.on('end', function(){
-    util.log('sound sent to client');
-    sound.destroy();  
+app.get('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, res, next){
+  db.recordings.find({
+    student: req.params.student,
+    lesson: req.params.lesson,
+    page: req.params.page,
+    block: req.params.block,
+    word: req.params.word
+  }, function(err, doc){
+    if(util.isError(err)){
+      res.status(400);
+      res.send('Mongodb '+err.toString());
+    }else{
+      if(doc == []) { res.status(400) };
+      res.send(doc);
+    }
   });
-  
-  sound.on('error', function(err){
-    util.log('err');
-    sound.destroy();  
-  });
-  
 });
 
-app.post('/:student/:lesson/:page/:block/:word/', function(req, res){
-  // REST interface /student/lesson/page/block/word/
-  console.log('fs path - %s, %i', req.path, req.params.length);
-  
-  if(!req.params.word){
-    console.log('no word param');
-    res.status(500);
-    res.send('Missing word variable in REST call');
-  } 
-  else{
-    res.status(200);
-    res.send();
-  }
-  
+/** 
+ * REST interface /<student id>/<lesson>/<page>/<block>/<word>/
+ * 
+ * if the request gets to this function it has passed all verification and can 
+ * be acted upon
+ */
+app.post('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, res, next){
+
   // pipe req data into a file
-  var sound = fs.createWriteStream('sounds' + req.url + 'sound',
-  {
-    flags: 'w',
-  });
+  var uploadBuffer = new PostBuffer(req);
   
-  req.pipe(sound);
-  req.on('end', function(){
-    util.log('saved sound to disk');
-    sound.destroy();  
+  uploadBuffer.onEnd(function(data){
+    util.log('Upload buffered for insert to DB');
+    res.status(201);
+    res.send();
+    
+    var doc = {
+      student: req.params.student,
+      lesson: req.params.lesson,
+      page: req.params.page,
+      block: req.params.block,
+      word: req.params.word,
+      sound: data.toString('utf8')
+    };
+    
+    db.recordings.save(doc,function(err, res) {
+      if(err){
+        console.log(err);
+      }
+    });
   });
   
   req.on('error', function(err){
-    util.log('err');
-    sound.destroy();  
+    util.log(err);
+    res.status(500);
+    res.send('server error while uploading sound'); 
   });
   
 });
 
+/**
+ * logging endpoint
+ * loggins will be simple and 'ficle' errors not dealt with etc etc'
+ */
+app.post('/logs/', function(req, res, next) {
+  var logBuffer = new PostBuffer(req);
+  
+  logBuffer.onEnd(function(data){
+    res.send(200);
+    var logDoc = JSON.parse(data);
+    logDoc.type = logDoc.type || "log";
+    db.logs.save(logDoc);
+  });
+});
+
+/**
+ * Start Application
+ */
 app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
 
-console.log('listening on %j, %j', process.env.PORT , process.env.IP );
+console.log('listening on %s, %s', process.env.PORT , process.env.IP );
