@@ -168,6 +168,14 @@ app.post('/logs/', function(req, res, next) {
 });
 
 /**
+ * dump will just dump req data to console.
+ */
+app.post('/dump*', function (req, res, next) {
+    req.pipe(process.stdout);
+    res.send();
+});
+
+/**
  * Start Application
  */
 app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
