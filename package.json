@@ -4,8 +4,8 @@
   "dependencies": {
     "express": ">=2.5.0",
     "http-proxy": "~0.8.4",
-    "mongojs": "~0.4.5",
-    "bufferstream": "~0.5.1"
+    "bufferstream": "~0.5.1",
+    "mongodb": "~1.1.11"
   },
   "engines": {
     "node": ">=0.6.0"

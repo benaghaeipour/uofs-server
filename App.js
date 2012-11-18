@@ -6,18 +6,16 @@
 // assumes these subfolders:
 //   public/
 //
-var httpProxy = require('http-proxy');
-var phpProxy = httpProxy.createServer(80, 'unitsofsound.net/v6php/');
-var mongojs = require('mongojs');
+var phpProxy = require('http-proxy').createServer(80, 'unitsofsound.net/v6php/');
 var express = require('express');
 var util = require('util');
 var app = express();
 var PostBuffer = require('bufferstream/postbuffer');
 
+var mongodb = require("mongodb"),
+    mongoServer = new mongodb.Server('alex.mongohq.com', 10051),
+    db = new mongodb.Db("dev", mongoServer).open();
 
-// *******************************************************
-//          Database Configuration
-var db = mongojs('c9:c9@alex.mongohq.com:10051/dev', ['recordings', 'logs']);
 
 // *******************************************************
 //          Server Configuration
@@ -33,10 +31,11 @@ console.log('Configuring Application for NODE_ENV:'+process.env.NODE_ENV);
 
 app.configure('C9', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-  
+  db = new mongodb.Db("dev", mongoServer).open();
 });
 app.configure('AppFog', function(){
   app.use(express.errorHandler());
+  db = new mongodb.Db("prod", mongoServer).open();
 });
 
 // *******************************************************
@@ -95,21 +94,7 @@ app.param('word', function(req, res, next, word){
 // *******************************************************
 //          Actually do save/get file
 app.get('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, res, next){
-  db.recordings.find({
-    student: req.params.student,
-    lesson: req.params.lesson,
-    page: req.params.page,
-    block: req.params.block,
-    word: req.params.word
-  }, function(err, doc){
-    if(util.isError(err)){
-      res.status(400);
-      res.send('Mongodb '+err.toString());
-    }else{
-      if(doc == []) { res.status(400) };
-      res.send(doc);
-    }
-  });
+  res.send();
 });
 
 /** 
@@ -124,24 +109,7 @@ app.post('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, 
   var uploadBuffer = new PostBuffer(req);
   
   uploadBuffer.onEnd(function(data){
-    util.log('Upload buffered for insert to DB');
-    res.status(201);
-    res.send();
-    
-    var doc = {
-      student: req.params.student,
-      lesson: req.params.lesson,
-      page: req.params.page,
-      block: req.params.block,
-      word: req.params.word,
-      sound: data.toString('utf8')
-    };
-    
-    db.recordings.save(doc,function(err, res) {
-      if(err){
-        console.log(err);
-      }
-    });
+   res.send();
   });
   
   req.on('error', function(err){
@@ -163,7 +131,6 @@ app.post('/logs/', function(req, res, next) {
     res.send(200);
     var logDoc = JSON.parse(data);
     logDoc.type = logDoc.type || "log";
-    db.logs.save(logDoc);
   });
 });
 
@@ -181,3 +148,8 @@ app.post('/dump*', function (req, res, next) {
 app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
 
 console.log('listening on %s, %s', process.env.PORT , process.env.IP );
+
+process.on('exit', function () {
+  //tidy up
+  console.log('bye');
+});
