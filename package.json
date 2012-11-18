@@ -1,0 +1,28 @@
+{
+  "name": "SoundSaver",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": ">=2.5.0",
+    "http-proxy": "~0.8.4",
+    "mongojs": "~0.4.5",
+    "bufferstream": "~0.5.1"
+  },
+  "engines": {
+    "node": ">=0.6.0"
+  },
+  "description": "Sound Saver",
+  "main": "App.js",
+  "directories": {
+    "test": "tests"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node tests/dbconnection.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/chrismatheson/soundSaver.git"
+  },
+  "author": "Chris Matheson",
+  "license": "BSD"
+}
