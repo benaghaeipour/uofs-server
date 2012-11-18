@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>Penny tried hard to encourage her brother to work for his examination in spite of his opposition.</text>
+         <clipLoc>assets/sound/dictation/110/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/110/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/110/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>An enormous amount of energy must have been needed to put the stones in place at Stonehenge.</text>
+         <clipLoc>assets/sound/dictation/110/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/110/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/110/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>In his opinion it was difficult to enlarge the photograph and still keep the feeling of the original.</text>
+         <clipLoc>assets/sound/dictation/110/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/110/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/110/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>The opposition was so great that unfortunately the football team lost on their home ground.</text>
+         <clipLoc>assets/sound/dictation/110/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/110/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/110/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The soldiers encountered the enemy at the entrance to the radar station but they did not engage them in combat.</text>
+         <clipLoc>assets/sound/dictation/110/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/110/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/110/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

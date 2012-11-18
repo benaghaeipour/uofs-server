@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>The eagle looked dangerous as it swooped down and caught its prey.</text>
+         <clipLoc>assets/sound/dictation/108/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/108/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/108/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The road was treacherous because the snow was piled high on either side and the surface was like a sheet of glass.</text>
+         <clipLoc>assets/sound/dictation/108/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/108/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/108/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>He fiddled with the connection to try and make the sprinkler work properly but it was obvious he would not manage to fix it.</text>
+         <clipLoc>assets/sound/dictation/108/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/108/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/108/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>She caught the needle in the middle of the purple material and examined the fabric closely to see if it was marked.</text>
+         <clipLoc>assets/sound/dictation/108/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/108/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/108/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The victorious team returned from their match and were given a tremendous welcome.</text>
+         <clipLoc>assets/sound/dictation/108/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/108/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/108/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

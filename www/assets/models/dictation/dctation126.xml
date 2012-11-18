@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>The memorable performance of the violinist at the school concert  held the audience spellbound.</text>
+         <clipLoc>assets/sound/dictation/126/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/126/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/126/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Ten percent of Jim's class were absent due to a contagious infection which had spread rapidly.</text>
+         <clipLoc>assets/sound/dictation/126/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/126/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/126/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>She could not persuade her mother to give her permission to stay out after 10pm on a regular basis.</text>
+         <clipLoc>assets/sound/dictation/126/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/126/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/126/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>The permanent layer of frost in the tundra area of Russia has preserved material for over a thousand years.</text>
+         <clipLoc>assets/sound/dictation/126/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/126/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/126/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Perhaps he would have had permission to go on the school trip if he had not been naughty on purpose.</text>
+         <clipLoc>assets/sound/dictation/126/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/126/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/126/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

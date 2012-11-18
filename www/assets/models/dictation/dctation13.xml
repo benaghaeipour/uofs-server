@@ -1,0 +1,35 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>The milk bottles will rattle in the bag.</text>
+         <clipLoc>assets/sound/dictation/13/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/13/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/13/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Will Mum mend the hand bag?</text>
+         <clipLoc>assets/sound/dictation/13/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/13/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/13/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The cattle can stand in the pond.</text>
+         <clipLoc>assets/sound/dictation/13/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/13/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/13/d3b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Jim hit his hand on the van.</text>
+         <clipLoc>assets/sound/dictation/13/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/13/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/13/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Tom put his hand in the bath.</text>
+         <clipLoc>assets/sound/dictation/13/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/13/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/13/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

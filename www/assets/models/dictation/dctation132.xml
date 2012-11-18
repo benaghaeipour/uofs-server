@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>He put every effort into winning the race and felt completely exhausted at the end of it.</text>
+         <clipLoc>assets/sound/dictation/132/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/132/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/132/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Due to the influenza epidemic the number of students attending the class was heavily depleted.</text>
+         <clipLoc>assets/sound/dictation/132/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/132/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/132/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The student did well in his final examinations because he was so conscientious.</text>
+         <clipLoc>assets/sound/dictation/132/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/132/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/132/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>The members of the committee smiled when the chairman finished his report with a contentious comment.</text>
+         <clipLoc>assets/sound/dictation/132/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/132/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/132/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>It was very ambitious of the boy to attempt to build such a difficult model and the result was very impressive.</text>
+         <clipLoc>assets/sound/dictation/132/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/132/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/132/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

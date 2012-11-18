@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>Saint Nicholas is a Christian saint who is also known as Father Christmas.</text>
+         <clipLoc>assets/sound/dictation/116/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/116/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/116/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>As the storm continued, the schooner anchored in the safety of the cove and so her engine survived the battering.</text>
+         <clipLoc>assets/sound/dictation/116/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/116/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/116/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>She took the prescription to the chemist to get the medicine for her stomach ache.</text>
+         <clipLoc>assets/sound/dictation/116/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/116/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/116/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>As a result of  the continual noise the mechanic developed a headache and rapidly forgot the technique he was trying to master.</text>
+         <clipLoc>assets/sound/dictation/116/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/116/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/116/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Christopher was delighted to be invited to play the flute in the local orchestra, as it would help him develop his playing technique.</text>
+         <clipLoc>assets/sound/dictation/116/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/116/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/116/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

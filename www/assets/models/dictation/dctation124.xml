@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>It seemed that the Russian soldiers had been sent on a pointless mission when they entered the foreign territory.</text>
+         <clipLoc>assets/sound/dictation/124/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/124/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/124/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>As the depression approached the weather forecast warned of severe gales and dangerous road conditions.</text>
+         <clipLoc>assets/sound/dictation/124/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/124/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/124/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The challenging talk by the specialist in Persian history was followed by a lengthy discussion.</text>
+         <clipLoc>assets/sound/dictation/124/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/124/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/124/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>In the confusion that followed the explosion, the man who had laid the bomb managed to escape unhurt.</text>
+         <clipLoc>assets/sound/dictation/124/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/124/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/124/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Her most prized possession was a piece of jewellery given to her by an aunt on the occasion of her twentieth birthday.</text>
+         <clipLoc>assets/sound/dictation/124/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/124/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/124/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

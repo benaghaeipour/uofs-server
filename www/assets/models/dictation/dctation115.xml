@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>On a cold January morning the emergency crew were called out to rescue the man who had attempted suicide.</text>
+         <clipLoc>assets/sound/dictation/115/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/115/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/115/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Following their advice Alice attempted to learn the language before visiting the country.</text>
+         <clipLoc>assets/sound/dictation/115/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/115/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/115/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>It is necessary to practise hard if you want to distinguish yourself playing a musical instrument.</text>
+         <clipLoc>assets/sound/dictation/115/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/115/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/115/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>He noticed the porter lifting the luggage from the service area into the distinguished looking car.</text>
+         <clipLoc>assets/sound/dictation/115/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/115/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/115/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Although there was a tendency to include food at such events, this time it was suggested that liquid refreshment would be sufficient.</text>
+         <clipLoc>assets/sound/dictation/115/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/115/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/115/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

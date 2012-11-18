@@ -1,0 +1,274 @@
+<FlexMonkey>
+  <TestSuite name="UofSV6 " description="null" ignore="false">
+    <TestCase name="Placment-Scott" description="logon as scott, with placment flag on" ignore="false">
+      <Test name="Login as Chris to SMan" description="null" defaultThinkTime="250" ignore="false">
+        <UIEvent command="Open" value="center" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="null"/>
+        </UIEvent>
+        <UIEvent command="Select" value="center" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="London"/>
+        </UIEvent>
+        <UIEvent command="SelectText" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="0"/>
+          <arg value="0"/>
+        </UIEvent>
+        <UIEvent command="Input" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="chris"/>
+        </UIEvent>
+        <UIEvent command="ChangeFocus" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Input" value="password" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="iii"/>
+        </UIEvent>
+        <UIEvent command="Click" value="enterbutton" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="_Workmenu_Button3" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+      </Test>
+      <Test name="Setup Scott" description="null" defaultThinkTime="250" ignore="false">
+        <UIEvent command="Click" value="Add" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="SelectText" value="studentID" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="0"/>
+          <arg value="0"/>
+        </UIEvent>
+        <UIEvent command="Input" value="studentID" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="scott"/>
+        </UIEvent>
+        <UIEvent command="ChangeFocus" value="studentID" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Input" value="fname" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="scott"/>
+        </UIEvent>
+        <UIEvent command="ChangeFocus" value="fname" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Input" value="surname" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="matheson"/>
+        </UIEvent>
+        <UIEvent command="ChangeFocus" value="surname" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Input" value="password1" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="iii"/>
+        </UIEvent>
+        <UIEvent command="ChangeFocus" value="password1" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Input" value="keyword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="iii"/>
+        </UIEvent>
+        <UIEvent command="ChangeFocus" value="keyword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Input" value="keywordAnswer" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="iii"/>
+        </UIEvent>
+        <UIEvent command="Click" value="Teacher" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="Save" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="exit" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+      </Test>
+      <Test name="placment, first word worng" description="null" defaultThinkTime="250" ignore="false">
+        <UIEvent command="Open" value="center" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="null"/>
+        </UIEvent>
+        <UIEvent command="Select" value="center" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="London"/>
+        </UIEvent>
+        <UIEvent command="SelectText" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="0"/>
+          <arg value="0"/>
+        </UIEvent>
+        <UIEvent command="Input" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="scott"/>
+        </UIEvent>
+        <UIEvent command="ChangeFocus" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Input" value="password" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="iii"/>
+        </UIEvent>
+        <UIEvent command="Click" value="enterbutton" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="pipspage" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="reading" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="nextword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="wrongword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="OK" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+      </Test>
+      <Test name="Happy Path words 36-47, Normal stop" description="null" defaultThinkTime="250" ignore="false">
+        <UIEvent command="Open" value="center" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="null"/>
+        </UIEvent>
+        <UIEvent command="Select" value="center" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="London"/>
+        </UIEvent>
+        <UIEvent command="SelectText" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="0"/>
+          <arg value="0"/>
+        </UIEvent>
+        <UIEvent command="Input" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="scott"/>
+        </UIEvent>
+        <UIEvent command="ChangeFocus" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Input" value="password" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="iii"/>
+        </UIEvent>
+        <UIEvent command="Click" value="enterbutton" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="pipspage" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="reading" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="nextword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="correctword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="nextword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="correctword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="nextword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="wrongword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="nextword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="wrongword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="nextword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="correctword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="nextword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="correctword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="nextword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="correctword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="nextword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="wrongword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="nextword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="correctword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="nextword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="wrongword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="nextword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="correctword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="nextword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="correctword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="nextword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="wrongword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="nextword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="wrongword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="nextword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="wrongword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="nextword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="wrongword" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="OK" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+      </Test>
+      <Test name="Clear Login Screen" description="null" defaultThinkTime="250" ignore="false">
+        <UIEvent command="SelectText" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="5"/>
+          <arg value="5"/>
+        </UIEvent>
+        <UIEvent command="Type" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="BACKSPACE"/>
+        </UIEvent>
+        <UIEvent command="Type" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="BACKSPACE"/>
+        </UIEvent>
+        <UIEvent command="Type" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="BACKSPACE"/>
+        </UIEvent>
+        <UIEvent command="Type" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="BACKSPACE"/>
+        </UIEvent>
+        <UIEvent command="Type" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="BACKSPACE"/>
+        </UIEvent>
+        <UIEvent command="SelectText" value="password" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="3"/>
+          <arg value="3"/>
+        </UIEvent>
+        <UIEvent command="Type" value="password" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="BACKSPACE"/>
+        </UIEvent>
+        <UIEvent command="Type" value="password" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="BACKSPACE"/>
+        </UIEvent>
+        <UIEvent command="Type" value="password" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="BACKSPACE"/>
+        </UIEvent>
+      </Test>
+      <Test name="Spelling 36-47" description="user scott" defaultThinkTime="250" ignore="false">
+        <UIEvent command="Open" value="center" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="null"/>
+        </UIEvent>
+        <UIEvent command="Select" value="center" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="London"/>
+        </UIEvent>
+        <UIEvent command="SelectText" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="0"/>
+          <arg value="0"/>
+        </UIEvent>
+        <UIEvent command="Input" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="scott"/>
+        </UIEvent>
+        <UIEvent command="ChangeFocus" value="student_id" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Input" value="password" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="iii"/>
+        </UIEvent>
+        <UIEvent command="Click" value="enterbutton" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="pipspage" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="spelling" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="playWord" prop="automationName" delay="4000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="playWord" prop="automationName" delay="4000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="playWord" prop="automationName" delay="4000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="SelectText" value="userInput" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="4"/>
+          <arg value="4"/>
+        </UIEvent>
+        <UIEvent command="Input" value="userInput" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="h"/>
+        </UIEvent>
+        <UIEvent command="Click" value="playWord" prop="automationName" delay="4000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="SelectText" value="userInput" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="5"/>
+          <arg value="5"/>
+        </UIEvent>
+        <UIEvent command="Input" value="userInput" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="x"/>
+        </UIEvent>
+        <UIEvent command="Click" value="playWord" prop="automationName" delay="4000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="playWord" prop="automationName" delay="4000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="playWord" prop="automationName" delay="4000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="playWord" prop="automationName" delay="4000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="SelectText" value="userInput" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="4"/>
+          <arg value="4"/>
+        </UIEvent>
+        <UIEvent command="Input" value="userInput" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="x"/>
+        </UIEvent>
+        <UIEvent command="Click" value="playWord" prop="automationName" delay="4000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="playWord" prop="automationName" delay="4000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="SelectText" value="userInput" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="3"/>
+          <arg value="3"/>
+        </UIEvent>
+        <UIEvent command="Input" value="userInput" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="x"/>
+        </UIEvent>
+        <UIEvent command="Click" value="playWord" prop="automationName" delay="4000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="playWord" prop="automationName" delay="4000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="playWord" prop="automationName" delay="4000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="SelectText" value="userInput" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="3"/>
+          <arg value="3"/>
+        </UIEvent>
+        <UIEvent command="Input" value="userInput" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="x"/>
+        </UIEvent>
+        <UIEvent command="Click" value="playWord" prop="automationName" delay="4000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="SelectText" value="userInput" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="4"/>
+          <arg value="4"/>
+        </UIEvent>
+        <UIEvent command="SelectText" value="userInput" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="4"/>
+          <arg value="4"/>
+        </UIEvent>
+        <UIEvent command="Input" value="userInput" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="x"/>
+        </UIEvent>
+        <UIEvent command="Click" value="playWord" prop="automationName" delay="4000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="SelectText" value="userInput" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="4"/>
+          <arg value="4"/>
+        </UIEvent>
+        <UIEvent command="Input" value="userInput" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="x"/>
+        </UIEvent>
+        <UIEvent command="Click" value="playWord" prop="automationName" delay="4000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="SelectText" value="userInput" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="4"/>
+          <arg value="4"/>
+        </UIEvent>
+        <UIEvent command="Input" value="userInput" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false">
+          <arg value="x"/>
+        </UIEvent>
+        <UIEvent command="Click" value="playWord" prop="automationName" delay="4000" attempts="10" retryOnlyOnResponse="false"/>
+        <UIEvent command="Click" value="OK" prop="automationName" delay="1000" attempts="10" retryOnlyOnResponse="false"/>
+      </Test>
+    </TestCase>
+  </TestSuite>
+</FlexMonkey>

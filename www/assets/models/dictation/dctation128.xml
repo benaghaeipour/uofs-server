@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>The news of the general election results in India was received with great enthusiasm.</text>
+         <clipLoc>assets/sound/dictation/128/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/128/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/128/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Although the orchestra was not familiar with the piece of music, the Canadian conductor brought great meaning to the slow movement.</text>
+         <clipLoc>assets/sound/dictation/128/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/128/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/128/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>It might seem peculiar to celebrate Christmas in Australia and eat turkey sitting on a beach.</text>
+         <clipLoc>assets/sound/dictation/128/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/128/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/128/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>The children found the exhibits in Bristol's industrial museum fascinating.</text>
+         <clipLoc>assets/sound/dictation/128/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/128/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/128/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The accused man showed his appreciation for his barrister after he was acquitted at his trial.</text>
+         <clipLoc>assets/sound/dictation/128/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/128/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/128/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>She peered anxiously through the gloom to see if she could distinguish his shape in the distance.</text>
+         <clipLoc>assets/sound/dictation/142/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/142/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/142/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>It was such a relief to know that he had successfully completed his final examinations.</text>
+         <clipLoc>assets/sound/dictation/142/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/142/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/142/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>As the getaway van accelerated down the narrow street the policeman just managed to take the registration number.</text>
+         <clipLoc>assets/sound/dictation/142/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/142/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/142/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>The explosions came in quick succession and thoroughly frightened the whole neighbourhood.</text>
+         <clipLoc>assets/sound/dictation/142/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/142/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/142/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Her anxiety increased when she realised that she had not received the important information.</text>
+         <clipLoc>assets/sound/dictation/142/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/142/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/142/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

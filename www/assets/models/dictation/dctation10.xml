@@ -1,0 +1,35 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>Will the dog rip the rug?</text>
+         <clipLoc>assets/sound/dictation/10/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/10/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/10/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>That rag is not a wig.</text>
+         <clipLoc>assets/sound/dictation/10/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/10/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/10/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The men can put the big dog in the van.</text>
+         <clipLoc>assets/sound/dictation/10/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/10/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/10/d3b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Jim is fit and can run and jog.</text>
+         <clipLoc>assets/sound/dictation/10/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/10/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/10/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Tom is with Jim in the hut.</text>
+         <clipLoc>assets/sound/dictation/10/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/10/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/10/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

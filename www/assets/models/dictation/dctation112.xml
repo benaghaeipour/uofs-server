@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>Without electricity, civilisation as we know it would be difficult to imagine.</text>
+         <clipLoc>assets/sound/dictation/112/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/112/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/112/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Their recent crossing of the Pacific Ocean in a sailing boat had required strict discipline.</text>
+         <clipLoc>assets/sound/dictation/112/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/112/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/112/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Having drawn a circle the child cut it out with a pair of scissors and marked the central point.</text>
+         <clipLoc>assets/sound/dictation/112/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/112/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/112/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>It was necessary to fill the container to capacity to obtain the best results.</text>
+         <clipLoc>assets/sound/dictation/112/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/112/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/112/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>At times it can certainly be difficult to understand what a civilised society really is.</text>
+         <clipLoc>assets/sound/dictation/112/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/112/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/112/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

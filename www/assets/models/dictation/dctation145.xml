@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>No one could predict what would be in store for the rescue team so they prepared their equipment carefully.</text>
+         <clipLoc>assets/sound/dictation/145/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/145/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/145/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The climbers took every precaution to ensure that their equipment was in perfect order before they made the ascent.</text>
+         <clipLoc>assets/sound/dictation/145/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/145/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/145/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The fine weather was a welcome break after the high winds and heavy rain of the previous day.</text>
+         <clipLoc>assets/sound/dictation/145/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/145/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/145/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>The children were enjoying their game pretending they were astronauts on the moon's surface.</text>
+         <clipLoc>assets/sound/dictation/145/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/145/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/145/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Having spent hours preparing the special meal the cook presumed that everybody would appreciate the menu.</text>
+         <clipLoc>assets/sound/dictation/145/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/145/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/145/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>

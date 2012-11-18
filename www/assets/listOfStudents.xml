@@ -1,0 +1,35 @@
+<?xml version =  "1.0" encoding = "iso-8859-1"?>
+<studentslist>
+   <students>
+      <firstName>John</firstName>
+      <surname>Smith</surname>
+      <userId>1</userId>
+      <passWord>arsenal</passWord>
+      <keyWord>my football team</keyWord>
+      <secondPassword>arsenal</secondPassword>
+   </students>
+      <students>
+      <firstName>Bill</firstName>
+      <surname>Jones</surname>
+      <userId>2</userId>
+      <passWord>arsenal</passWord>
+      <keyWord>my football team</keyWord>
+      <secondPassword>arsenal</secondPassword>
+    </students>
+      <students>
+      <firstName>Sue</firstName>
+      <surname>Davis</surname>
+      <userId>3</userId>
+      <passWord>arsenal</passWord>
+      <keyWord>my football team</keyWord>
+      <secondPassword>arsenal</secondPassword>
+    </students>
+      <students>
+      <firstName>Shona</firstName>
+      <surname>Matheson</surname>
+      <userId>5</userId>
+      <passWord>arsenal</passWord>
+      <keyWord>my football team</keyWord>
+      <secondPassword>arsenal</secondPassword>
+    </students>
+</studentslist>

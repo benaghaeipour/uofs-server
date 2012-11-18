@@ -1,0 +1,37 @@
+<?xml version="1.0" ?> 
+ <dictationLessonModel> 
+   <page>
+      <sentence>
+         <text>The new development at the school was not finished by the beginning of term.</text>
+         <clipLoc>assets/sound/dictation/106/d1.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/106/d1a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/106/d1b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>Tom was determined to visit his friend before December.</text>
+         <clipLoc>assets/sound/dictation/106/d2.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/106/d2a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/106/d2b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>He was delighted with the new dress designs for the Autumn collection.</text>
+         <clipLoc>assets/sound/dictation/106/d3.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/106/d3a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/106/d3b.mp3</clipLoc>
+      </sentence>
+   </page>
+   <page>
+      <sentence>
+     <text>Early next morning we decided to cross the desert without delay to avoid overheating the car.</text>
+         <clipLoc>assets/sound/dictation/106/d4.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/106/d4a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/106/d4b.mp3</clipLoc>
+      </sentence>
+      <sentence>
+     <text>The student was delighted to hear the result of his degree because he had despaired of ever passing the exam.</text>
+         <clipLoc>assets/sound/dictation/106/d5.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/106/d5a.mp3</clipLoc>
+         <clipLoc>assets/sound/dictation/106/d5b.mp3</clipLoc>
+      </sentence>
+   </page>
+</dictationLessonModel>
