@@ -1,9 +1,12 @@
-var db = require('../mongoHQdb.js');
+var db = require('../mongodb.js');
 
-db.connect('dev');
+process.env.NODE_ENV = 'development';
+
+var openDB = db.connect('dev');
+
 db.saveRecording();
 db.getRecording();
 
 setTimeout(function() {
-    process.exit(0);
-}, 6000);
+  db.dissconnect();
+}, 10000);

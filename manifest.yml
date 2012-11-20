@@ -1,13 +1,16 @@
---- 
-applications: 
-  .: 
-    name: uos-sound
-    framework: 
-      name: node
-      info: 
+---
+applications:
+  .:
+    name: uos-dev
+    framework:
+      name: standalone
+      info:
         mem: 64M
-        description: Node.js Application
+        description: Standalone Application
         exec: 
-    url: uos-sound.cloudfoundry.com
+    runtime: node06
+    command: App.js
+    infra: eu-aws
+    url: dev.unitsofsound.net
     mem: 64M
     instances: 1

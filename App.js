@@ -6,11 +6,17 @@
 // assumes these subfolders:
 //   public/
 //
-var phpProxy = require('http-proxy').createServer(80, 'unitsofsound.net/v6php/');
-var express = require('express');
-var util = require('util');
-var app = express();
-var PostBuffer = require('bufferstream/postbuffer');
+var phpProxy = require('http-proxy').createServer(80, 'unitsofsound.net/v6php/'),
+    express = require('express'),
+    util = require('util'),
+    app = express(),
+    PostBuffer = require('bufferstream/postbuffer'),
+    mongodb = require('mongodb');
+    
+// *******************************************************
+//          Global Variables
+var DB = '',
+    recordings = '';
 
 // *******************************************************
 //          Server Configuration
@@ -99,7 +105,13 @@ app.get('/favicon.ico', function (req, res, next) {
 // *******************************************************
 //          Actually do save/get file
 app.get('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, res, next){
-  res.send();
+  var storedRec = new mongodb.GridStore(DB, req.path,'r');
+  storedRec.open(function(err, gs){
+    //file opened, can now do things with it
+    // Create a stream to the file
+    var stream = gs.stream(true);
+    stream.pipe(res);
+  });
 });
 
 /** 
@@ -114,7 +126,14 @@ app.post('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, 
   var uploadBuffer = new PostBuffer(req);
   
   uploadBuffer.onEnd(function(data){
-   res.send();
+    res.send(); //got the file on the server so clients job is done
+    
+    var newRec = mongodb.GridStore(DB, req.path,'w');
+    newRec.write(uploadBuffer, function (err, gs) {
+      if(err){
+        console.log('error writing recording to GridFS');
+      }
+    });
   });
   
   req.on('error', function(err){
@@ -122,7 +141,6 @@ app.post('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, 
     res.status(500);
     res.send('server error while uploading sound'); 
   });
-  
 });
 
 /**
@@ -142,18 +160,24 @@ app.post('/logs/', function(req, res, next) {
 /**
  * dump will just dump req data to console.
  */
-app.post('/dump*', function (req, res, next) {
+app.post('/dump/*', function (req, res, next) {
     req.pipe(process.stdout);
     res.send();
 });
 
 /**
- * Start Application
+ * Open DB connection & Start Application
  */
-app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
+ 
+mongodb.connect('mongodb://c9:c9@alex.mongohq.com:10051/dev?safe=true', {safe:true}, function(err, db){
+  if(err){
+    console.log('error opening database');
+  }
+  DB = db; //make the db globally avaliable
+  app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
+  console.log('listening on %s, %s', process.env.PORT , process.env.IP );
+});
 
-console.log('listening on %s, %s', process.env.PORT , process.env.IP );
-
-process.on('exit', function () {
+process.on('SIGHUP', function () {
   console.log('bye');
 });
