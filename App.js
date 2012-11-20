@@ -12,11 +12,6 @@ var util = require('util');
 var app = express();
 var PostBuffer = require('bufferstream/postbuffer');
 
-var mongodb = require("mongodb"),
-    mongoServer = new mongodb.Server('alex.mongohq.com', 10051),
-    db = new mongodb.Db("dev", mongoServer).open();
-
-
 // *******************************************************
 //          Server Configuration
 app.configure(function(){  
@@ -31,11 +26,9 @@ console.log('Configuring Application for NODE_ENV:'+process.env.NODE_ENV);
 
 app.configure('C9', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-  db = new mongodb.Db("dev", mongoServer).open();
 });
 app.configure('AppFog', function(){
   app.use(express.errorHandler());
-  db = new mongodb.Db("prod", mongoServer).open();
 });
 
 // *******************************************************
@@ -89,6 +82,18 @@ app.param('word', function(req, res, next, word){
   }else{
     next();  
   }
+});
+
+// *******************************************************
+//          Some standrad routes etc
+
+app.get('/assets/*', function (req, res, next) {
+  res.redirect(301, 'http://www.unitsofsound.net/preview'+req.path);
+});
+
+app.get('/favicon.ico', function (req, res, next) {
+  //no favicon avaliable, but dont want 404 errors
+  res.send();
 });
 
 // *******************************************************
@@ -150,6 +155,5 @@ app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
 console.log('listening on %s, %s', process.env.PORT , process.env.IP );
 
 process.on('exit', function () {
-  //tidy up
   console.log('bye');
 });
