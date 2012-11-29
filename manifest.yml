@@ -9,7 +9,7 @@ applications:
         description: Standalone Application
         exec: 
     runtime: node06
-    command: App.js
+    command: node App.js
     infra: eu-aws
     url: dev.unitsofsound.net
     mem: 64M

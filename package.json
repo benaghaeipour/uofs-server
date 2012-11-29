@@ -1,27 +1,29 @@
 {
-  "name": "SoundSaver",
+  "name": "UOS-Server",
   "version": "0.0.1",
   "dependencies": {
     "express": ">=2.5.0",
     "http-proxy": "~0.8.4",
-    "bufferstream": "~0.5.1",
-    "mongodb": "~1.1.11"
+    "mongodb": "~1.1.11",
+    "async": "~0.1.22",
+    "underscore": "~1.4.2"
   },
   "engines": {
     "node": ">=0.6.0"
   },
-  "description": "Sound Saver",
+  "description": "HTTP server for Units of Sound online app",
   "main": "App.js",
   "directories": {
     "test": "tests"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "node tests/dbconnection.js"
+    "test": "node tests/tests.js",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/chrismatheson/soundSaver.git"
+    "url": "git@peachproductions.unfuddle.com:peachproductions/nodeserver.git"
   },
   "author": "Chris Matheson",
   "license": "BSD"

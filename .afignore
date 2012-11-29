@@ -1,0 +1,11 @@
+# ignore dot files
+.*
+
+# ignore assets directory
+# assets/
+
+# don't ignore assets/necessary.css
+# !assets/necessary.css
+
+# don't ignore assets/js/ directory
+# !assets/js/

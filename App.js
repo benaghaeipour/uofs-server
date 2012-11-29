@@ -1,3 +1,4 @@
+
 // *******************************************************
 // expressjs template
 //
@@ -7,50 +8,52 @@
 //   public/
 //
 var phpProxy = require('http-proxy').createServer(80, 'unitsofsound.net/v6php/'),
+    http = require('http'),
+    https = require('https'),
     express = require('express'),
     util = require('util'),
     app = express(),
-    PostBuffer = require('bufferstream/postbuffer'),
     mongodb = require('mongodb');
     
 // *******************************************************
 //          Global Variables
 var DB = '',
-    recordings = '';
+    students = null,
+    logs = null;
 
 // *******************************************************
 //          Server Configuration
-app.configure(function(){  
+app.configure(function() {
+  app.use('/v6php', phpProxy); //deal with this 1st to speed things up
   app.use(express.logger(':date - :remote-addr [req] :method :url :status [res] :res[content-length] - :response-time ms'));
   app.use(express.methodOverride());
+  app.use('/log/', express.json());
+  app.use('/student/*', express.json());
   app.use(app.router);
   app.use(express.static(__dirname + '/www'));
-  app.use('/v6php', phpProxy);
 });
 
 console.log('Configuring Application for NODE_ENV:'+process.env.NODE_ENV);
 
-app.configure('C9', function(){
+app.configure(function() {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  app.set('dbURI','mongodb://c9:c9@alex.mongohq.com:10051/dev?safe=true');
 });
-app.configure('AppFog', function(){
+
+app.configure('production', function() {
   app.use(express.errorHandler());
+  app.set('dbURI','mongodb://c9:c9@alex.mongohq.com:10051/prod?safe=false');
 });
 
 // *******************************************************
 //          Validate rest call
 
-app.all('*', function(req, res, next){
-  //res.set('Content-Type','html/text'); 
-  next();
-});
-
-app.param('student', function(req, res, next, student){
+app.param('student', function(req, res, next, student) {
   req.params.student = parseInt(student);
   next();
 });
 
-app.param('lesson', function(req, res, next, lesson){
+app.param('lesson', function(req, res, next, lesson) {
   req.params.lesson = parseInt(lesson);
   if(lesson > 160){
     res.status(400);
@@ -60,7 +63,7 @@ app.param('lesson', function(req, res, next, lesson){
   }
 });
 
-app.param('page', function(req, res, next, page){
+app.param('page', function(req, res, next, page) {
   req.params.page = parseInt(page);
   if(page > 10){
     res.status(400);
@@ -70,7 +73,7 @@ app.param('page', function(req, res, next, page){
   }
 });
 
-app.param('block', function(req, res, next, block){
+app.param('block', function(req, res, next, block) {
   req.params.block = parseInt(block);
   if(block > 8){
     res.status(400);
@@ -80,7 +83,7 @@ app.param('block', function(req, res, next, block){
   }
 });
 
-app.param('word', function(req, res, next, word){
+app.param('word', function(req, res, next, word) {
   req.params.word = parseInt(word);
   if(word > 5){
     res.status(400);
@@ -92,21 +95,21 @@ app.param('word', function(req, res, next, word){
 
 // *******************************************************
 //          Some standrad routes etc
-
-app.get('/assets/*', function (req, res, next) {
+app.get('/assets/*', function(req, res, next) {
   res.redirect(301, 'http://www.unitsofsound.net/preview'+req.path);
 });
 
-app.get('/favicon.ico', function (req, res, next) {
+app.get('/favicon.ico', function(req, res, next) {
   //no favicon avaliable, but dont want 404 errors
+  res.status(200);
   res.send();
 });
 
 // *******************************************************
-//          Actually do save/get file
-app.get('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, res, next){
+//          Recordings enpoints
+app.get('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, res, next) {
   var storedRec = new mongodb.GridStore(DB, req.path,'r');
-  storedRec.open(function(err, gs){
+  storedRec.open(function(err, gs) {
     //file opened, can now do things with it
     // Create a stream to the file
     var stream = gs.stream(true);
@@ -119,65 +122,148 @@ app.get('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, r
  * 
  * if the request gets to this function it has passed all verification and can 
  * be acted upon
+ * 
+ * saves post data sent to /recordings/123456/4/3/2/1/ to a file named /recordings/123456/4/3/2/1/
+ * in the GridFS mongodb
+ * 
+ * https://github.com/mongodb/node-mongodb-native/blob/master/docs/gridfs.md
  */
-app.post('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, res, next){
+app.post('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, res, next) {
 
-  // pipe req data into a file
-  var uploadBuffer = new PostBuffer(req);
+  var newRecording = mongodb.GridStore(DB, req.path,'w',{
+    "content_type": "binary/octet-stream",
+    "metadata":{
+      "student": req.params.student ,
+      "lesson": req.params.lesson ,
+      "page": req.params.page ,
+      "word": req.params.word 
+    },
+    "chunk_size": 1024*4
+  });
   
-  uploadBuffer.onEnd(function(data){
-    res.send(); //got the file on the server so clients job is done
-    
-    var newRec = mongodb.GridStore(DB, req.path,'w');
-    newRec.write(uploadBuffer, function (err, gs) {
+  req.on('data',function(chunk) {
+    newRecording.write(chunk,function(err, gs) {
       if(err){
         console.log('error writing recording to GridFS');
       }
     });
   });
   
-  req.on('error', function(err){
+  req.on('error', function(err) {
     util.log(err);
     res.status(500);
-    res.send('server error while uploading sound'); 
+    res.send('server error while uploading sound');
+    newRecording.close(function(){
+      mongodb.GridStore.unlink(DB, req.path);
+    });
+  });
+  
+  req.on('end',function() {
+    newRecording.close();
   });
 });
 
+// *******************************************************
+//          Student endpoints
+
 /**
- * logging endpoint
- * loggins will be simple and 'ficle' errors not dealt with etc etc'
+ * Creates a new student record from the req.data
  */
-app.post('/logs/', function(req, res, next) {
-  var logBuffer = new PostBuffer(req);
-  
-  logBuffer.onEnd(function(data){
-    res.send(200);
-    var logDoc = JSON.parse(data);
-    logDoc.type = logDoc.type || "log";
+app.post('/student/new/', function(req, res, next) {
+  students.insert(req.body, {safe:true}, function(err, objects) {
+    if(err){
+      console.log('error saving log : ' + err);
+    }
+  });
+  res.send(); 
+});
+
+/**
+ * Does a find on the DB from the posted object
+ */
+app.post('/student/find/', function(req, res, next) {
+  if(!req.body._id){
+    res.body = 'no _id in request object';
+    res.send(400);
+    next(new Error('no _id in request object'));
+  }else{
+    res.send();
+  }
+});
+
+/**
+ * Deletes the object found by the post data. (only if 1 is found)
+ */
+app.post('/student/delete/', function(req, res, next) {
+  res.send(); 
+});
+
+/**
+ * Merge req data with a record only if _id is present & valid
+ */
+app.post('/student/update/', function(req, res, next) {
+  res.send(); 
+});
+
+// *******************************************************
+//          Debug enpoints
+app.post('/log/', function(req, res, next){
+  logs.insert(req.body, {safe:true}, function(err, objects) {
+    if(err){
+      console.log('error saving log : ' + err);
+      res.send(500);
+    }else{
+      res.send();
+    }
   });
 });
 
 /**
  * dump will just dump req data to console.
  */
-app.post('/dump/*', function (req, res, next) {
-    req.pipe(process.stdout);
-    res.send();
+app.all('/dump/*', function(req, res, next) {
+  console.log('Params : '+req.params);
+  console.log('Method : '+req.method);
+  console.log('_method : '+req._method);
+  console.log('headers : '+JSON.stringify(req.headers));
+  console.log('Data : \n');
+  req.pipe(process.stdout);
+  res.send();
 });
 
-/**
- * Open DB connection & Start Application
- */
- 
-mongodb.connect('mongodb://c9:c9@alex.mongohq.com:10051/dev?safe=true', {safe:true}, function(err, db){
+// *******************************************************
+//          Start of application doing things
+
+// https://github.com/mongodb/node-mongodb-native#documentation
+mongodb.connect(app.get('dbURI'), {safe:true}, function(err, dbconnection) {
   if(err){
     console.log('error opening database');
+    throw(err);
   }
-  DB = db; //make the db globally avaliable
-  app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
+  DB = dbconnection; //make the db globally avaliable
+  
+  //make pointers to the collections we are going to use
+  DB.collection('logs', function(err, collection) {
+    if(err){
+      console.log('cannot open logs collection');
+      throw(err);
+    }
+    logs = collection;
+  });
+  
+  DB.collection('students', function(err, collection) {
+    if(err){
+      console.log('cannot open students collection');
+      throw(err);
+    }
+    students = collection;
+  });
+  
+  //https.createServer(null, app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 443);
+  http.createServer(app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
   console.log('listening on %s, %s', process.env.PORT , process.env.IP );
 });
 
-process.on('SIGHUP', function () {
+process.on('SIGHUP', function() {
   console.log('bye');
 });
