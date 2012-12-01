@@ -10,6 +10,7 @@
 var phpProxy = require('http-proxy').createServer(80, 'unitsofsound.net/v6php/'),
     http = require('http'),
     https = require('https'),
+    fs = require('fs'),
     express = require('express'),
     util = require('util'),
     app = express(),
@@ -26,9 +27,8 @@ var DB = '',
 app.configure(function() {
   app.use('/v6php', phpProxy); //deal with this 1st to speed things up
   app.use(express.logger(':date - :remote-addr [req] :method :url :status [res] :res[content-length] - :response-time ms'));
-  app.use(express.methodOverride());
   app.use('/log/', express.json());
-  app.use('/student/*', express.json());
+  app.use('/student/', express.json());
   app.use(app.router);
   app.use(express.static(__dirname + '/www'));
 });
@@ -41,6 +41,10 @@ app.configure(function() {
 });
 
 app.configure('production', function() {
+  app.use(express.logger({
+    format:':date - :remote-addr [req] :method :url :status [res] :res[content-length] - :response-time ms',
+    stream: fs.createWriteStream('http-reqs.logs', {flags:'a'})
+  }));
   app.use(express.errorHandler());
   app.set('dbURI','mongodb://c9:c9@alex.mongohq.com:10051/prod?safe=false');
 });
@@ -167,43 +171,59 @@ app.post('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, 
 //          Student endpoints
 
 /**
- * Creates a new student record from the req.data
- */
-app.post('/student/new/', function(req, res, next) {
-  students.insert(req.body, {safe:true}, function(err, objects) {
-    if(err){
-      console.log('error saving log : ' + err);
-    }
-  });
-  res.send(); 
-});
-
-/**
  * Does a find on the DB from the posted object
  */
 app.post('/student/find/', function(req, res, next) {
-  if(!req.body._id){
-    res.body = 'no _id in request object';
-    res.send(400);
-    next(new Error('no _id in request object'));
-  }else{
-    res.send();
+  try{
+    req.body._id = new mongodb.ObjectID(req.body._id);
+  }catch(err){
+    console.log(err);
   }
+  students.find(req.body,{limit:1},function (err, doc) {
+    if(err === null){
+      res.send(doc);
+    }
+    else{
+      next(err);
+    }
+  });
 });
 
 /**
  * Deletes the object found by the post data. (only if 1 is found)
  */
 app.post('/student/delete/', function(req, res, next) {
-  res.send(); 
+  try{
+    req.body._id = new mongodb.ObjectID(req.body._id);
+  }catch(err){
+    next(err);
+  }
+  res.send();
 });
 
 /**
+ * Creates a new student record from the req.data
  * Merge req data with a record only if _id is present & valid
  */
 app.post('/student/update/', function(req, res, next) {
-  res.send(); 
+  if(req.body._id !== "" && req.body._id !== null){
+    req.body._id = new mongodb.ObjectID(req.body._id);
+  }else{
+    delete req.body._id;
+  }
+  req.body.modified = new mongodb.Timestamp();
+  
+  students.save(req.body, req.body, {safe:true}, function(err, objects) {
+    if(err){
+      console.log('error saving log : ' + err);
+    }
+  });
+  res.send(201); 
 });
+
+// *******************************************************
+//          Results endpoints
+
 
 // *******************************************************
 //          Debug enpoints
@@ -213,7 +233,7 @@ app.post('/log/', function(req, res, next){
       console.log('error saving log : ' + err);
       res.send(500);
     }else{
-      res.send();
+      res.send(201);
     }
   });
 });

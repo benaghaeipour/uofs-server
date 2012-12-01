@@ -6,9 +6,11 @@ var assert = require('assert'),
 require("../App.js");
 
 var studentRecord = JSON.stringify({
-        id:'123456',
-        name:'chris matheson',
-        center:'london'
+        _id:"50b7edd4f76d067e2e000002",
+        fname:'Chris',
+        lname:'Matheson',
+        center:'london',
+        origin:'node test'
       },'utf8');
       
 var requestOptions = {
@@ -33,18 +35,23 @@ setTimeout(function() {
     },
     
     function(callback){ 
-      //post student obeject
+      //post log obeject
+      requestOptions.path = '/log/';
+      
       var req = http.request(requestOptions, function(response){
-        assert.equal(response.statusCode, 200, 'while writing a log to DB', 'got');
+        assert.equal(response.statusCode, 201, 'while writing a log to DB', 'got');
+        response.pipe(process.stdout);
         callback();
       });
-      req.end(studentRecord);
+      req.end(JSON.stringify({
+        type:'test',
+        message:'this was sent from node.js tests'
+      }));
     },
     
     function(callback){ 
       //post student obeject
-      requestOptions.headers.x-http-method-override = 'DELETE';
-      requestOptions.path = '/dump';
+      requestOptions.path = '/student/update/';
       
       var req = http.request(requestOptions, function(response){
         assert.equal(response.statusCode, 200, 'while writing a log to DB', 'got');
@@ -53,8 +60,21 @@ setTimeout(function() {
       req.end(studentRecord);
     },
     
+    function(callback){ 
+      //find student obeject
+      requestOptions.path = '/student/find/';
+      var req = http.request(requestOptions, function(response){
+        //assert.equal(response.statusCode, 200, 'while writing a log to DB', 'got');
+        response.pipe(process.stdout);
+        callback();
+      });
+      req.end(JSON.stringify({_id:'50b7edd4f76d067e2e000002'}));
+    },
+    
     function (callback) {
-      process.exit(0);
+      setTimeout(function() {
+        process.exit(0);
+      },1500);
       callback();
     }
   ]);    
