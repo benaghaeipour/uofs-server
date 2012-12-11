@@ -13,4 +13,4 @@ applications:
     infra: aws
     url: dev.unitsofsound.net
     mem: 64M
-    instances: 1
+    instances: 3

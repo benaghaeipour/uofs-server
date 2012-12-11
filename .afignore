@@ -1,8 +1,9 @@
 # ignore dot files
 .*
 
-# ignore assets directory
-# assets/
+# ignore directorys
+.c9revisions/
+.git/
 
 # don't ignore assets/necessary.css
 # !assets/necessary.css

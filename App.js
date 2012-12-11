@@ -14,23 +14,25 @@ var phpProxy = require('http-proxy').createServer(80, 'unitsofsound.net/v6php/')
     express = require('express'),
     util = require('util'),
     app = express(),
-    mongodb = require('mongodb');
+    mongodb = require('mongodb'),
+    _ = require('underscore');
     
 // *******************************************************
 //          Global Variables
 var DB = '',
     students = null,
-    logs = null;
+    logs = null,
+    results = null;
 
 // *******************************************************
 //          Server Configuration
 app.configure(function() {
-  app.use('/v6php', phpProxy); //deal with this 1st to speed things up
   app.use(express.logger(':date - :remote-addr [req] :method :url :status [res] :res[content-length] - :response-time ms'));
-  app.use('/log/', express.json());
-  app.use('/student/', express.json());
-  app.use(app.router);
+  app.use(express.timeout());
   app.use(express.static(__dirname + '/www'));
+  app.use('/v6php', phpProxy); //deal with this 1st to speed things up
+  app.use(express.json());
+  app.use(app.router);
 });
 
 console.log('Configuring Application for NODE_ENV:'+process.env.NODE_ENV);
@@ -45,60 +47,14 @@ app.configure('production', function() {
     format:':date - :remote-addr [req] :method :url :status [res] :res[content-length] - :response-time ms',
     stream: fs.createWriteStream('http-reqs.logs', {flags:'a'})
   }));
-  app.use(express.errorHandler());
   app.set('dbURI','mongodb://c9:c9@alex.mongohq.com:10051/prod?safe=false');
 });
 
-// *******************************************************
-//          Validate rest call
 
-app.param('student', function(req, res, next, student) {
-  req.params.student = parseInt(student);
-  next();
-});
-
-app.param('lesson', function(req, res, next, lesson) {
-  req.params.lesson = parseInt(lesson);
-  if(lesson > 160){
-    res.status(400);
-    next(new Error('requested lesson is out of range 1-160'));
-  }else{
-    next();  
-  }
-});
-
-app.param('page', function(req, res, next, page) {
-  req.params.page = parseInt(page);
-  if(page > 10){
-    res.status(400);
-    next(new Error('requested page is out of range 1-10'));
-  }else{
-    next();  
-  }
-});
-
-app.param('block', function(req, res, next, block) {
-  req.params.block = parseInt(block);
-  if(block > 8){
-    res.status(400);
-    next(new Error('requested block is out of range 1-8'));
-  }else{
-    next();  
-  }
-});
-
-app.param('word', function(req, res, next, word) {
-  req.params.word = parseInt(word);
-  if(word > 5){
-    res.status(400);
-    next(new Error('requested word is out of range 1-5'));
-  }else{
-    next();  
-  }
-});
 
 // *******************************************************
 //          Some standrad routes etc
+
 app.get('/assets/*', function(req, res, next) {
   res.redirect(301, 'http://www.unitsofsound.net/preview'+req.path);
 });
@@ -110,60 +66,25 @@ app.get('/favicon.ico', function(req, res, next) {
 });
 
 // *******************************************************
-//          Recordings enpoints
-app.get('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, res, next) {
-  var storedRec = new mongodb.GridStore(DB, req.path,'r');
-  storedRec.open(function(err, gs) {
-    //file opened, can now do things with it
-    // Create a stream to the file
-    var stream = gs.stream(true);
-    stream.pipe(res);
-  });
-});
+//          Login endpoint
 
-/** 
- * REST interface /<student id>/<lesson>/<page>/<block>/<word>/
+/**
+ * Does a search with request object whcih should only return one or none docs
  * 
- * if the request gets to this function it has passed all verification and can 
- * be acted upon
- * 
- * saves post data sent to /recordings/123456/4/3/2/1/ to a file named /recordings/123456/4/3/2/1/
- * in the GridFS mongodb
- * 
- * https://github.com/mongodb/node-mongodb-native/blob/master/docs/gridfs.md
+ * check that req includes user, center & pass
  */
-app.post('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, res, next) {
-
-  var newRecording = mongodb.GridStore(DB, req.path,'w',{
-    "content_type": "binary/octet-stream",
-    "metadata":{
-      "student": req.params.student ,
-      "lesson": req.params.lesson ,
-      "page": req.params.page ,
-      "word": req.params.word 
-    },
-    "chunk_size": 1024*4
-  });
-  
-  req.on('data',function(chunk) {
-    newRecording.write(chunk,function(err, gs) {
-      if(err){
-        console.log('error writing recording to GridFS');
-      }
-    });
-  });
-  
-  req.on('error', function(err) {
-    util.log(err);
-    res.status(500);
-    res.send('server error while uploading sound');
-    newRecording.close(function(){
-      mongodb.GridStore.unlink(DB, req.path);
-    });
-  });
-  
-  req.on('end',function() {
-    newRecording.close();
+app.post('/login/', function(req, res, next) {
+  var query = _.pick(req.body, 'center','loginName','pass');
+  students.findOne(query, {limit:1}, function (err, studentRecord) {
+    if(err){
+      next(err);
+      return;
+    }
+    if(studentRecord){
+      res.send(studentRecord);
+    }else{
+      res.send(401);
+    }
   });
 });
 
@@ -174,14 +95,13 @@ app.post('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, 
  * Does a find on the DB from the posted object
  */
 app.post('/student/find/', function(req, res, next) {
-  try{
-    req.body._id = new mongodb.ObjectID(req.body._id);
-  }catch(err){
-    console.log(err);
-  }
-  students.find(req.body,{limit:1},function (err, doc) {
+  if(req.body._id) req.body._id = new mongodb.ObjectID(req.body._id);
+  
+  var query = _.extend({},req.body);
+  
+  students.find(query, {limit:10}).toArray(function (err, records) {
     if(err === null){
-      res.send(doc);
+      res.send(records);
     }
     else{
       next(err);
@@ -224,10 +144,112 @@ app.post('/student/update/', function(req, res, next) {
 // *******************************************************
 //          Results endpoints
 
+/**
+ * Does a find on the DB from the posted object
+ */
+app.post('/results/find/', function(req, res, next) {
+  try{
+    req.body._id = new mongodb.ObjectID(req.body._id);
+  }catch(err){
+    console.log(err);
+  }
+  students.find(req.body, {limit:50}).toArray(function (err, records) {
+    if(err === null){
+      res.send(records);
+    }
+    else{
+      next(err);
+    }
+  });
+});
+
+/**
+ * Creates a new student record from the req.data
+ * Merge req data with a record only if _id is present & valid
+ */
+app.post('/results/save/', function(req, res, next) {
+  if(req.body._id){
+    res.status(400);
+    next(new Error('new results should not have _id property'));
+  }else{
+    students.save(req.body, req.body, {safe:true}, function(err, objects) {
+      if(err){
+        console.log('error saving log : ' + err);
+      }
+    });
+    res.send(201); 
+  }
+});
+
+// *******************************************************
+//          Recordings enpoints
+
+/**
+ * Returns a file from GrdFS
+ */
+app.get('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, res, next) {
+  var storedRec = new mongodb.GridStore(DB, req.path,'r');
+  storedRec.open(function(err, gs) {
+    //file opened, can now do things with it
+    // Create a stream to the file
+    var stream = gs.stream(true);
+    stream.pipe(res);
+  });
+});
+
+/** 
+ * REST interface /<student id>/<lesson>/<page>/<block>/<word>/
+ * 
+ * if the request gets to this function it has passed all verification and can 
+ * be acted upon
+ * 
+ * saves post data sent to /recordings/123456/4/3/2/1/ to a file named /recordings/123456/4/3/2/1/
+ * in the GridFS mongodb
+ * 
+ * https://github.com/mongodb/node-mongodb-native/blob/master/docs/gridfs.md
+ */
+app.post('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, res, next) {
+
+  var newRecording = new mongodb.GridStore(DB, req.path,'w',{
+    "content_type": "binary/octet-stream",
+    "chunk_size": 1024*4
+  });
+  
+  newRecording.open(function(err, gridStore) {
+    if(err) {next(err)}
+    
+    req.on('data',function(chunk) {
+      gridStore.write(chunk, function(err, gs) {
+        if(err){
+          console.log('error writing recording to GridFS');
+        }
+      });
+    });
+  });
+    
+  req.on('error', function(err) {
+    if(err) {next(err)}
+    
+    newRecording.close(function(){
+      mongodb.GridStore.unlink(DB, req.path);
+    });
+  });
+  
+  req.on('end',function() {
+    newRecording.close();
+  });
+});
 
 // *******************************************************
 //          Debug enpoints
+
+/**
+ * log req body into the db with a type & message minimum, and any other properties
+ */
 app.post('/log/', function(req, res, next){
+  if( !req.body.type && !req.body.message ){
+    next(new Error('log does not have the required properties \'type\' and \'message\''));
+  }
   logs.insert(req.body, {safe:true}, function(err, objects) {
     if(err){
       console.log('error saving log : ' + err);
@@ -248,7 +270,17 @@ app.all('/dump/*', function(req, res, next) {
   console.log('headers : '+JSON.stringify(req.headers));
   console.log('Data : \n');
   req.pipe(process.stdout);
-  res.send();
+  req.on('end', function () {
+    res.send();
+  });
+});
+
+app.get('/crash/', function(req, res, next) {
+  console.error('This is a triggerd crash');
+  res.send('crashing app in 500ms');
+  setTimeout(function() {
+    throw new Error('this crash was triggered');
+  }, 500);
 });
 
 // *******************************************************
@@ -277,6 +309,14 @@ mongodb.connect(app.get('dbURI'), {safe:true}, function(err, dbconnection) {
       throw(err);
     }
     students = collection;
+  });
+  
+  DB.collection('results', function(err, collection) {
+    if(err){
+      console.log('cannot open students collection');
+      throw(err);
+    }
+    results = collection;
   });
   
   //https.createServer(null, app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 443);
