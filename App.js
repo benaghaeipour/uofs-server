@@ -75,6 +75,7 @@ app.get('/favicon.ico', function(req, res, next) {
  */
 app.post('/login/', function(req, res, next) {
   var query = _.pick(req.body, 'center','loginName','pass');
+  console.log(query);
   students.findOne(query, {limit:1}, function (err, studentRecord) {
     if(err){
       next(err);
@@ -100,12 +101,11 @@ app.post('/student/find/', function(req, res, next) {
   var query = _.extend({},req.body);
   
   students.find(query, {limit:10}).toArray(function (err, records) {
-    if(err === null){
-      res.send(records);
-    }
-    else{
+    if(err){
       next(err);
+      return;
     }
+    res.send(records);
   });
 });
 
@@ -113,32 +113,35 @@ app.post('/student/find/', function(req, res, next) {
  * Deletes the object found by the post data. (only if 1 is found)
  */
 app.post('/student/delete/', function(req, res, next) {
-  try{
-    req.body._id = new mongodb.ObjectID(req.body._id);
-  }catch(err){
-    next(err);
-  }
+
   res.send();
 });
 
 /**
- * Creates a new student record from the req.data
- * Merge req data with a record only if _id is present & valid
+ * Create SR if _id == null
+ * Update SR if _id == something
  */
 app.post('/student/update/', function(req, res, next) {
-  if(req.body._id !== "" && req.body._id !== null){
-    req.body._id = new mongodb.ObjectID(req.body._id);
+  if(_.isEmpty(req.body._id) || _.isNull(req.body._id) || _.isUndefined(req.body._id)){
+    //create new record
+    students.insert(req.body,{safe:true},function(err, objects) {
+      if(err){
+        next(err);
+        return;
+      }
+      res.send(201);
+    });
   }else{
-    delete req.body._id;
+    //update record by matchin _id
+    req.body._id = new mongodb.ObjectID(req.body._id);
+    students.update(_.pick(req.body, '_id'), _.omit(req.body,'_id'), {safe:true}, function(err, objects) {
+      if(err){
+        next(err);
+        return;
+      }
+      res.send(201);
+    });
   }
-  req.body.modified = new mongodb.Timestamp();
-  
-  students.save(req.body, req.body, {safe:true}, function(err, objects) {
-    if(err){
-      console.log('error saving log : ' + err);
-    }
-  });
-  res.send(201); 
 });
 
 // *******************************************************
@@ -154,12 +157,11 @@ app.post('/results/find/', function(req, res, next) {
     console.log(err);
   }
   students.find(req.body, {limit:50}).toArray(function (err, records) {
-    if(err === null){
-      res.send(records);
-    }
-    else{
+    if(err){
       next(err);
-    }
+      return;
+    } 
+    res.send(records);
   });
 });
 
@@ -174,10 +176,11 @@ app.post('/results/save/', function(req, res, next) {
   }else{
     students.save(req.body, req.body, {safe:true}, function(err, objects) {
       if(err){
-        console.log('error saving log : ' + err);
+        next(err);
+        return;
       }
+      res.send(201);
     });
-    res.send(201); 
   }
 });
 
