@@ -38,7 +38,7 @@ app.configure(function() {
 console.log('Configuring Application for NODE_ENV:'+process.env.NODE_ENV);
 
 app.configure(function() {
-  app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+  app.use(express.errorHandler({ dumpExceptions: true, showStack: false }));
   app.set('dbURI','mongodb://c9:c9@alex.mongohq.com:10051/dev?safe=true');
 });
 
@@ -75,13 +75,22 @@ app.get('/favicon.ico', function(req, res, next) {
  */
 app.post('/login/', function(req, res, next) {
   var query = _.pick(req.body, 'center','loginName','pass');
-  console.log(query);
   students.findOne(query, {limit:1}, function (err, studentRecord) {
     if(err){
+      logs.insert({
+        type: "Login",
+        sucessfull: false,
+        message: query
+      },{safe:false});
       next(err);
       return;
     }
     if(studentRecord){
+      logs.insert({
+        type: "Login",
+        sucessfull: true,
+        message: query
+      },{safe:false});
       res.send(studentRecord);
     }else{
       res.send(401);
@@ -193,6 +202,10 @@ app.post('/results/save/', function(req, res, next) {
 app.get('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, res, next) {
   var storedRec = new mongodb.GridStore(DB, req.path,'r');
   storedRec.open(function(err, gs) {
+    if(err){
+      next(err);
+      return;
+    }
     //file opened, can now do things with it
     // Create a stream to the file
     var stream = gs.stream(true);
@@ -219,9 +232,13 @@ app.post('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, 
   });
   
   newRecording.open(function(err, gridStore) {
-    if(err) {next(err)}
+    if(err){
+      next(err);
+      return;
+    }
     
     req.on('data',function(chunk) {
+      console.log('recodring data\n');
       gridStore.write(chunk, function(err, gs) {
         if(err){
           console.log('error writing recording to GridFS');
@@ -231,14 +248,14 @@ app.post('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, 
   });
     
   req.on('error', function(err) {
-    if(err) {next(err)}
-    
     newRecording.close(function(){
       mongodb.GridStore.unlink(DB, req.path);
     });
+    next(err);
   });
   
-  req.on('end',function() {
+  req.on('end', function() {
+    console.log('recodring req end\n');
     newRecording.close();
   });
 });
