@@ -199,8 +199,8 @@ app.post('/results/save/', function(req, res, next) {
 /**
  * Returns a file from GrdFS
  */
-app.get('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, res, next) {
-  var storedRec = new mongodb.GridStore(DB, req.path,'r');
+app.get('/recordings/:filename/', function(req, res, next) {
+  var storedRec = new mongodb.GridStore(DB, req.params.filename,'r');
   storedRec.open(function(err, gs) {
     if(err){
       next(err);
@@ -224,17 +224,16 @@ app.get('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, r
  * 
  * https://github.com/mongodb/node-mongodb-native/blob/master/docs/gridfs.md
  */
-app.post('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, res, next) {
+app.post('/recordings/:filename/', function(req, res, next) {
   
+  var tempFileName = './tmp/'+req.params.filename;
   //buffer file upload into an actual file
-  var uploadBuff =  fs.createWriteStream('./tmp/blah');
+  var uploadBuff =  fs.createWriteStream(tempFileName);
   req.pipe(uploadBuff);
   
   //save this file off to DB
   req.on('end', function () {
-    res.send(201);
-    
-    var newRecording = new mongodb.GridStore(DB, req.path,'w',{
+    var newRecording = new mongodb.GridStore(DB, req.params.filename,'w',{
       "content_type": "binary/octet-stream",
       "chunk_size": 1024*4
     });
@@ -244,11 +243,13 @@ app.post('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, 
         next(err);
         return;
       }
-      gridStore.writeFile('./tmp/blah' , function (err, filePointer) {
+      gridStore.writeFile(tempFileName , function (err, filePointer) {
         if(err){
           next(err);
           return;
         }
+        res.send(201);
+        fs.unlink(tempFileName);
       });
     });
   });

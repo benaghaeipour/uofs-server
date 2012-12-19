@@ -23,7 +23,7 @@ setTimeout(function() {
   
     function(callback){ 
       //post log obeject
-      requestOptions.path = '/recordings/'+Math.round(Math.random()*1000000)+'/4/3/2/1/';
+      requestOptions.path = '/recordings/'+Math.round(Math.random()*1000000)+'4321/';
       
       var req = http.request(requestOptions, function(response){
         response.pipe(process.stdout);
