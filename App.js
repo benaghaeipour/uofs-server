@@ -27,8 +27,7 @@ var DB = '',
 // *******************************************************
 //          Server Configuration
 app.configure(function() {
-  app.use(express.logger(':date - :remote-addr [req] :method :url :status [res] :res[content-length] - :response-time ms'));
-  app.use(express.timeout());
+  app.use(express.logger(':date - :remote-addr [req] :method :url [res] :status :res[content-length] - :response-time ms'));
   app.use(express.static(__dirname + '/www'));
   app.use('/v6php', phpProxy); //deal with this 1st to speed things up
   app.use(express.json());
@@ -44,9 +43,10 @@ app.configure(function() {
 
 app.configure('production', function() {
   app.use(express.logger({
-    format:':date - :remote-addr [req] :method :url :status [res] :res[content-length] - :response-time ms',
+    format:':date - :remote-addr [req] :method :url [res] :status :res[content-length] b in:response-time ms',
     stream: fs.createWriteStream('http-reqs.logs', {flags:'a'})
   }));
+  app.use(express.timeout());
   app.set('dbURI','mongodb://c9:c9@alex.mongohq.com:10051/prod?safe=false');
 });
 
@@ -225,38 +225,32 @@ app.get('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, r
  * https://github.com/mongodb/node-mongodb-native/blob/master/docs/gridfs.md
  */
 app.post('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, res, next) {
-
-  var newRecording = new mongodb.GridStore(DB, req.path,'w',{
-    "content_type": "binary/octet-stream",
-    "chunk_size": 1024*4
-  });
   
-  newRecording.open(function(err, gridStore) {
-    if(err){
-      next(err);
-      return;
-    }
+  //buffer file upload into an actual file
+  var uploadBuff =  fs.createWriteStream('./tmp/blah');
+  req.pipe(uploadBuff);
+  
+  //save this file off to DB
+  req.on('end', function () {
+    res.send(201);
     
-    req.on('data',function(chunk) {
-      console.log('recodring data\n');
-      gridStore.write(chunk, function(err, gs) {
+    var newRecording = new mongodb.GridStore(DB, req.path,'w',{
+      "content_type": "binary/octet-stream",
+      "chunk_size": 1024*4
+    });
+    
+    newRecording.open(function(err, gridStore) {
+      if(err){
+        next(err);
+        return;
+      }
+      gridStore.writeFile('./tmp/blah' , function (err, filePointer) {
         if(err){
-          console.log('error writing recording to GridFS');
+          next(err);
+          return;
         }
       });
     });
-  });
-    
-  req.on('error', function(err) {
-    newRecording.close(function(){
-      mongodb.GridStore.unlink(DB, req.path);
-    });
-    next(err);
-  });
-  
-  req.on('end', function() {
-    console.log('recodring req end\n');
-    newRecording.close();
   });
 });
 
@@ -267,8 +261,9 @@ app.post('/recordings/:student?/:lesson?/:page?/:block?/:word?/', function(req, 
  * log req body into the db with a type & message minimum, and any other properties
  */
 app.post('/log/', function(req, res, next){
-  if( !req.body.type && !req.body.message ){
+  if( _.isEmpty(req.body.type) || _.isEmpty(req.body.type) ){
     next(new Error('log does not have the required properties \'type\' and \'message\''));
+    return;
   }
   logs.insert(req.body, {safe:true}, function(err, objects) {
     if(err){

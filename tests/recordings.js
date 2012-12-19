@@ -12,7 +12,7 @@ var requestOptions = {
   method:'POST', 
   path:'/log/', 
   headers:{
-    'content-type':'audio/basic'
+    'content-type':'binary/octet-stream'
     }
 };
 
@@ -30,9 +30,7 @@ setTimeout(function() {
         callback();
       });
       
-      var stream = fs.createReadStream('tests/d1.mp3');
-      stream.resume();
-      stream.pipe(req);
+      fs.createReadStream('tests/d1.mp3').pipe(req);
     },
 
     function (callback) {
