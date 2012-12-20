@@ -1,0 +1,3 @@
+[submodule "staticmongo"]
+	path = staticmongo
+	url = https://github.com/chrismatheson/static-mongo.git

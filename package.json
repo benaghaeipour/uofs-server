@@ -6,7 +6,8 @@
     "http-proxy": "~0.8.4",
     "mongodb": "~1.1.11",
     "async": "~0.1.22",
-    "underscore": "~1.4.2"
+    "underscore": "~1.4.2",
+    "staticmongo": "0.x"
   },
   "engines": {
     "node": ">=0.6.0"

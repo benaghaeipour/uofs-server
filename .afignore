@@ -4,6 +4,7 @@
 # ignore directorys
 .c9revisions/
 .git/
+tests/
 
 # don't ignore assets/necessary.css
 # !assets/necessary.css

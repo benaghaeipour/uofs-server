@@ -12,7 +12,7 @@ var phpProxy = require('http-proxy').createServer(80, 'unitsofsound.net/v6php/')
     https = require('https'),
     fs = require('fs'),
     express = require('express'),
-    util = require('util'),
+    staticmongo = require('staticmongo'),
     app = express(),
     mongodb = require('mongodb'),
     _ = require('underscore');
@@ -73,7 +73,7 @@ app.get('/favicon.ico', function(req, res, next) {
  * 
  * check that req includes user, center & pass
  */
-app.post('/login/', function(req, res, next) {
+app.post('/login[/]?', function(req, res, next) {
   var query = _.pick(req.body, 'center','loginName','pass');
   students.findOne(query, {limit:1}, function (err, studentRecord) {
     if(err){
@@ -104,7 +104,7 @@ app.post('/login/', function(req, res, next) {
 /**
  * Does a find on the DB from the posted object
  */
-app.post('/student/find/', function(req, res, next) {
+app.post('/student/find[/]?', function(req, res, next) {
   if(req.body._id) req.body._id = new mongodb.ObjectID(req.body._id);
   
   var query = _.extend({},req.body);
@@ -121,7 +121,7 @@ app.post('/student/find/', function(req, res, next) {
 /**
  * Deletes the object found by the post data. (only if 1 is found)
  */
-app.post('/student/delete/', function(req, res, next) {
+app.post('/student/delete[/]?', function(req, res, next) {
 
   res.send();
 });
@@ -130,7 +130,7 @@ app.post('/student/delete/', function(req, res, next) {
  * Create SR if _id == null
  * Update SR if _id == something
  */
-app.post('/student/update/', function(req, res, next) {
+app.post('/student/update[/]?', function(req, res, next) {
   if(_.isEmpty(req.body._id) || _.isNull(req.body._id) || _.isUndefined(req.body._id)){
     //create new record
     students.insert(req.body,{safe:true},function(err, objects) {
@@ -159,7 +159,7 @@ app.post('/student/update/', function(req, res, next) {
 /**
  * Does a find on the DB from the posted object
  */
-app.post('/results/find/', function(req, res, next) {
+app.post('/results/find[/]?', function(req, res, next) {
   try{
     req.body._id = new mongodb.ObjectID(req.body._id);
   }catch(err){
@@ -178,7 +178,7 @@ app.post('/results/find/', function(req, res, next) {
  * Creates a new student record from the req.data
  * Merge req data with a record only if _id is present & valid
  */
-app.post('/results/save/', function(req, res, next) {
+app.post('/results/save[/]?', function(req, res, next) {
   if(req.body._id){
     res.status(400);
     next(new Error('new results should not have _id property'));
@@ -199,7 +199,7 @@ app.post('/results/save/', function(req, res, next) {
 /**
  * Returns a file from GrdFS
  */
-app.get('/recordings/:filename/', function(req, res, next) {
+app.get('/recordings/:filename[/]?', function(req, res, next) {
   var storedRec = new mongodb.GridStore(DB, req.params.filename,'r');
   storedRec.open(function(err, gs) {
     if(err){
@@ -224,7 +224,7 @@ app.get('/recordings/:filename/', function(req, res, next) {
  * 
  * https://github.com/mongodb/node-mongodb-native/blob/master/docs/gridfs.md
  */
-app.post('/recordings/:filename/', function(req, res, next) {
+app.post('/recordings/:filename[/]?', function(req, res, next) {
   
   var tempFileName = './tmp/'+req.params.filename;
   //buffer file upload into an actual file
@@ -261,7 +261,7 @@ app.post('/recordings/:filename/', function(req, res, next) {
 /**
  * log req body into the db with a type & message minimum, and any other properties
  */
-app.post('/log/', function(req, res, next){
+app.post('/log[/]?', function(req, res, next){
   if( _.isEmpty(req.body.type) || _.isEmpty(req.body.type) ){
     next(new Error('log does not have the required properties \'type\' and \'message\''));
     return;
@@ -279,7 +279,7 @@ app.post('/log/', function(req, res, next){
 /**
  * dump will just dump req data to console.
  */
-app.all('/dump/*', function(req, res, next) {
+app.all('/dump[/]?', function(req, res, next) {
   console.log('Params : '+req.params);
   console.log('Method : '+req.method);
   console.log('_method : '+req._method);
@@ -291,7 +291,7 @@ app.all('/dump/*', function(req, res, next) {
   });
 });
 
-app.get('/crash/', function(req, res, next) {
+app.get('/crash[/]?', function(req, res, next) {
   console.error('This is a triggerd crash');
   res.send('crashing app in 500ms');
   setTimeout(function() {
