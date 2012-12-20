@@ -5,33 +5,30 @@
 // assumes: npm install express
 //
 // assumes these subfolders:
-//   public/
+//   www/
+//   tmp/
 //
 var phpProxy = require('http-proxy').createServer(80, 'unitsofsound.net/v6php/'),
     http = require('http'),
     https = require('https'),
     fs = require('fs'),
     express = require('express'),
-    staticmongo = require('staticmongo'),
-    app = express(),
     mongodb = require('mongodb'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    app = express();
     
 // *******************************************************
 //          Global Variables
-var DB = '',
-    students = null,
-    logs = null,
-    results = null;
+var DB = null;
 
 // *******************************************************
 //          Server Configuration
 app.configure(function() {
   app.use(express.logger(':date - :remote-addr [req] :method :url [res] :status :res[content-length] - :response-time ms'));
-  app.use(express.static(__dirname + '/www'));
-  app.use('/v6php', phpProxy); //deal with this 1st to speed things up
+  app.use('/v6php', phpProxy);
   app.use(express.json());
   app.use(app.router);
+  app.use(express.static(__dirname + '/www'));
 });
 
 console.log('Configuring Application for NODE_ENV:'+process.env.NODE_ENV);
@@ -75,9 +72,9 @@ app.get('/favicon.ico', function(req, res, next) {
  */
 app.post('/login[/]?', function(req, res, next) {
   var query = _.pick(req.body, 'center','loginName','pass');
-  students.findOne(query, {limit:1}, function (err, studentRecord) {
+  DB.students.findOne(query, {limit:1}, function (err, studentRecord) {
     if(err){
-      logs.insert({
+      DB.logs.insert({
         type: "Login",
         sucessfull: false,
         message: query
@@ -86,7 +83,7 @@ app.post('/login[/]?', function(req, res, next) {
       return;
     }
     if(studentRecord){
-      logs.insert({
+      DB.logs.insert({
         type: "Login",
         sucessfull: true,
         message: query
@@ -109,7 +106,7 @@ app.post('/student/find[/]?', function(req, res, next) {
   
   var query = _.extend({},req.body);
   
-  students.find(query, {limit:10}).toArray(function (err, records) {
+  DB.students.find(query, {limit:10}).toArray(function (err, records) {
     if(err){
       next(err);
       return;
@@ -133,7 +130,7 @@ app.post('/student/delete[/]?', function(req, res, next) {
 app.post('/student/update[/]?', function(req, res, next) {
   if(_.isEmpty(req.body._id) || _.isNull(req.body._id) || _.isUndefined(req.body._id)){
     //create new record
-    students.insert(req.body,{safe:true},function(err, objects) {
+    DB.students.insert(req.body,{safe:true},function(err, objects) {
       if(err){
         next(err);
         return;
@@ -143,7 +140,7 @@ app.post('/student/update[/]?', function(req, res, next) {
   }else{
     //update record by matchin _id
     req.body._id = new mongodb.ObjectID(req.body._id);
-    students.update(_.pick(req.body, '_id'), _.omit(req.body,'_id'), {safe:true}, function(err, objects) {
+    DB.students.update(_.pick(req.body, '_id'), _.omit(req.body,'_id'), {safe:true}, function(err, objects) {
       if(err){
         next(err);
         return;
@@ -165,7 +162,7 @@ app.post('/results/find[/]?', function(req, res, next) {
   }catch(err){
     console.log(err);
   }
-  students.find(req.body, {limit:50}).toArray(function (err, records) {
+  DB.students.find(req.body, {limit:50}).toArray(function (err, records) {
     if(err){
       next(err);
       return;
@@ -183,7 +180,7 @@ app.post('/results/save[/]?', function(req, res, next) {
     res.status(400);
     next(new Error('new results should not have _id property'));
   }else{
-    students.save(req.body, req.body, {safe:true}, function(err, objects) {
+    DB.students.save(req.body, req.body, {safe:true}, function(err, objects) {
       if(err){
         next(err);
         return;
@@ -266,7 +263,7 @@ app.post('/log[/]?', function(req, res, next){
     next(new Error('log does not have the required properties \'type\' and \'message\''));
     return;
   }
-  logs.insert(req.body, {safe:true}, function(err, objects) {
+  DB.logs.insert(req.body, {safe:true}, function(err, objects) {
     if(err){
       console.log('error saving log : ' + err);
       res.send(500);
@@ -316,7 +313,7 @@ mongodb.connect(app.get('dbURI'), {safe:true}, function(err, dbconnection) {
       console.log('cannot open logs collection');
       throw(err);
     }
-    logs = collection;
+    DB.logs = collection;
   });
   
   DB.collection('students', function(err, collection) {
@@ -324,7 +321,7 @@ mongodb.connect(app.get('dbURI'), {safe:true}, function(err, dbconnection) {
       console.log('cannot open students collection');
       throw(err);
     }
-    students = collection;
+    DB.students = collection;
   });
   
   DB.collection('results', function(err, collection) {
@@ -332,7 +329,7 @@ mongodb.connect(app.get('dbURI'), {safe:true}, function(err, dbconnection) {
       console.log('cannot open students collection');
       throw(err);
     }
-    results = collection;
+    DB.results = collection;
   });
   
   //https.createServer(null, app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 443);
@@ -341,5 +338,6 @@ mongodb.connect(app.get('dbURI'), {safe:true}, function(err, dbconnection) {
 });
 
 process.on('SIGHUP', function() {
+  DB.close();
   console.log('bye');
 });
