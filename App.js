@@ -8,6 +8,17 @@
 //   www/
 //   tmp/
 //
+
+// *******************************************************
+//          Application metrics
+///var appfog = JSON.parse(process.env.VMC_APP_INSTANCE);
+//require('nodefly').profile(
+//    '08a3157a-c881-4488-a8d8-ccb0b53ca8a5',
+//    ['[C9]uos-dev']
+//);
+
+// *******************************************************
+//          Application includes
 var phpProxy = require('http-proxy').createServer(80, 'unitsofsound.net/v6php/'),
     http = require('http'),
     https = require('https'),
@@ -71,8 +82,15 @@ app.get('/favicon.ico', function(req, res, next) {
  * check that req includes user, center & pass
  */
 app.post('/login[/]?', function(req, res, next) {
-  var query = _.pick(req.body, 'center','loginName','pass');
-  DB.students.findOne(query, {limit:1}, function (err, studentRecord) {
+  //sanitize
+  var query = _.extend({
+    username:"",
+    pw1:""
+  }, _.pick(req.body,'username','pw1'));
+  query.username.toLowerCase();
+  query.pw1.toLowerCase();
+  
+  DB.users.findOne(query, {limit:1}, function (err, studentRecord) {
     if(err){
       DB.logs.insert({
         type: "Login",
@@ -102,11 +120,12 @@ app.post('/login[/]?', function(req, res, next) {
  * Does a find on the DB from the posted object
  */
 app.post('/student/find[/]?', function(req, res, next) {
-  if(req.body._id) req.body._id = new mongodb.ObjectID(req.body._id);
+  var query = req.body;
+  if(query._id) query._id = new mongodb.ObjectID(query._id);
+  query.username.toLowerCase();
+  query.pw1.toLowerCase();
   
-  var query = _.extend({},req.body);
-  
-  DB.students.find(query, {limit:10}).toArray(function (err, records) {
+  DB.users.find(query).toArray(function (err, records) {
     if(err){
       next(err);
       return;
@@ -128,9 +147,13 @@ app.post('/student/delete[/]?', function(req, res, next) {
  * Update SR if _id == something
  */
 app.post('/student/update[/]?', function(req, res, next) {
-  if(_.isEmpty(req.body._id) || _.isNull(req.body._id) || _.isUndefined(req.body._id)){
+  var query = req.body;
+  query.username.toLowerCase();
+  query.pw1.toLowerCase();
+  
+  if(_.isEmpty(query._id) || _.isNull(query._id) || _.isUndefined(query._id)){
     //create new record
-    DB.students.insert(req.body,{safe:true},function(err, objects) {
+    DB.users.insert(query,{safe:true},function(err, objects) {
       if(err){
         next(err);
         return;
@@ -139,8 +162,8 @@ app.post('/student/update[/]?', function(req, res, next) {
     });
   }else{
     //update record by matchin _id
-    req.body._id = new mongodb.ObjectID(req.body._id);
-    DB.students.update(_.pick(req.body, '_id'), _.omit(req.body,'_id'), {safe:true}, function(err, objects) {
+    query._id = new mongodb.ObjectID(query._id);
+    DB.users.update(_.pick(query, '_id'), _.omit(query,'_id'), {safe:true}, function(err, objects) {
       if(err){
         next(err);
         return;
@@ -150,45 +173,6 @@ app.post('/student/update[/]?', function(req, res, next) {
   }
 });
 
-// *******************************************************
-//          Results endpoints
-
-/**
- * Does a find on the DB from the posted object
- */
-app.post('/results/find[/]?', function(req, res, next) {
-  try{
-    req.body._id = new mongodb.ObjectID(req.body._id);
-  }catch(err){
-    console.log(err);
-  }
-  DB.students.find(req.body, {limit:50}).toArray(function (err, records) {
-    if(err){
-      next(err);
-      return;
-    } 
-    res.send(records);
-  });
-});
-
-/**
- * Creates a new student record from the req.data
- * Merge req data with a record only if _id is present & valid
- */
-app.post('/results/save[/]?', function(req, res, next) {
-  if(req.body._id){
-    res.status(400);
-    next(new Error('new results should not have _id property'));
-  }else{
-    DB.students.save(req.body, req.body, {safe:true}, function(err, objects) {
-      if(err){
-        next(err);
-        return;
-      }
-      res.send(201);
-    });
-  }
-});
 
 // *******************************************************
 //          Recordings enpoints
@@ -252,8 +236,9 @@ app.post('/recordings/:filename[/]?', function(req, res, next) {
   });
 });
 
+
 // *******************************************************
-//          Debug enpoints
+//          Log enpoint
 
 /**
  * log req body into the db with a type & message minimum, and any other properties
@@ -273,10 +258,14 @@ app.post('/log[/]?', function(req, res, next){
   });
 });
 
+
+// *******************************************************
+//          Debug enpoints
+
 /**
  * dump will just dump req data to console.
  */
-app.all('/dump[/]?', function(req, res, next) {
+app.all('/dev/dump[/]?', function(req, res, next) {
   console.log('Params : '+req.params);
   console.log('Method : '+req.method);
   console.log('_method : '+req._method);
@@ -288,7 +277,7 @@ app.all('/dump[/]?', function(req, res, next) {
   });
 });
 
-app.get('/crash[/]?', function(req, res, next) {
+app.all('/dev/crash[/]?', function(req, res, next) {
   console.error('This is a triggerd crash');
   res.send('crashing app in 500ms');
   setTimeout(function() {
@@ -316,20 +305,12 @@ mongodb.connect(app.get('dbURI'), {safe:true}, function(err, dbconnection) {
     DB.logs = collection;
   });
   
-  DB.collection('students', function(err, collection) {
+  DB.collection('users', function(err, collection) {
     if(err){
       console.log('cannot open students collection');
       throw(err);
     }
-    DB.students = collection;
-  });
-  
-  DB.collection('results', function(err, collection) {
-    if(err){
-      console.log('cannot open students collection');
-      throw(err);
-    }
-    DB.results = collection;
+    DB.users = collection;
   });
   
   //https.createServer(null, app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 443);

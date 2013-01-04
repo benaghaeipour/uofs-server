@@ -28,22 +28,21 @@ setTimeout(function() {
         callback();
       });
       req.end(JSON.stringify({
-        loginName:'chris',
-        center:'London',
-        pass:'iii'
+        username:'Chris',
+        pw1:'iii'
       },'utf8'));
     },
     
     function(callback){ 
       //login with wrong creds and get 401-unauth error
       var req = http.request(requestOptions, function(response){
-        assert.equal(response.statusCode, 401, 'login with wrong center');
+        assert.equal(response.statusCode, 200, 'login with correct details');
+        response.pipe(process.stdout);
         callback();
       });
       req.end(JSON.stringify({
-        loginName:'chris',
-        center:'wrong',
-        pass:'iii'
+        username:'Scott',
+        pw1:'iii'
       },'utf8'));
     },
     
@@ -51,12 +50,12 @@ setTimeout(function() {
       //login with wrong creds and get 401-unauth error
       var req = http.request(requestOptions, function(response){
         assert.equal(response.statusCode, 401, 'login with wrong password');
+        response.pipe(process.stdout);
         callback();
       });
       req.end(JSON.stringify({
-        loginName:'chris',
-        center:'London',
-        pass:'wrong'
+        username:'chris',
+        pw1:'wrong'
       },'utf8'));
     },
     
@@ -65,7 +64,7 @@ setTimeout(function() {
       var req = http.request(requestOptions, function(response){
         response.pipe(process.stdout);
         response.on('end', function(){
-          assert.equal(response.statusCode, 401, 'login with missing user & pass');  
+          assert.equal(response.statusCode, 401, 'login with missing user & pw1');
         });
         callback();
       });

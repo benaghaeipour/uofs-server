@@ -1,3 +1,3 @@
-require("logs.js");
-require("student.js");
-require("recordings.js");
+require("./logs.js");
+require("./student.js");
+require("./recordings.js");
