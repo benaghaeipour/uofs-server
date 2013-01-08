@@ -42,9 +42,10 @@ app.configure(function() {
   app.use(express.static(__dirname + '/www'));
 });
 
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 console.log('Configuring Application for NODE_ENV:'+process.env.NODE_ENV);
 
-app.configure(function() {
+app.configure('development', function() {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: false }));
   app.set('dbURI','mongodb://c9:c9@alex.mongohq.com:10051/dev?safe=true');
 });
@@ -92,11 +93,6 @@ app.post('/login[/]?', function(req, res, next) {
   
   DB.users.findOne(query, {limit:1}, function (err, studentRecord) {
     if(err){
-      DB.logs.insert({
-        type: "Login",
-        sucessfull: false,
-        message: query
-      },{safe:false});
       next(err);
       return;
     }
@@ -108,6 +104,11 @@ app.post('/login[/]?', function(req, res, next) {
       },{safe:false});
       res.send(studentRecord);
     }else{
+      DB.logs.insert({
+        type: "Login",
+        sucessfull: false,
+        message: query
+      },{safe:false});
       res.send(401);
     }
   });
@@ -121,10 +122,16 @@ app.post('/login[/]?', function(req, res, next) {
  */
 app.post('/student/find[/]?', function(req, res, next) {
   var query = req.body;
-  if(query._id) query._id = new mongodb.ObjectID(query._id);
-  query.username.toLowerCase();
-  query.pw1.toLowerCase();
-  
+  if(query._id){
+    query._id = new mongodb.ObjectID(query._id);
+  }
+  if(query.username){
+    query.username.toLowerCase();  
+  }
+  if(query.pw1){
+    query.pw1.toLowerCase();
+  }
+
   DB.users.find(query).toArray(function (err, records) {
     if(err){
       next(err);
@@ -146,10 +153,18 @@ app.post('/student/delete[/]?', function(req, res, next) {
  * Create SR if _id == null
  * Update SR if _id == something
  */
-app.post('/student/update[/]?', function(req, res, next) {
+app.post('/student/update[/]?', allowEdit, function(req, res, next) {
   var query = req.body;
-  query.username.toLowerCase();
-  query.pw1.toLowerCase();
+  if(query._id){
+    next(new Error("cant change _id of a user"));
+    return;
+  }
+  if(query.username){
+    query.username.toLowerCase();  
+  }
+  if(query.pw1){
+    query.pw1.toLowerCase();
+  }
   
   if(_.isEmpty(query._id) || _.isNull(query._id) || _.isUndefined(query._id)){
     //create new record
@@ -172,6 +187,16 @@ app.post('/student/update[/]?', function(req, res, next) {
     });
   }
 });
+
+/**
+ * This function will check if the current session's logged in user is allowed to 
+ * perform the requested edits.
+ * passes an error if this is not possible
+ */
+function allowEdit(req, res, next){
+  next();
+  return;
+}
 
 
 // *******************************************************
