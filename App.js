@@ -11,10 +11,14 @@
 
 // *******************************************************
 //          Application metrics
-///var appfog = JSON.parse(process.env.VMC_APP_INSTANCE);
+//var appfog = JSON.parse(process.env.VMC_APP_INSTANCE);
 //require('nodefly').profile(
 //    '08a3157a-c881-4488-a8d8-ccb0b53ca8a5',
-//    ['[C9]uos-dev']
+//    ['[C9]uos-dev'],
+//    {
+//      // time in ms when the event loop is considered blocked
+//      blockThreshold: 10
+//    }
 //);
 
 // *******************************************************
@@ -25,12 +29,13 @@ var phpProxy = require('http-proxy').createServer(80, 'unitsofsound.net/v6php/')
     fs = require('fs'),
     express = require('express'),
     mongodb = require('mongodb'),
-    _ = require('underscore'),
-    app = express();
+    _ = require('underscore');
+    
     
 // *******************************************************
 //          Global Variables
-var DB = null;
+var DB = null,
+    app = express();
 
 // *******************************************************
 //          Server Configuration
@@ -92,10 +97,8 @@ app.post('/login[/]?', function(req, res, next) {
   query.pw1.toLowerCase();
   
   DB.users.findOne(query, {limit:1}, function (err, studentRecord) {
-    if(err){
-      next(err);
-      return;
-    }
+    if(err){ return next(err)}
+
     if(studentRecord){
       DB.logs.insert({
         type: "Login",
@@ -122,8 +125,18 @@ app.post('/login[/]?', function(req, res, next) {
  */
 app.post('/student/find[/]?', function(req, res, next) {
   var query = req.body;
+  var options = {};
   if(query._id){
     query._id = new mongodb.ObjectID(query._id);
+    
+  }else{
+    //dont fetch syllabus's when doing big query
+    options.fields = {
+      'dictationSyllabus':0,
+      'spellingSyllabus':0, 
+      'readingSyllabus':0, 
+      'memorySyllabus':0
+    };
   }
   if(query.username){
     query.username.toLowerCase();  
@@ -132,11 +145,8 @@ app.post('/student/find[/]?', function(req, res, next) {
     query.pw1.toLowerCase();
   }
 
-  DB.users.find(query).toArray(function (err, records) {
-    if(err){
-      next(err);
-      return;
-    }
+  DB.users.find(query, options).toArray(function (err, records) {
+    if(err){ return next(err)}
     res.send(records);
   });
 });
@@ -155,10 +165,7 @@ app.post('/student/delete[/]?', function(req, res, next) {
  */
 app.post('/student/update[/]?', allowEdit, function(req, res, next) {
   var query = req.body;
-  if(query._id){
-    next(new Error("cant change _id of a user"));
-    return;
-  }
+  
   if(query.username){
     query.username.toLowerCase();  
   }
@@ -169,20 +176,17 @@ app.post('/student/update[/]?', allowEdit, function(req, res, next) {
   if(_.isEmpty(query._id) || _.isNull(query._id) || _.isUndefined(query._id)){
     //create new record
     DB.users.insert(query,{safe:true},function(err, objects) {
-      if(err){
-        next(err);
-        return;
-      }
+      if(err){ return next(err)}
+      
       res.send(201);
     });
   }else{
     //update record by matchin _id
     query._id = new mongodb.ObjectID(query._id);
+    console.log(JSON.stringify(query));
     DB.users.update(_.pick(query, '_id'), _.omit(query,'_id'), {safe:true}, function(err, objects) {
-      if(err){
-        next(err);
-        return;
-      }
+      if(err){ return next(err)}
+      
       res.send(201);
     });
   }
@@ -208,10 +212,8 @@ function allowEdit(req, res, next){
 app.get('/recordings/:filename[/]?', function(req, res, next) {
   var storedRec = new mongodb.GridStore(DB, req.params.filename,'r');
   storedRec.open(function(err, gs) {
-    if(err){
-      next(err);
-      return;
-    }
+    if(err){ return next(err)}
+    
     //file opened, can now do things with it
     // Create a stream to the file
     var stream = gs.stream(true);
@@ -245,15 +247,11 @@ app.post('/recordings/:filename[/]?', function(req, res, next) {
     });
     
     newRecording.open(function(err, gridStore) {
-      if(err){
-        next(err);
-        return;
-      }
+      if(err){ return next(err)}
+      
       gridStore.writeFile(tempFileName , function (err, filePointer) {
-        if(err){
-          next(err);
-          return;
-        }
+        if(err){ return next(err)}
+        
         res.send(201);
         fs.unlink(tempFileName);
       });
