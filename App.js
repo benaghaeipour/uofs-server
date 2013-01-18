@@ -133,6 +133,7 @@ app.post('/student/find[/]?', function(req, res, next) {
     //dont fetch syllabus's when doing big query
     options.fields = {
       'dictationSyllabus':0,
+      'autoSyllabus':0,
       'spellingSyllabus':0, 
       'readingSyllabus':0, 
       'memorySyllabus':0
