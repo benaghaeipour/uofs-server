@@ -11,15 +11,25 @@
 
 // *******************************************************
 //          Application metrics
-//var appfog = JSON.parse(process.env.VMC_APP_INSTANCE);
-//require('nodefly').profile(
-//    '08a3157a-c881-4488-a8d8-ccb0b53ca8a5',
-//    ['[C9]uos-dev'],
-//    {
-//      // time in ms when the event loop is considered blocked
-//      blockThreshold: 10
-//    }
-//);
+
+try{
+  var appfog = JSON.parse(process.env.VMC_APP_INSTANCE);
+  
+  var options = {
+    // time in ms when the event loop is considered blocked
+    blockThreshold: 10
+  };
+  
+  require('nodefly').profile(
+      '08a3157a-c881-4488-a8d8-ccb0b53ca8a5',
+      ["UOS Server",
+       appfog.name,
+       appfog.instance_index],
+       options // optional
+  );
+}catch(err){
+  console.error("Failed to init nodefly logging");
+}
 
 // *******************************************************
 //          Application includes
@@ -29,13 +39,17 @@ var phpProxy = require('http-proxy').createServer(80, 'unitsofsound.net/v6php/')
     fs = require('fs'),
     express = require('express'),
     mongodb = require('mongodb'),
-    _ = require('underscore');
-    
+    _ = require('underscore'),
+    logentries = require('node-logentries');
     
 // *******************************************************
 //          Global Variables
 var DB = null,
     app = express();
+    
+var log = logentries.logger({
+  token:'42520623-fd75-45a9-bdea-599d0ff58bca'
+});
 
 // *******************************************************
 //          Server Configuration
@@ -100,18 +114,11 @@ app.post('/login[/]?', function(req, res, next) {
     if(err){ return next(err)}
 
     if(studentRecord){
-      DB.logs.insert({
-        type: "Login",
-        sucessfull: true,
-        message: query
-      },{safe:false});
+      log.info("Login Sucess"+query);
       res.send(studentRecord);
     }else{
-      DB.logs.insert({
-        type: "Login",
-        sucessfull: false,
-        message: query
-      },{safe:false});
+      log.notice("Login Failed");
+      log.notice(query);
       res.send(401);
     }
   });
@@ -145,7 +152,8 @@ app.post('/student/find[/]?', function(req, res, next) {
   if(query.pw1){
     query.pw1.toLowerCase();
   }
-
+  log.debug("Student Find");
+  log.debug(query);
   DB.users.find(query, options).toArray(function (err, records) {
     if(err){ return next(err)}
     res.send(records);
@@ -203,6 +211,21 @@ function allowEdit(req, res, next){
   return;
 }
 
+// *******************************************************
+//          Center endpoints
+
+/**
+ * Get center obj
+ */
+app.post('/center/find[/]?', function(req, res, next) {
+  var query = req.body;
+  var options = {};
+  
+  DB.centers.findOne(query, {limit:1}, function (err, records) {
+    if(err){ return next(err)}
+    res.send(records);
+  });
+});
 
 // *******************************************************
 //          Recordings enpoints
@@ -313,21 +336,12 @@ app.all('/dev/crash[/]?', function(req, res, next) {
 //          Start of application doing things
 
 // https://github.com/mongodb/node-mongodb-native#documentation
-mongodb.connect(app.get('dbURI'), {safe:true}, function(err, dbconnection) {
+mongodb.connect(app.get('dbURI'), {safe:true, autoreconnect:true}, function(err, dbconnection) {
   if(err){
     console.log('error opening database');
     throw(err);
   }
   DB = dbconnection; //make the db globally avaliable
-  
-  //make pointers to the collections we are going to use
-  DB.collection('logs', function(err, collection) {
-    if(err){
-      console.log('cannot open logs collection');
-      throw(err);
-    }
-    DB.logs = collection;
-  });
   
   DB.collection('users', function(err, collection) {
     if(err){
@@ -335,6 +349,14 @@ mongodb.connect(app.get('dbURI'), {safe:true}, function(err, dbconnection) {
       throw(err);
     }
     DB.users = collection;
+  });
+  
+  DB.collection('centers', function(err, collection) {
+    if(err){
+      console.log('cannot open students collection');
+      throw(err);
+    }
+    DB.centers = collection;
   });
   
   //https.createServer(null, app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 443);

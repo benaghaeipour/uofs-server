@@ -6,11 +6,10 @@
     "http-proxy": "~0.8.4",
     "mongodb": "~1.1.11",
     "underscore": "~1.4.2",
-    "nodefly": "~0.1.16a"
+    "nodefly": "~0.1.16a",
+    "node-logentries": "0.0.2"
   },
-  "devDependencies":{
-    "async": "~0.1.22"  
-  },
+  "devDependencies": {},
   "engines": {
     "node": ">=0.6.0"
   },
@@ -19,7 +18,6 @@
   "directories": {
     "test": "tests"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "node tests/tests.js",
     "start": "node app.js"

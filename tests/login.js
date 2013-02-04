@@ -28,20 +28,7 @@ setTimeout(function() {
         callback();
       });
       req.end(JSON.stringify({
-        username:'Chris',
-        pw1:'iii'
-      },'utf8'));
-    },
-    
-    function(callback){ 
-      //login with wrong creds and get 401-unauth error
-      var req = http.request(requestOptions, function(response){
-        assert.equal(response.statusCode, 200, 'login with correct details');
-        response.pipe(process.stdout);
-        callback();
-      });
-      req.end(JSON.stringify({
-        username:'Scott',
+        username:'chris',
         pw1:'iii'
       },'utf8'));
     },
