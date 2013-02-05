@@ -48,7 +48,8 @@ var DB = null,
     app = express();
     
 var log = logentries.logger({
-  token:'42520623-fd75-45a9-bdea-599d0ff58bca'
+  token:'42520623-fd75-45a9-bdea-599d0ff58bca',
+  timestamp:false
 });
 
 var httpLogsToken = 'a15ad4d2-7c28-406d-bef0-9e12f39225b5';
@@ -67,16 +68,22 @@ app.configure(function() {
 });
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+process.env.DB_URI = process.env.DB_URI || 'mongodb://c9:c9@alex.mongohq.com:10051/dev?safe=true';
 console.log('Configuring Application for NODE_ENV:'+process.env.NODE_ENV);
+console.log('Configuring for DB : '+process.env.DB_URI);
 
 app.configure('development', function() {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: false }));
-  app.set('dbURI','mongodb://c9:c9@alex.mongohq.com:10051/dev?safe=true');
+  //additional loggin for C9
+  log.on('log',function(logline){
+    console.log( logline );
+  });
+  log.level('debug');
 });
 
 app.configure('production', function() {
+  log.level('warning');
   app.use(express.timeout());
-  app.set('dbURI','mongodb://c9:c9@alex.mongohq.com:10051/prod?safe=false');
 });
 
 
@@ -131,11 +138,10 @@ app.post('/login[/]?', function(req, res, next) {
     if(err){ return next(err)}
 
     if(studentRecord){
-      log.info("Login Sucess"+query);
+      log.info("Login Sucess %s : %s",studentRecord.username,studentRecord._id);
       res.send(studentRecord);
     }else{
-      log.notice("Login Failed");
-      log.notice(query);
+      log.notice("Login Failed \n%s", JSON.stringify(query));
       res.send(401);
     }
   });
@@ -169,8 +175,8 @@ app.post('/student/find[/]?', function(req, res, next) {
   if(query.pw1){
     query.pw1.toLowerCase();
   }
-  log.debug("Student Find");
-  log.debug(query);
+  log.info("Student/Find/ : ", JSON.stringify(query));
+
   DB.users.find(query, options).toArray(function (err, records) {
     if(err){ return next(err)}
     res.send(records);
@@ -203,13 +209,13 @@ app.post('/student/update[/]?', allowEdit, function(req, res, next) {
     //create new record
     DB.users.insert(query,{safe:true},function(err, objects) {
       if(err){ return next(err)}
-      
+      log.info("Student Created : ", query._id);
       res.send(201);
     });
   }else{
     //update record by matchin _id
     query._id = new mongodb.ObjectID(query._id);
-    console.log(JSON.stringify(query));
+    log.info("Student Updated : ", query._id);
     DB.users.update(_.pick(query, '_id'), _.omit(query,'_id'), {safe:true}, function(err, objects) {
       if(err){ return next(err)}
       
@@ -353,7 +359,7 @@ app.all('/dev/crash[/]?', function(req, res, next) {
 //          Start of application doing things
 
 // https://github.com/mongodb/node-mongodb-native#documentation
-mongodb.connect(app.get('dbURI'), {safe:true, autoreconnect:true}, function(err, dbconnection) {
+mongodb.connect(process.env.DB_URI, {safe:true, autoreconnect:true}, function(err, dbconnection) {
   if(err){
     console.log('error opening database');
     throw(err);
@@ -362,7 +368,7 @@ mongodb.connect(app.get('dbURI'), {safe:true, autoreconnect:true}, function(err,
   
   DB.collection('users', function(err, collection) {
     if(err){
-      console.log('cannot open students collection');
+      console.log('cannot open users collection');
       throw(err);
     }
     DB.users = collection;
@@ -370,7 +376,7 @@ mongodb.connect(app.get('dbURI'), {safe:true, autoreconnect:true}, function(err,
   
   DB.collection('centers', function(err, collection) {
     if(err){
-      console.log('cannot open students collection');
+      console.log('cannot open centers collection');
       throw(err);
     }
     DB.centers = collection;
