@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "dependencies": {
     "express": ">=2.5.0",
-    "http-proxy": "~0.8.4",
     "mongodb": "~1.1.11",
     "underscore": "~1.4.2",
     "nodefly": "~0.1.16a",

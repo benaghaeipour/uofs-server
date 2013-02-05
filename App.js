@@ -10,7 +10,7 @@
 //
 
 // *******************************************************
-//          Application metrics
+//          Performance metrics
 
 try{
   var appfog = JSON.parse(process.env.VMC_APP_INSTANCE);
@@ -33,7 +33,7 @@ try{
 
 // *******************************************************
 //          Application includes
-var phpProxy = require('http-proxy').createServer(80, 'unitsofsound.net/v6php/'),
+var net = require('net'),
     http = require('http'),
     https = require('https'),
     fs = require('fs'),
@@ -51,11 +51,16 @@ var log = logentries.logger({
   token:'42520623-fd75-45a9-bdea-599d0ff58bca'
 });
 
+var httpLogsToken = 'a15ad4d2-7c28-406d-bef0-9e12f39225b5';
+var httpLogsSocket = new net.Socket().connect(10000, 'api.logentries.com');
+
 // *******************************************************
 //          Server Configuration
 app.configure(function() {
-  app.use(express.logger(':date - :remote-addr [req] :method :url [res] :status :res[content-length] - :response-time ms'));
-  app.use('/v6php', phpProxy);
+  app.use(express.logger({
+    format: httpLogsToken+' :remote-addr [req] :method :url [res] :status :res[content-length] b in:response-time ms',
+    stream: httpLogsSocket
+  }));
   app.use(express.json());
   app.use(app.router);
   app.use(express.static(__dirname + '/www'));
@@ -70,10 +75,6 @@ app.configure('development', function() {
 });
 
 app.configure('production', function() {
-  app.use(express.logger({
-    format:':date - :remote-addr [req] :method :url [res] :status :res[content-length] b in:response-time ms',
-    stream: fs.createWriteStream('http-reqs.logs', {flags:'a'})
-  }));
   app.use(express.timeout());
   app.set('dbURI','mongodb://c9:c9@alex.mongohq.com:10051/prod?safe=false');
 });
@@ -91,6 +92,22 @@ app.get('/favicon.ico', function(req, res, next) {
   //no favicon avaliable, but dont want 404 errors
   res.status(200);
   res.send();
+});
+
+app.get('/crossdomain.xml', function(req, res, next) {
+  //no favicon avaliable, but dont want 404 errors
+  res.status(200);
+  res.send('\
+    <?xml version="1.0"?>\
+    <!DOCTYPE cross-domain-policy SYSTEM\
+    "http://www.adobe.com/xml/dtds/cross-domain-policy.dtd">\
+    \
+    <cross-domain-policy>\
+      <site-control permitted-cross-domain-policies="all"/>\
+      <allow-access-from domain="*" secure="false"/>\
+      <allow-http-request-headers-from domain="*" headers="*" secure="false"/>\
+    </cross-domain-policy>'
+  );
 });
 
 // *******************************************************
