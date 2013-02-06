@@ -34,6 +34,21 @@ setTimeout(function() {
       }));
     },
     
+    function(callback){ 
+      //post log obeject
+      requestOptions.path = '/center/update/';
+      
+      var req = http.request(requestOptions, function(response){
+        assert.equal(response.statusCode, 201, 'failed to update center');
+        response.pipe(process.stdout);
+        callback();
+      });
+      req.end(JSON.stringify({
+        name:'London',
+        maxDate:'blah'
+      }));
+    },
+    
     function (callback) {
       setTimeout(function() {
         process.exit(0);

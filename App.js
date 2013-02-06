@@ -138,10 +138,10 @@ app.post('/login[/]?', function(req, res, next) {
     if(err){ return next(err)}
 
     if(studentRecord){
-      log.info("Login Sucess %s : %s",studentRecord.username,studentRecord._id);
+      log.info('Login Sucess %s : %s',studentRecord.username,studentRecord._id);
       res.send(studentRecord);
     }else{
-      log.notice("Login Failed \n%s", JSON.stringify(query));
+      log.notice('Login Failed \n%j', JSON.stringify(query));
       res.send(401);
     }
   });
@@ -175,7 +175,7 @@ app.post('/student/find[/]?', function(req, res, next) {
   if(query.pw1){
     query.pw1.toLowerCase();
   }
-  log.info("Student/Find/ : ", JSON.stringify(query));
+  log.info('Student/Find/ : %j', JSON.stringify(query));
 
   DB.users.find(query, options).toArray(function (err, records) {
     if(err){ return next(err)}
@@ -209,13 +209,13 @@ app.post('/student/update[/]?', allowEdit, function(req, res, next) {
     //create new record
     DB.users.insert(query,{safe:true},function(err, objects) {
       if(err){ return next(err)}
-      log.info("Student Created : ", query._id);
+      log.info('Student Created : %s', query._id);
       res.send(201);
     });
   }else{
     //update record by matchin _id
     query._id = new mongodb.ObjectID(query._id);
-    log.info("Student Updated : ", query._id);
+    log.info('Student Updated : %s', query._id);
     DB.users.update(_.pick(query, '_id'), _.omit(query,'_id'), {safe:true}, function(err, objects) {
       if(err){ return next(err)}
       
@@ -242,11 +242,24 @@ function allowEdit(req, res, next){
  */
 app.post('/center/find[/]?', function(req, res, next) {
   var query = req.body;
-  var options = {};
   
   DB.centers.findOne(query, {limit:1}, function (err, records) {
     if(err){ return next(err)}
+    log.info('Center find : %s', query.name);
     res.send(records);
+  });
+});
+
+/**
+ * Can only update if you have _id value. new centers created by us
+ */
+app.post('/center/update[/]?', function(req, res, next) {
+  var query = req.body;
+  
+  DB.users.update(_.pick(query, '_id'), _.omit(query,'_id'), {safe:true}, function(err, objects) {
+    if(err){ return next(err)}
+      
+    res.send(201);
   });
 });
 
@@ -341,8 +354,11 @@ app.all('/dev/dump[/]?', function(req, res, next) {
   console.log('_method : '+req._method);
   console.log('headers : '+JSON.stringify(req.headers));
   console.log('Data : \n');
-  req.pipe(process.stdout);
+
   req.on('end', function () {
+    res.write('<h1>Headers</h1>\n'+JSON.stringify(req.headers));
+    res.write('<h1>Params</h1>\n'+JSON.stringify(req.params));
+    res.write('<h1>Data</h1>\n'+JSON.stringify(req.data));
     res.send();
   });
 });
