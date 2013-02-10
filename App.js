@@ -12,23 +12,23 @@
 // *******************************************************
 //          Performance metrics
 
-try{
+if(process.env.VMC_APP_INSTANCE)
+{
   var appfog = JSON.parse(process.env.VMC_APP_INSTANCE);
-  
-  var options = {
-    // time in ms when the event loop is considered blocked
-    blockThreshold: 10
-  };
   
   require('nodefly').profile(
       '08a3157a-c881-4488-a8d8-ccb0b53ca8a5',
       ["UOS Server",
        appfog.name,
        appfog.instance_index],
-       options // optional
+       {blockThreshold: 10} // optional
   );
-}catch(err){
-  console.error("Failed to init nodefly logging");
+}else{
+  require('nodefly').profile(
+      '08a3157a-c881-4488-a8d8-ccb0b53ca8a5',
+      ["UOS Server",'cloud9'],
+      {blockThreshold: 10} // optional
+  );
 }
 
 // *******************************************************
@@ -52,25 +52,28 @@ var log = logentries.logger({
   timestamp:false
 });
 
-var httpLogsToken = 'a15ad4d2-7c28-406d-bef0-9e12f39225b5';
-var httpLogsSocket = new net.Socket().connect(10000, 'api.logentries.com');
 
 // *******************************************************
 //          Server Configuration
+
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+process.env.LOGS_TOKEN = process.env.LOGS_TOKEN || 'a15ad4d2-7c28-406d-bef0-9e12f39225b5';
+process.env.DB_URI = process.env.DB_URI || 'mongodb://c9:c9@alex.mongohq.com:10051/dev?safe=true';
+console.log('Configuring Application for NODE_ENV:'+process.env.NODE_ENV);
+console.log('Configuring for DB : '+process.env.DB_URI);
+
 app.configure(function() {
+  
   app.use(express.logger({
-    format: httpLogsToken+' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b in:response-time ms',
-    stream: httpLogsSocket
+    format: process.env.LOGS_TOKEN+' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b in:response-time ms',
+    stream: new net.Socket().connect(10000, 'api.logentries.com')
   }));
   app.use(express.json());
   app.use(app.router);
   app.use(express.static(__dirname + '/www'));
 });
 
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-process.env.DB_URI = process.env.DB_URI || 'mongodb://c9:c9@alex.mongohq.com:10051/dev?safe=true';
-console.log('Configuring Application for NODE_ENV:'+process.env.NODE_ENV);
-console.log('Configuring for DB : '+process.env.DB_URI);
+
 
 app.configure('development', function() {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: false }));
@@ -82,7 +85,7 @@ app.configure('development', function() {
 });
 
 app.configure('production', function() {
-  log.level('warning');
+  log.level('info');
   app.use(express.timeout());
 });
 
@@ -129,7 +132,8 @@ app.post('/login[/]?', function(req, res, next) {
   //sanitize
   var query = _.extend({
     username:"",
-    pw1:""
+    pw1:"",
+    deleted:{$exists:false}
   }, _.pick(req.body,'username','pw1'));
   query.username.toLowerCase();
   query.pw1.toLowerCase();
@@ -141,7 +145,7 @@ app.post('/login[/]?', function(req, res, next) {
       log.info('Login Sucess : ',studentRecord.username,studentRecord._id);
       res.send(studentRecord);
     }else{
-      log.notice('Login Failed \n%j', JSON.stringify(query));
+      log.notice('Login Failed : ', JSON.stringify(query));
       res.send(401);
     }
   });
@@ -179,6 +183,7 @@ app.post('/student/find[/]?', function(req, res, next) {
 
   DB.users.find(query, options).toArray(function (err, records) {
     if(err){ return next(err)}
+    log.debug('Returning : ', JSON.stringify(records))
     res.send(records);
   });
 });
@@ -215,7 +220,10 @@ app.post('/student/update[/]?', allowEdit, function(req, res, next) {
   }else{
     //update record by matchin _id
     query._id = new mongodb.ObjectID(query._id);
+    
     log.info('Student Updated : ', query._id);
+    log.debug('Update query : ', JSON.stringify(query));
+    
     DB.users.update(_.pick(query, '_id'), _.omit(query,'_id'), {safe:true}, function(err, objects) {
       if(err){ return next(err)}
       
@@ -243,9 +251,19 @@ function allowEdit(req, res, next){
 app.post('/center/find[/]?', function(req, res, next) {
   var query = req.body;
   
-  DB.centers.findOne(query, {limit:1}, function (err, records) {
+  log.debug('Center/Find Query : '+ JSON.stringify(query));
+  
+  if(!query.name){
+    return next(new Error('need name or _id for this call'))
+  }
+  
+  log.info('Center find : '+ query.name);
+  
+  DB.centers.findOne(query, {limit:1, fields:{purchaseOrders:0}}, function (err, records) {
     if(err){ return next(err)}
-    log.info('Center find : %s', query.name);
+    
+    log.debug('Returning : '+ JSON.stringify(records))
+    
     res.send(records);
   });
 });
@@ -255,10 +273,18 @@ app.post('/center/find[/]?', function(req, res, next) {
  */
 app.post('/center/update[/]?', function(req, res, next) {
   var query = req.body;
+  if(!query._id){
+    return next(new Error('need object _id for this call'))
+  }
   
-  DB.users.update(_.pick(query, '_id'), _.omit(query,'_id'), {safe:true}, function(err, objects) {
+  query._id = new mongodb.ObjectID(query._id);
+  
+  log.info('Updating Center : '+JSON.stringify(query._id));
+  log.debug('Center/Update query : '+ JSON.stringify(query));
+  
+  DB.centers.update(_.pick(query, '_id'), _.omit(query,'_id'), {safe:true}, function(err, objects) {
     if(err){ return next(err)}
-      
+    log.debug('Retuning : '+JSON.stringify(objects));
     res.send(201);
   });
 });

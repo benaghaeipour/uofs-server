@@ -41,8 +41,8 @@ setTimeout(function() {
         callback();
       });
       req.end(JSON.stringify({
-        username:'chris',
-        pw1:'wrong'
+        username:'deleted',
+        pw1:'iii'
       },'utf8'));
     },
     
