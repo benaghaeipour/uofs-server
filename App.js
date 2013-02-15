@@ -9,27 +9,6 @@
 //   tmp/
 //
 
-// *******************************************************
-//          Performance metrics
-
-if(process.env.VMC_APP_INSTANCE)
-{
-  var appfog = JSON.parse(process.env.VMC_APP_INSTANCE);
-  
-  require('nodefly').profile(
-      '08a3157a-c881-4488-a8d8-ccb0b53ca8a5',
-      ["UOS Server",
-       appfog.name,
-       appfog.instance_index],
-       {blockThreshold: 10} // optional
-  );
-}else{
-  require('nodefly').profile(
-      '08a3157a-c881-4488-a8d8-ccb0b53ca8a5',
-      ["UOS Server",'cloud9'],
-      {blockThreshold: 10} // optional
-  );
-}
 
 // *******************************************************
 //          Application includes
@@ -57,7 +36,7 @@ var log = logentries.logger({
 //          Server Configuration
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-process.env.LOGS_TOKEN = process.env.LOGS_TOKEN || 'a15ad4d2-7c28-406d-bef0-9e12f39225b5';
+process.env.HTTP_LOGS_TOKEN = process.env.HTTP_LOGS_TOKEN || 'a15ad4d2-7c28-406d-bef0-9e12f39225b5';
 process.env.DB_URI = process.env.DB_URI || 'mongodb://c9:c9@alex.mongohq.com:10051/dev?safe=true';
 console.log('Configuring Application for NODE_ENV:'+process.env.NODE_ENV);
 console.log('Configuring for DB : '+process.env.DB_URI);
@@ -65,7 +44,7 @@ console.log('Configuring for DB : '+process.env.DB_URI);
 app.configure(function() {
   
   app.use(express.logger({
-    format: process.env.LOGS_TOKEN+' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b in:response-time ms',
+    format: process.env.HTTP_LOGS_TOKEN+' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b in:response-time ms',
     stream: new net.Socket().connect(10000, 'api.logentries.com')
   }));
   app.use(express.json());
@@ -179,6 +158,8 @@ app.post('/student/find[/]?', function(req, res, next) {
   if(query.pw1){
     query.pw1.toLowerCase();
   }
+  query.deleted = { $exists: false };
+  
   log.info('Student/Find/ : ', JSON.stringify(query));
 
   DB.users.find(query, options).toArray(function (err, records) {
@@ -192,8 +173,15 @@ app.post('/student/find[/]?', function(req, res, next) {
  * Deletes the object found by the post data. (only if 1 is found)
  */
 app.post('/student/delete[/]?', function(req, res, next) {
-
-  res.send();
+  var query = req.body;
+  log.info('Student Deleted : ', query._id);
+  query._id = new mongodb.ObjectID(query._id);
+  
+  DB.users.update(_.pick(query, '_id'), {$set:{deleted:true}}, {safe:true}, function(err, objects) {
+    if(err){ return next(err)}
+      
+    res.send(201);
+  });
 });
 
 /**
@@ -224,7 +212,7 @@ app.post('/student/update[/]?', allowEdit, function(req, res, next) {
     log.info('Student Updated : ', query._id);
     log.debug('Update query : ', JSON.stringify(query));
     
-    DB.users.update(_.pick(query, '_id'), _.omit(query,'_id'), {safe:true}, function(err, objects) {
+    DB.users.update(_.pick(query, '_id'), {$set:_.omit(query,'_id')}, {safe:true}, function(err, objects) {
       if(err){ return next(err)}
       
       res.send(201);

@@ -1,16 +1,15 @@
 {
   "name": "UOS-Server",
-  "version": "0.0.1",
+  "version": "0.0.1-2",
   "dependencies": {
     "express": ">=2.5.0",
     "mongodb": "~1.1.11",
     "underscore": "~1.4.2",
-    "node-logentries": "0.0.2",
-    "nodefly": "~0.1.26"
+    "node-logentries": "0.0.2"
   },
   "devDependencies": {},
   "engines": {
-    "node": ">=0.6.0"
+    "node": "0.8.x"
   },
   "description": "HTTP server for Units of Sound online app",
   "main": "App.js",
@@ -19,12 +18,9 @@
   },
   "scripts": {
     "test": "node tests/tests.js",
-    "start": "node app.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@peachproductions.unfuddle.com:peachproductions/nodeserver.git"
+    "start": "App.js"
   },
   "author": "Chris Matheson",
-  "license": "BSD"
+  "license": "BSD",
+  "subdomain": "uos"
 }

@@ -31,7 +31,7 @@ setTimeout(function() {
         callback();
       });
       req.end(JSON.stringify({
-        loginName:'chris'+Math.round(Math.random()*1000),
+        username:'chris'+Math.round(Math.random()*1000),
         center:'London'
       }));
     },
@@ -48,8 +48,24 @@ setTimeout(function() {
         callback();
       });
       req.end(JSON.stringify({
-        loginName:'chris',
+        username:'chris',
         center:'London'
+      }));
+    },
+    
+    function(callback){ 
+      //New SR with same details as existing
+      requestOptions.path = '/student/delete/';
+      
+      var req = http.request(requestOptions, function(response){
+        response.on('end', function(){
+          //assert.equal(response.statusCode, 400, 'Failed to refuse new SR with details that allready exist');  
+        });
+        response.pipe(process.stdout);
+        callback();
+      });
+      req.end(JSON.stringify({
+        _id:'510f89605f3269072e000010'
       }));
     },
     
@@ -61,7 +77,7 @@ setTimeout(function() {
         callback();
       });
       req.end(JSON.stringify({
-        _id:'ffffffffffffffffffffffff',
+        _id:'50fd14f37646fb785f00000b',
         modified: Date()
       }));
     },
