@@ -1,5 +1,0 @@
-{
-  "APItoken":"eniyv295ngo2r6d60uqb",
-  "logsEndpoint":"http://api.mongohq.com/databases/dev/collections/logs",
-  "studentEndpoint":"http://api.mongohq.com/databases/dev/collection/students"
-}
