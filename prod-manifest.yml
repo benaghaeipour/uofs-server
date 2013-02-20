@@ -1,0 +1,20 @@
+---
+applications:
+  .:
+    name: uos-server
+    framework:
+      name: standalone
+      info:
+        mem: 64M
+        description: Standalone Application
+        exec: 
+    runtime: node08
+    command: node App.js
+    infra: aws
+    url: ${name}.${target-base} app.unitsofsound.net
+    mem: 64M
+    instances: 5
+    env:
+        NODE_ENV: production
+        DB_URI: mongodb://c9:c9@linus.mongohq.com:10090/prod?safe=false
+        HTTP_LOGS_TOKEN: 9d7a778b-d12f-4630-a3e9-c812d1c2317a

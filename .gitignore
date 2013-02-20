@@ -9,9 +9,8 @@ lib-cov
 *.c9save
 
 pids
-logs
-results
 tmp
+www/*
 
 node_modules
 npm-debug.log
