@@ -164,7 +164,7 @@ app.post('/student/find[/]?', function(req, res, next) {
 
   DB.users.find(query, options).toArray(function (err, records) {
     if(err){ return next(err)}
-    log.debug('Returning : ', JSON.stringify(records))
+    log.debug('Returning : ', JSON.stringify(records));
     res.send(records);
   });
 });
@@ -177,7 +177,7 @@ app.post('/student/delete[/]?', function(req, res, next) {
   log.info('Student Deleted : ', query._id);
   query._id = new mongodb.ObjectID(query._id);
   
-  DB.users.update(_.pick(query, '_id'), {$set:{deleted:true}}, {safe:true}, function(err, objects) {
+  DB.users.update(_.pick(query, '_id'), {$set:{deleted: new Date()}}, {safe:true}, function(err, objects) {
     if(err){ return next(err)}
       
     res.send(201);
@@ -284,12 +284,14 @@ app.post('/center/update[/]?', function(req, res, next) {
  * Returns a file from GrdFS
  */
 app.get('/recordings/:filename[/]?', function(req, res, next) {
+  log.debug('request for '+req.params.filename);
   var storedRec = new mongodb.GridStore(DB, req.params.filename,'r');
   storedRec.open(function(err, gs) {
     if(err){ return next(err)}
     
     //file opened, can now do things with it
     // Create a stream to the file
+    log.debug('request for existing recording');
     var stream = gs.stream(true);
     stream.pipe(res);
   });
@@ -308,6 +310,7 @@ app.get('/recordings/:filename[/]?', function(req, res, next) {
  */
 app.post('/recordings/:filename[/]?', function(req, res, next) {
   
+  log.debug('receieving recording file '+req.params.filename);
   var tempFileName = './tmp/'+req.params.filename;
   //buffer file upload into an actual file
   var uploadBuff =  fs.createWriteStream(tempFileName);
@@ -325,7 +328,7 @@ app.post('/recordings/:filename[/]?', function(req, res, next) {
       
       gridStore.writeFile(tempFileName , function (err, filePointer) {
         if(err){ return next(err)}
-        
+        log.debug('recoding file has been sucessfully saved');
         res.send(201);
         fs.unlink(tempFileName);
       });
