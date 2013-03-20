@@ -31,6 +31,14 @@ var log = logentries.logger({
   timestamp:false
 });
 
+try{
+  require('nodefly').profile(
+    '08a3157a-c881-4488-a8d8-ccb0b53ca8a5',
+    'UnitsOfSoundOnline'
+  );
+}catch(err){
+  console.err('Failed to start Nodefly');
+}
 
 // *******************************************************
 //          Server Configuration
@@ -242,7 +250,7 @@ app.post('/center/find[/]?', function(req, res, next) {
   log.debug('Center/Find Query : '+ JSON.stringify(query));
   
   if(!query.name){
-    return next(new Error('need name or _id for this call'))
+    return next(new Error('need name or _id for this call'));
   }
   
   log.info('Center find : '+ query.name);
@@ -250,7 +258,7 @@ app.post('/center/find[/]?', function(req, res, next) {
   DB.centers.findOne(query, {limit:1, fields:{purchaseOrders:0}}, function (err, records) {
     if(err){ return next(err)}
     
-    log.debug('Returning : '+ JSON.stringify(records))
+    log.debug('Returning : '+ JSON.stringify(records));
     
     res.send(records);
   });
@@ -262,7 +270,7 @@ app.post('/center/find[/]?', function(req, res, next) {
 app.post('/center/update[/]?', function(req, res, next) {
   var query = req.body;
   if(!query._id){
-    return next(new Error('need object _id for this call'))
+    return next(new Error('need object _id for this call'));
   }
   
   query._id = new mongodb.ObjectID(query._id);
