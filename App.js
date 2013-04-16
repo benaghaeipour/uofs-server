@@ -32,9 +32,12 @@ var log = logentries.logger({
 });
 
 try{
+  var appfog = JSON.parse(process.env.VMC_APP_INSTANCE);
   require('nodefly').profile(
-    '08a3157a-c881-4488-a8d8-ccb0b53ca8a5',
-    'UnitsOfSoundOnline'
+      '08a3157a-c881-4488-a8d8-ccb0b53ca8a5',
+      ['UOSOnline',
+       appfog.name,
+     appfog.instance_index]
   );
 }catch(err){
   console.err('Failed to start Nodefly');
