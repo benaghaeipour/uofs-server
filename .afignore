@@ -5,6 +5,7 @@
 .c9revisions/
 .git/
 tests/
+logs/
 
 # don't ignore assets/necessary.css
 # !assets/necessary.css

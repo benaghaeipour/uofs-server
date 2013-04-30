@@ -40,7 +40,7 @@ try{
      appfog.instance_index]
   );
 }catch(err){
-  console.err('Failed to start Nodefly');
+  console.error('Failed to start Nodefly');
 }
 
 // *******************************************************
@@ -429,7 +429,7 @@ mongodb.connect(process.env.DB_URI, {safe:true, autoreconnect:true}, function(er
   
   //https.createServer(null, app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 443);
   http.createServer(app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
-  console.log('listening on %s, %s', process.env.PORT , process.env.IP );
+  console.log('listening on %s', process.env.PORT);
 });
 
 process.on('SIGHUP', function() {

@@ -9,8 +9,8 @@ applications:
         description: Standalone Application
         exec: 
     runtime: node08
-    command: node App.js
+    command: node app.js
     infra: aws
-    url: ${name}.${target-base}, dev.unitsofsound.net
+    url: dev.unitsofsound.net
     mem: 64M
     instances: 3

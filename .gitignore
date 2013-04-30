@@ -11,6 +11,7 @@ lib-cov
 pids
 tmp
 www/*
+.c9revisions/*
 
 node_modules
 npm-debug.log
