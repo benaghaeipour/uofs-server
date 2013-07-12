@@ -72,6 +72,7 @@ app.configure('development', function() {
     console.log( logline );
   });
   log.level('debug');
+  log.debug('Setting up debug level logging');
 });
 
 app.configure('production', function() {
@@ -85,7 +86,7 @@ app.configure('production', function() {
 //          Some standrad routes etc
 
 app.get('/assets/*', function(req, res, next) {
-  res.redirect(301, 'http://www.unitsofsound.net/preview'+req.path);
+  res.redirect(301, 'http://static.unitsofsound.net/UK'+req.path);
 });
 
 app.get('/favicon.ico', function(req, res, next) {
@@ -391,20 +392,45 @@ app.all('/dev/dump[/]?', function(req, res, next) {
   });
 });
 
-app.all('/dev/crash[/]?', function(req, res, next) {
-  console.error('This is a triggerd crash');
-  log.crit('This is a triggerd crash');
-  res.send('crashing app in 500ms');
-  setTimeout(function() {
-    throw new Error('this crash was triggered');
-  }, 500);
-});
+// app.all('/dev/crash[/]?', function(req, res, next) {
+//   console.error('This is a triggerd crash');
+//   log.crit('This is a triggerd crash');
+//   res.send('crashing app in 500ms');
+//   setTimeout(function() {
+//     throw new Error('this crash was triggered');
+//   }, 500);
+// });
 
 // *******************************************************
 //          Start of application doing things
 
 // https://github.com/mongodb/node-mongodb-native#documentation
-mongodb.connect(process.env.DB_URI, {safe:true, autoreconnect:true}, function(err, dbconnection) {
+
+var options = {}
+options.autoreconnect = true;
+options.safe = true;
+options.logger = {};
+options.logger.doDebug = true;
+options.logger.debug = function (message, object) {
+    // print the mongo command:
+    // "writing command to mongodb"
+    console.log(message);
+    log.debug(message);
+
+    // print the collection name
+    console.log(object.json.collectionName)
+    log.debug(object.json.collectionName)
+
+    // print the json query sent to MongoDB
+    console.log(object.json.query)
+    log.debug(object.json.query)
+
+    // print the binary object
+    console.log(object.binary)
+    log.debug(object.binary)
+};
+
+mongodb.connect(process.env.DB_URI, options, function(err, dbconnection) {
   if(err){
     console.log('error opening database');
     throw(err);
@@ -430,9 +456,15 @@ mongodb.connect(process.env.DB_URI, {safe:true, autoreconnect:true}, function(er
   //https.createServer(null, app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 443);
   http.createServer(app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
   console.log('listening on %s', process.env.PORT);
+  log.debug('listening on %s', process.env.PORT);
 });
 
 process.on('SIGHUP', function() {
   DB.close();
   console.log('bye');
+});
+
+process.on('uncaughtException', function(err) {
+  log.error(err);
+  log.emrg(err);
 });
