@@ -11,7 +11,7 @@ applications:
     runtime: node08
     command: node app.js
     infra: aws
-    url: ${name}.${target-base} app.unitsofsound.net
+    url: app.unitsofsound.net
     mem: 64M
     instances: 5
 

@@ -31,26 +31,16 @@ var log = logentries.logger({
   timestamp:false
 });
 
-try{
-  var appfog = JSON.parse(process.env.VMC_APP_INSTANCE);
-  require('nodefly').profile(
-      '08a3157a-c881-4488-a8d8-ccb0b53ca8a5',
-      ['UOSOnline',
-       appfog.name,
-     appfog.instance_index]
-  );
-}catch(err){
-  console.error('Failed to start Nodefly');
-}
-
 // *******************************************************
 //          Server Configuration
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 process.env.HTTP_LOGS_TOKEN = process.env.HTTP_LOGS_TOKEN || 'a15ad4d2-7c28-406d-bef0-9e12f39225b5';
 process.env.DB_URI = process.env.DB_URI || 'mongodb://c9:c9@alex.mongohq.com:10051/dev?safe=true';
-console.log('Configuring Application for NODE_ENV:'+process.env.NODE_ENV);
-console.log('Configuring for DB : '+process.env.DB_URI);
+
+log.info('Configuring Application for NODE_ENV:'+process.env.NODE_ENV);
+log.info('Configuring for DB : '+process.env.DB_URI);
+log.info('Mongo-db-native driver version : ' + mongodb.version);
 
 app.configure(function() {
   
@@ -71,7 +61,7 @@ app.configure('development', function() {
   log.on('log',function(logline){
     console.log( logline );
   });
-  log.level('debug');
+  log.level('info');
   log.debug('Setting up debug level logging');
 });
 
@@ -200,7 +190,7 @@ app.post('/student/delete[/]?', function(req, res, next) {
  * Create SR if _id == null
  * Update SR if _id == something
  */
-app.post('/student/update[/]?', allowEdit, function(req, res, next) {
+app.post('/student/update[/]?', function(req, res, next) {
   var query = req.body;
   
   if(query.username){
@@ -222,25 +212,19 @@ app.post('/student/update[/]?', allowEdit, function(req, res, next) {
     query._id = new mongodb.ObjectID(query._id);
     
     log.info('Student Updated : ', query._id);
-    log.debug('Update query : ', JSON.stringify(query));
+    // log.debug('Update query : ', JSON.stringify(query));
     
     DB.users.update(_.pick(query, '_id'), {$set:_.omit(query,'_id')}, {safe:true}, function(err, objects) {
-      if(err){ return next(err)}
-      
+      if(err){ 
+        log.emerg('Update error : ', JSON.stringify(err));
+        return next(err);
+      }
+      log.info("Studnet Update : success")
       res.send(201);
     });
   }
 });
 
-/**
- * This function will check if the current session's logged in user is allowed to 
- * perform the requested edits.
- * passes an error if this is not possible
- */
-function allowEdit(req, res, next){
-  next();
-  return;
-}
 
 // *******************************************************
 //          Center endpoints
@@ -262,7 +246,7 @@ app.post('/center/find[/]?', function(req, res, next) {
   DB.centers.findOne(query, {limit:1, fields:{purchaseOrders:0}}, function (err, records) {
     if(err){ return next(err)}
     
-    log.debug('Returning : '+ JSON.stringify(records));
+    // log.debug('Returning : '+ JSON.stringify(records));
     
     res.send(records);
   });
@@ -362,7 +346,7 @@ app.post('/log[/]?', function(req, res, next){
   }
   DB.logs.insert(req.body, {safe:true}, function(err, objects) {
     if(err){
-      console.log('error saving log : ' + err);
+      log.err('error saving log : ' + err);
       res.send(500);
     }else{
       res.send(201);
@@ -414,32 +398,29 @@ options.logger.doDebug = true;
 options.logger.debug = function (message, object) {
     // print the mongo command:
     // "writing command to mongodb"
-    console.log(message);
     log.debug(message);
 
     // print the collection name
-    console.log(object.json.collectionName)
     log.debug(object.json.collectionName)
 
     // print the json query sent to MongoDB
-    console.log(object.json.query)
     log.debug(object.json.query)
 
-    // print the binary object
-    console.log(object.binary)
-    log.debug(object.binary)
+    // // print the binary object
+    // console.log(object.binary)
+    // log.debug(object.binary)
 };
 
 mongodb.connect(process.env.DB_URI, options, function(err, dbconnection) {
   if(err){
-    console.log('error opening database');
+    log.emerg('error opening database');
     throw(err);
   }
   DB = dbconnection; //make the db globally avaliable
   
   DB.collection('users', function(err, collection) {
     if(err){
-      console.log('cannot open users collection');
+      log.emerg('cannot open users collection');
       throw(err);
     }
     DB.users = collection;
@@ -447,7 +428,7 @@ mongodb.connect(process.env.DB_URI, options, function(err, dbconnection) {
   
   DB.collection('centers', function(err, collection) {
     if(err){
-      console.log('cannot open centers collection');
+      log.emerg('cannot open centers collection');
       throw(err);
     }
     DB.centers = collection;
@@ -455,7 +436,6 @@ mongodb.connect(process.env.DB_URI, options, function(err, dbconnection) {
   
   //https.createServer(null, app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 443);
   http.createServer(app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
-  console.log('listening on %s', process.env.PORT);
   log.debug('listening on %s', process.env.PORT);
 });
 
@@ -465,6 +445,5 @@ process.on('SIGHUP', function() {
 });
 
 process.on('uncaughtException', function(err) {
-  log.error(err);
-  log.emrg(err);
+  log.emerg("UNCAUGHT!!: " + err + err.stack);
 });
