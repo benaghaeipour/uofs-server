@@ -1,5 +1,5 @@
 {
-  "name": "UOS-Server",
+  "name": "uofs-prod",
   "version": "0.0.10-5",
   "dependencies": {
     "express": "3.2.x",
@@ -18,8 +18,8 @@
   "domains":[
     "app.unitsofsound.net"
   ],
-  env:{
-    "NODE_ENV"="production",
+  "env": {
+    "NODE_ENV":"production",
     "DB_URI":"mongodb://c9:c9@linus.mongohq.com:10090/prod",
     "HTTP_LOGS_TOKEN":"9d7a778b-d12f-4630-a3e9-c812d1c2317a"
   },
