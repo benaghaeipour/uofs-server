@@ -1,5 +1,5 @@
 {
-  "name": "UOS-Server",
+  "name": "uofs-server-dev",
   "version": "0.0.10-5",
   "dependencies": {
     "express": "3.2.x",
