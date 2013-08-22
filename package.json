@@ -29,5 +29,5 @@
   },
   "author": "Chris Matheson",
   "license": "BSD",
-  "subdomain": "uos-dev"
+  "subdomain": "uos-prod"
 }
