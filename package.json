@@ -1,6 +1,6 @@
 {
   "name": "uofs-dev",
-  "version": "0.0.10-5",
+  "version": "0.0.10-7",
   "dependencies": {
     "express": "3.2.x",
     "mongodb": "1.3.x",
@@ -21,7 +21,7 @@
   "env": {
     "NODE_ENV": "development",
     "DB_URI": "mongodb://c9:c9@alex.mongohq.com:10051/dev",
-    "HTTP_LOGS_TOKEN":"a15ad4d2-7c28-406d-bef0-9e12f39225b5"
+    "HTTP_LOGS_TOKEN": "a15ad4d2-7c28-406d-bef0-9e12f39225b5"
   },
   "scripts": {
     "test": "node tests/tests.js",
@@ -29,5 +29,5 @@
   },
   "author": "Chris Matheson",
   "license": "BSD",
-  "subdomain": "uos-prod"
+  "subdomain": "uos-dev"
 }
