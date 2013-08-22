@@ -75,8 +75,8 @@ app.configure('production', function() {
 // *******************************************************
 //          Some standrad routes etc
 
-app.get('/assets/*', function(req, res, next) {
-  res.redirect(301, 'http://static.unitsofsound.net/UK'+req.path);
+app.get('/u[k,s]/*', function(req, res, next) {
+  res.redirect(301, 'http://static.unitsofsound.net/'+req.path);
 });
 
 app.get('/favicon.ico', function(req, res, next) {
