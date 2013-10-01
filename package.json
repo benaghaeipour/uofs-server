@@ -1,6 +1,6 @@
 {
-  "name": "uofs-dev",
-  "version": "0.0.10-7",
+  "name": "uofs-prod",
+  "version": "0.0.10-12",
   "dependencies": {
     "express": "3.2.x",
     "mongodb": "1.3.x",
@@ -15,13 +15,13 @@
   "directories": {
     "test": "tests"
   },
-  "domains":[
+  "domains": [
     "app.unitsofsound.net"
-    ],
-  "env":{
-    "NODE_ENV"="production",
-    "DB_URI":"mongodb://c9:c9@linus.mongohq.com:10090/prod",
-    "HTTP_LOGS_TOKEN":"9d7a778b-d12f-4630-a3e9-c812d1c2317a"
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "DB_URI": "mongodb://c9:c9@linus.mongohq.com:10090/prod",
+    "HTTP_LOGS_TOKEN": "9d7a778b-d12f-4630-a3e9-c812d1c2317a"
   },
   "scripts": {
     "test": "node tests/tests.js",
@@ -29,5 +29,5 @@
   },
   "author": "Chris Matheson",
   "license": "BSD",
-  "subdomain": "uos-dev"
+  "subdomain": "uos-prod"
 }
