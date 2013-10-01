@@ -11,6 +11,7 @@ lib-cov
 pids
 tmp
 .c9revisions/*
+.DS_Store
 
 node_modules
 npm-debug.log
