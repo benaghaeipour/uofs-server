@@ -15,13 +15,13 @@
   "directories": {
     "test": "tests"
   },
-  "domains": [
-    "dev.unitsofsound.net"
-  ],
-  "env": {
-    "NODE_ENV": "development",
-    "DB_URI": "mongodb://c9:c9@alex.mongohq.com:10051/dev",
-    "HTTP_LOGS_TOKEN": "a15ad4d2-7c28-406d-bef0-9e12f39225b5"
+  "domains":[
+    "app.unitsofsound.net"
+    ],
+  "env":{
+    "NODE_ENV"="production",
+    "DB_URI":"mongodb://c9:c9@linus.mongohq.com:10090/prod",
+    "HTTP_LOGS_TOKEN":"9d7a778b-d12f-4630-a3e9-c812d1c2317a"
   },
   "scripts": {
     "test": "node tests/tests.js",
