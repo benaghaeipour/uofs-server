@@ -12,6 +12,7 @@ pids
 tmp
 .c9revisions/*
 .DS_Store
+static/*
 
 node_modules
 npm-debug.log
