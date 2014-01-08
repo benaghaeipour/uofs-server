@@ -6,3 +6,5 @@ branches:
     - master
 before_install:
   - $TRAVIS_BUILD_DIR/bin/downloadSDK.sh
+notifications:
+  email: false
