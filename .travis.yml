@@ -7,4 +7,4 @@ branches:
   except:
     - master
 before_install:
-  - ./bin/downloadSDK.sh
+  - $TRAVIS_BUILD_DIR/bin/downloadSDK.sh
