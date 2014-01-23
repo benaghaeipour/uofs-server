@@ -1,8 +1,7 @@
 set -x
 set -e
-#if [ ! -e redis-2.4.18/src/redis-server ]; then
+if [ ! -e tmp/flex_sdk_4.6.zip ]; then
     wget http://download.macromedia.com/pub/flex/sdk/flex_sdk_4.6.zip
-    unzip -a -q flex_sdk_4.6.zip
-    echo 'contents of SDK dir'
-    find .
-#fi
+    unzip -a -q ./tmp/flex_sdk_4.6.zip -d tmp/flex_sdk
+    echo 'flex SDK installed to tmp/flex_sdk_4.6'
+fi
