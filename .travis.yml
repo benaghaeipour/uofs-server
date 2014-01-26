@@ -5,6 +5,7 @@ branches:
   except:
     - master
 before_script:
+  - sudo apt-get install -qq unzip
   - ant -buildfile client-src/build.xml main
 deploy:
   provider: nodejitsu
