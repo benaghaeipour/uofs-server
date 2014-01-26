@@ -44,6 +44,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     echo ======== provisioning =========
     sudo apt-get update
     sudo apt-get install -y unzip ant
+    cd /vagrant
 SCRIPT
 
   config.vm.provision "shell", inline: $script
