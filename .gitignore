@@ -14,8 +14,12 @@ tmp
 .c9revisions/*
 .DS_Store
 static/*
+<<<<<<< HEAD
 .vagrant/*
 client-src/*
+=======
+build/*
+>>>>>>> 5bfa962f96315bd0ec5adca1898df9fa4920d37c
 
 node_modules
 npm-debug.log
