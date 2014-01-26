@@ -6,6 +6,7 @@ branches:
     - master
 before_script:
   - sudo apt-get install -qq unzip
+  - mkdir client-src/SDK
   - wget http://download.macromedia.com/pub/flex/sdk/flex_sdk_4.6.zip -O ./client-src/SDK/flex_sdk_4.6.zip
   - ant -buildfile client-src/build.xml main
 deploy:
