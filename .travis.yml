@@ -6,5 +6,10 @@ branches:
     - master
 before_script:
   - ant -buildfile client-src/build.xml main
+deploy:
+  provider: nodejitsu
+  user: "chrismatheson"
+  api_key: "d3c9edaf-4c9b-46de-a1b2-eb54faca6715"
+  skip_cleanup: true
 notifications:
   email: false
