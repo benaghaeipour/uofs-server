@@ -4,7 +4,7 @@ node_js:
 branches:
   except:
     - master
-before_install:
-  - $TRAVIS_BUILD_DIR/bin/downloadSDK.sh
+before_script:
+  - ant -buildfile client-src/build.xml main
 notifications:
   email: false
