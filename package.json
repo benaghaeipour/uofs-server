@@ -26,7 +26,6 @@
     "HTTP_LOGS_TOKEN": "a15ad4d2-7c28-406d-bef0-9e12f39225b5"
   },
   "scripts": {
-    "test": "node tests/tests.js",
     "start": "node app.js"
   },
   "author": "Chris Matheson",
