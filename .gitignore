@@ -16,5 +16,6 @@ tmp
 static/*
 .vagrant/*
 client-src/*
+
 node_modules
 npm-debug.log
