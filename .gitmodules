@@ -1,3 +1,3 @@
 [submodule "client-src"]
 	path = client-src
-	url = git@github.com:peachproductions/unitsofsound.git
+	url = https://github.com/peachproductions/unitsofsound.git
