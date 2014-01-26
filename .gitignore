@@ -14,6 +14,7 @@ tmp
 .c9revisions/*
 .DS_Store
 static/*
+.vagrant/*
 
 node_modules
 npm-debug.log
