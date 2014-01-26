@@ -8,6 +8,7 @@ lib-cov
 *.gz
 *.c9save
 *~
+client-src.zip
 
 pids
 tmp

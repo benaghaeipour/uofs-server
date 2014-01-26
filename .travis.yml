@@ -6,7 +6,8 @@ branches:
     - master
 before_script:
   - wget https://github.com/peachproductions/unitsofsound/archive/master.zip -O client-src.zip
-  - unzip -a -q ./client-src.zip -d ./client-src
+  - unzip -a -q ./client-src.zip -d ./
+  - mv ./unitsofsound-master ./client-src
   - sudo apt-get install -qq unzip
   - mkdir client-src/SDK
   - mkdir www
