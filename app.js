@@ -49,7 +49,8 @@ log.info('Mongo-db-native driver version : ' + mongodb.version);
 
 
 app.configure(function() {
-    format: process.env.HTTP_LOGS_TOKEN + ' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b in:response-time ms',
+  app.use(express.logger({
+      format: process.env.HTTP_LOGS_TOKEN + ' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b in:response-time ms',
     stream: new net.Socket().connect(10000, 'api.logentries.com')
   }));
   app.use(express.json());
