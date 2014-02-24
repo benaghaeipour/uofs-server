@@ -1,19 +1,16 @@
 language: node_js
 node_js:
-- '0.8'
-branches:
-  except:
-  - master
+    - '0.8'
 before_script:
-- wget https://github.com/peachproductions/unitsofsound/archive/master.zip -O client-src.zip
-- unzip -a -q ./client-src.zip -d ./
-- mv ./unitsofsound-master ./client-src
-- sudo apt-get install -qq unzip
-- mkdir client-src/SDK
-- mkdir www
-- wget http://download.macromedia.com/pub/flex/sdk/flex_sdk_4.6.zip -O ./client-src/SDK/flex_sdk_4.6.zip
-- unzip -a -q ./client-src/SDK/flex_sdk_4.6.zip -d ./client-src/SDK
-- ant -buildfile client-src/build.xml main
+    - wget https://github.com/peachproductions/unitsofsound/archive/master.zip -O client-src.zip
+    - unzip -a -q ./client-src.zip -d ./
+    - mv ./unitsofsound-master ./client-src
+    - sudo apt-get install -qq unzip
+    - mkdir client-src/SDK
+    - mkdir www
+    - wget http://download.macromedia.com/pub/flex/sdk/flex_sdk_4.6.zip -O ./client-src/SDK/flex_sdk_4.6.zip
+    - unzip -a -q ./client-src/SDK/flex_sdk_4.6.zip -d ./client-src/SDK
+    - ant -buildfile client-src/build.xml main
 deploy:
   provider: nodejitsu
   user: chrismatheson
@@ -21,7 +18,8 @@ deploy:
     secure: XodhHlQsJLYJihuoFKJ3cW+g2Cy7uWxG9B6lsmFPpII99XB1gtb++DKF3ZJQj/4PHFikdOr6l6A2RUuef6ssrVCX37lLGROql/D+XP/XYUhjzL5a0eMBmwN2m875Y7q07VFBeUfhrY92NDn3xkLK06lLmNIUI4WerD757M0yHtE=
   skip_cleanup: true
   on:
-  - dev
-  - master
+    branch:
+        - master
+        - dev
 notifications:
   email: false
