@@ -33,6 +33,10 @@ var log = logentries.logger({
 });
 
 // *******************************************************
+//          expose 'app' for testing
+module.exports = app;
+
+// *******************************************************
 //          Server Configuration
 
 app.set('env', process.env.NODE_ENV || 'development');
