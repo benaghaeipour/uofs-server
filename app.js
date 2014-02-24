@@ -28,8 +28,8 @@ var DB = null,
     app = express();
 
 var log = logentries.logger({
-  token:'42520623-fd75-45a9-bdea-599d0ff58bca',
-  timestamp:false
+  token: process.env.LOG_TOKEN,
+  timestamp: false
 });
 
 // *******************************************************
@@ -40,7 +40,7 @@ module.exports = app;
 //          Server Configuration
 
 app.set('env', process.env.NODE_ENV || 'development');
-process.env.HTTP_LOGS_TOKEN = process.env.HTTP_LOGS_TOKEN || 'a15ad4d2-7c28-406d-bef0-9e12f39225b5';
+process.env.LOG_TOKEN = process.env.LOG_TOKEN || 'a15ad4d2-7c28-406d-bef0-9e12f39225b5';
 process.env.DB_URI = process.env.DB_URI || 'mongodb://c9:c9@alex.mongohq.com:10051/dev?safe=true';
 
 log.info('Configuring Application for NODE_ENV: '+app.get('set'));
@@ -50,7 +50,7 @@ log.info('Mongo-db-native driver version : ' + mongodb.version);
 app.configure(function() {
 
   app.use(express.logger({
-    format: process.env.HTTP_LOGS_TOKEN+' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b in:response-time ms',
+    format: process.env.LOG_TOKEN + ' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b in:response-time ms',
     stream: new net.Socket().connect(10000, 'api.logentries.com')
   }));
   app.use(express.json());
