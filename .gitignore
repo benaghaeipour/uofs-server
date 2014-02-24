@@ -15,7 +15,6 @@ tmp
 .c9revisions/*
 .DS_Store
 static/*
-www/*
 
 static/
 .vagrant/
