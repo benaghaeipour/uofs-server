@@ -10,15 +10,15 @@
   "devDependencies": {
     "async": "~0.2.9",
     "supertest": "~0.9.0",
-    "mocha": "~1.17.1",
-    "expect.js": "~0.3.1"
+    "expect.js": "~0.3.1",
+    "jasmine-node": "~1.13.1"
   },
   "engines": {
     "node": "0.8.x"
   },
   "description": "HTTP server for Units of Sound online app",
   "directories": {
-    "test": "mocha tests/server.spec.js"
+    "test": "tests/"
   },
   "domains": [
     "dev.unitsofsound.net"
@@ -29,7 +29,7 @@
     "HTTP_LOGS_TOKEN": "a15ad4d2-7c28-406d-bef0-9e12f39225b5"
   },
   "scripts": {
-    "test": "mocha tests/server.spec.js",
+    "test": "jasmine-node tests/",
     "start": "node app.js"
   },
   "author": "Chris Matheson",
