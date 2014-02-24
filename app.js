@@ -1,4 +1,5 @@
 /*jslint node:true*/
+/*jshint multistr:true */
 // *******************************************************
 // expressjs template
 //
@@ -34,18 +35,17 @@ var log = logentries.logger({
 // *******************************************************
 //          Server Configuration
 
-app.enable(process.env.NODE_ENV || 'development');
+app.set('env', (process.env.NODE_ENV || 'development'));
 process.env.HTTP_LOGS_TOKEN = process.env.HTTP_LOGS_TOKEN || 'a15ad4d2-7c28-406d-bef0-9e12f39225b5';
 process.env.DB_URI = process.env.DB_URI || 'mongodb://c9:c9@alex.mongohq.com:10051/dev?safe=true';
 
-log.info('Configuring Application for NODE_ENV:'+process.env.NODE_ENV);
+log.info('Configuring Application for NODE_ENV: ' + app.get('set'));
 log.info('Configuring for DB : '+process.env.DB_URI);
 log.info('Mongo-db-native driver version : ' + mongodb.version);
 
 
 app.configure(function() {
-  app.use(express.logger({
-    format: process.env.HTTP_LOGS_TOKEN+' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b in:response-time ms',
+    format: process.env.HTTP_LOGS_TOKEN + ' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b in:response-time ms',
     stream: new net.Socket().connect(10000, 'api.logentries.com')
   }));
   app.use(express.json());

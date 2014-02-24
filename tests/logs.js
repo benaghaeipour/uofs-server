@@ -4,7 +4,7 @@ var assert = require('assert'),
     fs = require('fs'),
     _ = require('underscore');
 
-require("../App.js");
+require("../app.js");
 
 var studentRecord = JSON.stringify({
         _id:"50b7edd4f76d067e2e000002",
@@ -13,12 +13,12 @@ var studentRecord = JSON.stringify({
         center:'london',
         origin:'node test'
       },'utf8');
-      
+
 var requestOptions = {
-  host:process.env.IP, 
-  port:process.env.PORT, 
-  method:'POST', 
-  path:'/log/', 
+  host:process.env.IP,
+  port:process.env.PORT,
+  method:'POST',
+  path:'/log/',
   headers:{
     'content-type':'application/json'
     }
@@ -32,13 +32,13 @@ setTimeout(function() {
       http.get({host:process.env.IP, port:process.env.PORT, path:'/favicon.ico'}, function(response){
         assert.equal(response.statusCode, 200, 'while requesting favicon.ico', 'got');
         callback();
-      });    
+      });
     },
-    
-    function(callback){ 
+
+    function(callback){
       //post log obeject
       requestOptions.path = '/log/';
-      
+
       var req = http.request(requestOptions, function(response){
         assert.equal(response.statusCode, 201, 'while writing a log to DB', 'got');
         response.pipe(process.stdout);
@@ -49,12 +49,12 @@ setTimeout(function() {
         message:'this was sent from node.js tests'
       }));
     },
-    
+
     function (callback) {
       setTimeout(function() {
         process.exit(0);
       },1500);
       callback();
     }
-  ]);    
+  ]);
 }, 1500);

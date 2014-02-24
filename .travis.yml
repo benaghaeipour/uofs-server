@@ -20,6 +20,8 @@ deploy:
   api_key:
     secure: XodhHlQsJLYJihuoFKJ3cW+g2Cy7uWxG9B6lsmFPpII99XB1gtb++DKF3ZJQj/4PHFikdOr6l6A2RUuef6ssrVCX37lLGROql/D+XP/XYUhjzL5a0eMBmwN2m875Y7q07VFBeUfhrY92NDn3xkLK06lLmNIUI4WerD757M0yHtE=
   skip_cleanup: true
-  on: dev
+  on:
+  - dev
+  - master
 notifications:
   email: false

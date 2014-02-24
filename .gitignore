@@ -7,13 +7,19 @@ lib-cov
 *.pid
 *.gz
 *.c9save
+*~
+client-src.zip
 
 pids
 tmp
 .c9revisions/*
 .DS_Store
+<<<<<<< HEAD
 static/*
 www/*
 
+static/
+.vagrant/
+client-src/
 node_modules
 npm-debug.log
