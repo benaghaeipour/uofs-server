@@ -13,6 +13,7 @@ tmp
 .c9revisions/*
 .DS_Store
 static/*
+www/*
 
 node_modules
 npm-debug.log
