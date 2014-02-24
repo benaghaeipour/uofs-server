@@ -29,7 +29,7 @@
     "HTTP_LOGS_TOKEN": "9d7a778b-d12f-4630-a3e9-c812d1c2317a"
   },
   "scripts": {
-    "test": "jasmine-node tests/",
+    "test": "jasmine-node tests/ --forceexit",
     "start": "node app.js"
   },
   "author": "Chris Matheson",
