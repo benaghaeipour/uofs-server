@@ -328,7 +328,7 @@ app.get('/recordings/:filename[/]?', function (req, res, next) {
     var storedRec = new mongodb.GridStore(DB, req.params.filename, 'r');
     storedRec.open(function (err, gs) {
         if (err) {
-            return next(err);
+            return res.send(404);
         }
 
         //file opened, can now do things with it
