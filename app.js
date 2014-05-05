@@ -58,11 +58,8 @@ app.configure(function() {
   app.use(express.static(__dirname + '/www'));
 });
 
-
-
 app.configure('development', function() {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: false }));
-  //additional loggin for C9
   log.on('log',function(logline){
     console.log( logline );
   });
