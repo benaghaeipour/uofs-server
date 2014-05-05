@@ -67,6 +67,11 @@ app.configure('development', function() {
   log.debug('Setting up debug level logging');
 });
 
+app.configure('test', function () {
+    log = console;
+    log.log('removed LE logging')
+});
+
 app.configure('production', function() {
   log.level('info');
   app.use(express.timeout());
