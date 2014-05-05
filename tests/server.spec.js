@@ -1,5 +1,5 @@
 /*jshint node:true*/
-/*globals mocha, expect, it, xit, describe*/
+/*globals mocha, expect, jasmine, it, xit, describe*/
 describe('uofs-server', function () {
     var request = require('supertest'),
         server = 'http://localhost:5000';
@@ -33,5 +33,26 @@ describe('uofs-server', function () {
             .post('/login', {username: 'no-one', pw1:'nothing'})
             .set('Accept', 'application/json')
             .expect(401, done);
+    });
+
+    it('should create a user', function (done) {
+        request(server)
+            .post('/student/update', {
+                username: 'testUser',
+                pw1: 'testPass'
+            })
+            .set('Accept', 'application/json')
+            .expect(201, done);
+    });
+
+    xit('should now have one student', function (done) {
+        request(server)
+            .post('/student/find', {})
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(200, function (res) {
+                expect(res).toBe(jasmine.any(Array));
+                done();
+            });
     });
 });

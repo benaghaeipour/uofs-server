@@ -69,7 +69,7 @@ app.configure('development', function() {
 
 app.configure('test', function () {
     log = console;
-    log.log('removed LE logging')
+    log.log('removed LE logging');
 });
 
 app.configure('production', function() {
