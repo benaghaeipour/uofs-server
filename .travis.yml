@@ -1,17 +1,21 @@
 language: node_js
 node_js:
     - '0.8'
+services:
+  - mongodb
+env: DB_URI="mongodb://localhost:10051/test"
 before_script:
-    - wget https://github.com/peachproductions/unitsofsound/archive/master.zip -O client-src.zip
-    - unzip -a -q ./client-src.zip -d ./
-    - mv ./unitsofsound-master ./client-src
-    - sudo apt-get install -qq unzip
-    - mkdir client-src/SDK
-    - mkdir www
-    - wget http://download.macromedia.com/pub/flex/sdk/flex_sdk_4.6.zip -O ./client-src/SDK/flex_sdk_4.6.zip
-    - unzip -a -q ./client-src/SDK/flex_sdk_4.6.zip -d ./client-src/SDK
-    - ant -buildfile client-src/build.xml main
-    - npm config set ca ""
+  - mongo mydb_test --eval 'db.addUser("travis", "test");'
+  - wget https://github.com/peachproductions/unitsofsound/archive/master.zip -O client-src.zip
+  - unzip -a -q ./client-src.zip -d ./
+  - mv ./unitsofsound-master ./client-src
+  - sudo apt-get install -qq unzip
+  - mkdir client-src/SDK
+  - mkdir www
+  - wget http://download.macromedia.com/pub/flex/sdk/flex_sdk_4.6.zip -O ./client-src/SDK/flex_sdk_4.6.zip
+  - unzip -a -q ./client-src/SDK/flex_sdk_4.6.zip -d ./client-src/SDK
+  - ant -buildfile client-src/build.xml main
+  - npm config set ca ""
 deploy:
   provider: nodejitsu
   user: chrismatheson
