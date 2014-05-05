@@ -2,7 +2,7 @@
 /*globals mocha, expect, it, xit, describe*/
 describe('uofs-server', function () {
     var request = require('supertest'),
-        server = require('../app');
+        server = 'http://localhost:5000';
 
     it('should ignore favicon', function (done) {
         request(server)
@@ -19,9 +19,10 @@ describe('uofs-server', function () {
             .expect(301, done);
     });
 
-    xit('should login', function (done) {
+    it('should login', function (done) {
         request(server)
             .post('/login', {username: 'no-one', pw1:'nothing'})
-            .expect(200, done);
+            .set('Accept', 'application/json')
+            .expect(401, done);
     });
 });
