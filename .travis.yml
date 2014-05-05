@@ -15,7 +15,7 @@ before_script:
 #  - unzip -a -q ./client-src/SDK/flex_sdk_4.6.zip -d ./client-src/SDK
 #  - ant -buildfile client-src/build.xml main
   - npm config set ca ""
-  - npm start
+  - npm start &
 deploy:
   provider: nodejitsu
   user: chrismatheson
