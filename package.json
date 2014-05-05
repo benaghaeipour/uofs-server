@@ -6,7 +6,7 @@
     "express": "3.2.x",
     "mongodb": "1.4.3",
     "underscore": "1.4.4",
-    "node-logentries": "0.0.2"
+    "node-logentries": "~0.1.0"
   },
   "devDependencies": {
     "supertest": "0.12.x",

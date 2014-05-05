@@ -32,16 +32,19 @@ var log = logentries.logger({
     timestamp: false
 });
 
+// set defaults to those needed for local dev
+app.set('env', (process.env.NODE_ENV || 'development'));
+process.env.LOG_TOKEN = process.env.LOG_TOKEN || 'a15ad4d2-7c28-406d-bef0-9e12f39225b5';
+process.env.DB_URI = process.env.DB_URI || 'mongodb://c9:c9@alex.mongohq.com:10051/dev?safe=true';
+process.env.PORT = process.env.PORT || 5000;
+
+
 // *******************************************************
 //          expose 'app' for testing
 module.exports = app;
 
 // *******************************************************
 //          Server Configuration
-
-app.set('env', (process.env.NODE_ENV || 'development'));
-process.env.LOG_TOKEN = process.env.LOG_TOKEN || 'a15ad4d2-7c28-406d-bef0-9e12f39225b5';
-process.env.DB_URI = process.env.DB_URI || 'mongodb://c9:c9@alex.mongohq.com:10051/dev?safe=true';
 
 log.info('Configuring Application for NODE_ENV: ' + app.get('env'));
 log.info('Configuring for DB : ' + process.env.DB_URI);
@@ -58,30 +61,25 @@ app.configure(function () {
     app.use(express.static(__dirname + '/www'));
 });
 
-app.configure('development', function () {
-    debugger;
-    app.use(express.errorHandler({
-        dumpExceptions: true,
-        showStack: false
-    }));
-    log.on('log', function (logline) {
-        console.log(logline);
-    });
-    log.level('info');
-    log.debug('Setting up debug level logging');
-});
-
-app.configure('test', function () {
-    log = console;
-    log.log('removed LE logging');
-});
-
-app.configure('production', function () {
-    log.level('info');
-    app.use(express.timeout());
-});
-
-
+switch(process.env.NODE_ENV) {
+    case 'production':
+        log.level('info');
+        app.use(express.timeout());
+        break;
+    case 'development':
+        //allow overflow
+    default:
+        log.on('log', function (logline) {
+            console.log(logline);
+        });
+        app.use(express.errorHandler({
+            dumpExceptions: true,
+            showStack: false
+        }));
+        log.level('info');
+        log.debug('Setting up debug level logging');
+        break;
+}
 
 // *******************************************************
 //          Some standrad routes etc
