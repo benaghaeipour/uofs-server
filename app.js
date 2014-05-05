@@ -58,16 +58,18 @@ app.configure(function() {
   app.use(express.static(__dirname + '/www'));
 });
 
-
-
 app.configure('development', function() {
   app.use(express.errorHandler({ dumpExceptions: true, showStack: false }));
-  //additional loggin for C9
   log.on('log',function(logline){
     console.log( logline );
   });
   log.level('info');
   log.debug('Setting up debug level logging');
+});
+
+app.configure('test', function () {
+    log = console;
+    log.log('removed LE logging');
 });
 
 app.configure('production', function() {
@@ -450,4 +452,5 @@ process.on('SIGHUP', function() {
 
 process.on('uncaughtException', function(err) {
   log.emerg("UNCAUGHT!!: " + err + err.stack);
+  process.exit(1);
 });
