@@ -45,9 +45,9 @@ describe('uofs-server', function () {
             .expect(201, done);
     });
 
-    xit('should now have one student', function (done) {
+    it('should now have one student', function (done) {
         request(server)
-            .post('/student/find', {})
+            .post('/student/find', { username: true})
             .set('Accept', 'application/json')
             .expect('Content-Type', /json/)
             .expect(200, function (res) {
