@@ -4,13 +4,6 @@ describe('uofs-server', function () {
     var request = require('supertest'),
         server = 'http://localhost:5000';
 
-//    it('should force https', function (done) {
-//        request(server)
-//            .get('/ index.html')
-//            .expect(301)
-//            .expect('Location', /static\.unitsofsound\.net\/uk/, done);
-//    });
-
     it('should ignore favicon', function (done) {
         request(server)
             .get('/favicon.ico')
@@ -28,17 +21,25 @@ describe('uofs-server', function () {
             .expect(301, done);
     });
 
-    it('should login', function (done) {
+    it('should fail to login', function (done) {
         request(server)
-            .post('/login', {username: 'no-one', pw1:'nothing'})
+            .post('/login')
+            .send({username: 'no-one', pw1:'nothing'})
             .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
             .expect(401, done);
     });
 
-    xit('should login', function (done) {
+    it('should login', function (done) {
         request(server)
-            .post('/login', {"center":null,"pw1":"iii","username":"scott4"})
+            .post('/login')
+            .send({"center":null,"pw1":"iii","username":"scott4"})
             .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect('Content-Type', /application\/json/)
+            .expect(function (res) {
+                expect(res.body._id).toMatch(/[a-f0-9]{24}/);
+            })
             .expect(200, done);
     });
 
@@ -50,22 +51,30 @@ describe('uofs-server', function () {
 
     it('should create a user', function (done) {
         request(server)
-            .post('/student/update', {
+            .post('/student/update')
+            .send({
                 username: 'testUser',
                 pw1: 'testPass'
             })
             .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect('Content-Type', /application\/json/)
+            .expect(function (res) {
+                expect(res.body[0]._id).toMatch(/[a-f0-9]{24}/);
+            })
             .expect(201, done);
     });
 
-    xit('should now have one student', function (done) {
+    it('should now have one student', function (done) {
         request(server)
-            .post('/student/find', { username: true})
+            .post('/student/find')
+            .send({})
             .set('Accept', 'application/json')
-            .expect('Content-Type', /json/)
-            .expect(200, function (res) {
-                expect(res).toBe(jasmine.any(Array));
-                done();
-            });
+            .set('Content-Type', 'application/json')
+            .expect('Content-Type', /application\/json/)
+            .expect(function (res) {
+                expect(res.body).toEqual(jasmine.any(Array));
+            })
+            .expect(200, done);
     });
 });

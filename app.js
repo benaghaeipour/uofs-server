@@ -233,8 +233,9 @@ app.post('/student/update[/]?', function (req, res, next) {
             if (err) {
                 return next(err);
             }
-            log.info('Student Created : ', query._id);
-            res.send(201);
+            log.info('Student Created : ', objects);
+            res.status(201);
+            res.send(objects);
         });
     } else {
         //update record by matchin _id
@@ -252,8 +253,9 @@ app.post('/student/update[/]?', function (req, res, next) {
                 log.emerg('Update error : ', JSON.stringify(err));
                 return next(err);
             }
-            log.info("Studnet Update : success");
-            res.send(201);
+            log.info("Student Update : success", objects);
+            res.status(201);
+            res.send(objects);
         });
     }
 });
