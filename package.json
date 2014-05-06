@@ -29,6 +29,7 @@
   },
   "scripts": {
     "test": "jasmine-node tests/ --forceexit",
+    "dev": "jasmine-node tests/ --forceexit --autotest --color",
     "start": "node app.js"
   },
   "author": "Chris Matheson",
