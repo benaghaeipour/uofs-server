@@ -10,7 +10,7 @@
   },
   "devDependencies": {
     "supertest": "0.12.x",
-    "jasmine-node": "^1.14.3"
+    "jasmine-node": "1.14.3"
   },
   "engines": {
     "node": "0.8.x"
