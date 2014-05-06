@@ -24,7 +24,11 @@
   ],
   "env": {
     "NODE_ENV": "production",
+<<<<<<< HEAD
     "DB_URI": "mongodb://c9:c9@linus.mongohq.com:10090/prod",
+=======
+    "DB_URI": "mongodb://c9:c9@oceanic.mongohq.com:10015/dev",
+>>>>>>> somewhere closer to auto cleanup of db on test start
     "LOG_TOKEN": "9d7a778b-d12f-4630-a3e9-c812d1c2317a"
   },
   "scripts": {

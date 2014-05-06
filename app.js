@@ -35,7 +35,7 @@ var log = logentries.logger({
 // set defaults to those needed for local dev
 app.set('env', (process.env.NODE_ENV || 'development'));
 process.env.LOG_TOKEN = process.env.LOG_TOKEN || 'a15ad4d2-7c28-406d-bef0-9e12f39225b5';
-process.env.DB_URI = process.env.DB_URI || 'mongodb://c9:c9@alex.mongohq.com:10051/dev?safe=true';
+process.env.DB_URI = process.env.DB_URI || 'mongodb://c9:c9@oceanic.mongohq.com:10015/dev';
 process.env.PORT = process.env.PORT || 5000;
 
 
