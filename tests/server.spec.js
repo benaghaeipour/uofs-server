@@ -74,7 +74,32 @@ describe('uofs-server', function () {
             .expect('Content-Type', /application\/json/)
             .expect(function (res) {
                 expect(res.body).toEqual(jasmine.any(Array));
+                expect(res.body.length).toBeGreaterThan(0);
             })
             .expect(200, done);
+    });
+
+    it('should have one center', function (done) {
+        request(server)
+            .post('/center/find')
+            .send({name: 'London'})
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect('Content-Type', /application\/json/)
+            .expect(function (res) {
+                expect(res.body).toEqual(jasmine.any(Object));
+                expect(res.body.name).toBe('London');
+            })
+            .expect(200, done);
+    });
+
+    xit('should update a center', function (done) {
+        request(server)
+            .post('/center/update')
+            .send({_id: 'a12321312321321321ab5555', blah:'blah'})
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect('Content-Type', /application\/json/)
+            .expect(201, done);
     });
 });

@@ -269,6 +269,9 @@ app.post('/student/update[/]?', function (req, res, next) {
  */
 app.post('/center/find[/]?', function (req, res, next) {
     var query = req.body;
+    query.deleted ={
+        $exists: false
+    };
 
     log.debug('Center/Find Query : ' + JSON.stringify(query));
 
@@ -315,7 +318,8 @@ app.post('/center/update[/]?', function (req, res, next) {
             return next(err);
         }
         log.debug('Retuning : ' + JSON.stringify(objects));
-        res.send(201);
+        res.status(201);
+        res.send(objects);
     });
 });
 
