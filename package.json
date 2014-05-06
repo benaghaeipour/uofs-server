@@ -13,7 +13,7 @@
     "jasmine-node": "1.14.3"
   },
   "engines": {
-    "node": "0.8.x"
+    "node": "0.10.x"
   },
   "description": "HTTP server for Units of Sound online app",
   "directories": {
