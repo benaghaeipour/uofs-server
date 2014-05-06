@@ -4,7 +4,7 @@
   "repository": "https://github.com/peachproductions/uofs-server",
   "dependencies": {
     "express": "3.2.x",
-    "mongodb": "^1.4.3",
+    "mongodb": "^1.4.0",
     "underscore": "^1.4.4",
     "node-logentries": "0.0.2"
   },
@@ -24,7 +24,7 @@
   ],
   "env": {
     "NODE_ENV": "production",
-    "DB_URI": "mongodb://c9:c9@alex.mongohq.com:10051/dev",
+    "DB_URI": "mongodb://c9:c9@linus.mongohq.com:10090/prod",
     "LOG_TOKEN": "9d7a778b-d12f-4630-a3e9-c812d1c2317a"
   },
   "scripts": {
