@@ -20,10 +20,10 @@
     "test": "tests/"
   },
   "domains": [
-    "app.unitsofsound.net"
+    "dev.unitsofsound.net"
   ],
   "env": {
-    "NODE_ENV": "production",
+    "NODE_ENV": "develoment",
     "DB_URI": "mongodb://c9:c9@oceanic.mongohq.com:10015/dev",
     "LOG_TOKEN": "a15ad4d2-7c28-406d-bef0-9e12f39225b5"
   },
@@ -34,5 +34,5 @@
   },
   "author": "Chris Matheson",
   "license": "BSD",
-  "subdomain": "uos-prod"
+  "subdomain": "uos-dev"
 }
