@@ -25,7 +25,7 @@
   "env": {
     "NODE_ENV": "production",
     "DB_URI": "mongodb://c9:c9@oceanic.mongohq.com:10015/dev",
-    "LOG_TOKEN": "9d7a778b-d12f-4630-a3e9-c812d1c2317a"
+    "LOG_TOKEN": "a15ad4d2-7c28-406d-bef0-9e12f39225b5"
   },
   "scripts": {
     "test": "jasmine-node tests/ --forceexit",
