@@ -94,7 +94,7 @@ describe('uofs-server', function () {
             .expect(200, done);
     });
 
-    it('should have one center', function (done) {
+    xit('should have one center', function (done) {
         request(server)
             .post('/center/find')
             .send({name: 'Manchester'})
