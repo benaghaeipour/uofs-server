@@ -58,7 +58,6 @@ app.configure(function () {
     }));
     app.use(express.json());
     app.use(app.router);
-    app.use(express.static(__dirname + '/www'));
 });
 
 switch(process.env.NODE_ENV) {
@@ -66,8 +65,6 @@ switch(process.env.NODE_ENV) {
         log.level('info');
         app.use(express.timeout());
         break;
-    case 'development':
-        //allow overflow
     default:
         log.on('log', function (logline) {
             console.log(logline);
