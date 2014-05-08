@@ -1,5 +1,5 @@
 {
-  "name": "uofs-prod",
+  "name": "uofs-dev",
   "version": "0.1.2",
   "repository": "https://github.com/peachproductions/uofs-server",
   "dependencies": {
