@@ -19,9 +19,6 @@
   "directories": {
     "test": "tests/"
   },
-  "domains": [
-    "dev.unitsofsound.net"
-  ],
   "env": {
     "NODE_ENV": "develoment",
     "DB_URI": "mongodb://c9:c9@oceanic.mongohq.com:10015/dev",
