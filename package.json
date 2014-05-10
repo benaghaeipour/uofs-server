@@ -6,7 +6,8 @@
     "express": "3.2.x",
     "mongodb": "1.4.3",
     "underscore": "1.4.4",
-    "node-logentries": "~0.1.0"
+    "node-logentries": "~0.1.0",
+    "forever": "^0.11.1"
   },
   "devDependencies": {
     "supertest": "0.12.x",
@@ -27,7 +28,7 @@
   "scripts": {
     "test": "jasmine-node tests/ --forceexit",
     "dev": "jasmine-node tests/ --forceexit --autotest --color",
-    "start": "node app.js"
+    "start": "forever start app.js"
   },
   "author": "Chris Matheson",
   "license": "BSD",
