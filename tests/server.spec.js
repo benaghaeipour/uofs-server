@@ -29,11 +29,11 @@ describe('uofs-server', function () {
         request(server)
             .get('/uk/something')
             .expect('Location', /static\.unitsofsound\.net\/uk\/something/)
-            .expect(301, done);
+            .expect(302, done);
         request(server)
             .get('/us/something')
             .expect('Location', /static\.unitsofsound\.net\/us\/something/)
-            .expect(301, done);
+            .expect(302, done);
     });
 
     it('should fail to login', function (done) {
