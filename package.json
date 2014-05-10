@@ -1,5 +1,6 @@
 {
   "name": "uofs-dev",
+  "subdomain": "uos-dev",
   "version": "0.1.2",
   "repository": "https://github.com/peachproductions/uofs-server",
   "dependencies": {
@@ -28,9 +29,9 @@
   "scripts": {
     "test": "jasmine-node tests/ --forceexit",
     "dev": "jasmine-node tests/ --forceexit --autotest --color",
+    "postdeploy": "node post-deploy.js",
     "start": "forever start app.js"
   },
   "author": "Chris Matheson",
-  "license": "BSD",
-  "subdomain": "uos-dev"
+  "license": "BSD"
 }
