@@ -58,6 +58,11 @@ app.configure(function () {
     }));
     app.use(express.json());
     app.use(app.router);
+    app.use(function(req, res, next){
+      res.set('NODE_ENV', process.env.NODE_ENV);
+      next();
+    });
+
 });
 
 switch(process.env.NODE_ENV) {
