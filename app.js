@@ -87,7 +87,7 @@ switch(process.env.NODE_ENV) {
 //          Some standrad routes etc
 
 app.get('/u[k,s]/*', function (req, res, next) {
-    res.redirect(301, 'http://static.unitsofsound.net' + req.path);
+    res.redirect(302, 'http://static.unitsofsound.net' + req.path);
 });
 
 app.get('/favicon.ico', function (req, res, next) {
