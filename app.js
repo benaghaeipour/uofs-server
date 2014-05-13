@@ -506,5 +506,5 @@ process.on('SIGHUP', function () {
 
 process.on('uncaughtException', function (err) {
     log.emerg("UNCAUGHT!!: " + err + err.stack);
-    process.exit(1);
+//    process.exit(1);
 });
