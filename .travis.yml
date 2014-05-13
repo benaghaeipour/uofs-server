@@ -17,5 +17,7 @@ deploy:
     branch:
         - master
         - dev
+        - preview
+        - online
 notifications:
   email: false
