@@ -1,6 +1,6 @@
 {
-  "name": "uofs-dev",
-  "subdomain": "uos-dev",
+  "name": "uofs-preview",
+  "subdomain": "uos-preview",
   "version": "0.1.2",
   "repository": "https://github.com/peachproductions/uofs-server",
   "dependencies": {
@@ -23,8 +23,8 @@
   },
   "env": {
     "NODE_ENV": "develoment",
-    "DB_URI": "mongodb://c9:c9@oceanic.mongohq.com:10015/dev",
-    "LOG_TOKEN": "a15ad4d2-7c28-406d-bef0-9e12f39225b5"
+    "DB_URI": "mongodb://c9:c9@oceanic.mongohq.com:10040/preview",
+    "LOG_TOKEN": "174fa695-751c-41fc-bd3b-5a11cd44b4b4"
   },
   "scripts": {
     "test": "jasmine-node tests/ --forceexit",
