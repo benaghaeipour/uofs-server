@@ -30,7 +30,7 @@
     "test": "jasmine-node tests/ --forceexit",
     "dev": "jasmine-node tests/ --forceexit --autotest --color",
     "postdeploy": "node post-deploy.js",
-    "start": "forever start app.js"
+    "start": "node app.js"
   },
   "author": "Chris Matheson",
   "license": "BSD"
