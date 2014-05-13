@@ -15,7 +15,7 @@
 //    });
 //});
 
-describe('uofs-server', function () {
+xdescribe('uofs-server', function () {
     var request = require('supertest'),
         server = 'http://localhost:5000';
 
