@@ -67,7 +67,7 @@ app.configure(function () {
 
 switch(process.env.NODE_ENV) {
     case 'production':
-        log.level('info');
+        log.level('debug');
         app.use(express.timeout());
         break;
     default:
@@ -495,8 +495,8 @@ mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
     });
 
     //https.createServer(null, app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 443);
+    log.info('listening on ' + process.env.PORT);
     http.createServer(app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
-    log.debug('listening on %s', process.env.PORT);
 });
 
 process.on('SIGHUP', function () {
