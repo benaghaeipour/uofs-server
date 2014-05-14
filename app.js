@@ -503,8 +503,3 @@ process.on('SIGHUP', function () {
     DB.close();
     console.log('bye');
 });
-
-process.on('uncaughtException', function (err) {
-    log.emerg("UNCAUGHT!!: " + err + err.stack);
-//    process.exit(1);
-});
