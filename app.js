@@ -72,7 +72,7 @@ switch(process.env.NODE_ENV) {
         break;
     default:
         log.on('log', function (logline) {
-            console.debug(logline);
+            console.log(logline);
         });
         app.use(express.errorHandler({
             dumpExceptions: true,
