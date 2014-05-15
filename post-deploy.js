@@ -1,3 +1,4 @@
+/*jslint node:true */
 var pkg = require('./package.json');
 var le = require('node-logentries').logger(pkg.process.env.LOG_TOKEN);
 
