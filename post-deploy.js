@@ -1,5 +1,6 @@
-var le = require('node-logentries').logger({token: process.env.LOG_TOKEN});
+var pkg = require('./package.json');
+var le = require('node-logentries').logger(pkg.process.env.LOG_TOKEN);
 
-le.info('Deploying application v' + require('./package.json').version + ' from SHA:'+process.env.TRAVIS_COMMIT);
+le.info('Deploying application v' + pkg.version + ' from SHA:' + process.env.TRAVIS_COMMIT);
 
 process.exit();
