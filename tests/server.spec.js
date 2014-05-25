@@ -1,21 +1,29 @@
 /*jshint node:true*/
 /*globals mocha, expect, jasmine, it, xit, describe*/
 
-//beforeEach(function (done) {
-//    var mongodb = require('mongodb'),
-//        db;
-//    mongodb.connect('mongodb://c9:c9@oceanic.mongohq.com:10015/dev', {}, function (err, dbconnection) {
-//        if (err) { throw (err);}
-//        console.log('Connected to dev DB in Spec');
-//        db = dbconnection;
-//        db.users.drop();
-//        db.centers.drop();
-//        console.log('done');
-//        done();
-//    });
-//});
+beforeEach(function (done) {
+    var mongodb = require('mongodb'),
+        db;
+
+    function drop() {}
+
+    mongodb.connect(process.env.DB_URI, {}, function (err, dbconnection) {
+        if (err) { throw (err);}
+        db = dbconnection;
+        db.collection('users').drop();
+        db.collection('centers').drop();
+        console.log('done');
+        done();
+    });
+});
 
 describe('uofs-server', function () {
+    it('wont do fuck all', function () {
+        expect(true).toBe(true);
+    });
+});
+
+xdescribe('uofs-server', function () {
     var request = require('supertest'),
         server = 'http://localhost:5000';
 

@@ -19,7 +19,7 @@ var net = require('net'),
     fs = require('fs'),
     express = require('express'),
     mongodb = require('mongodb'),
-    _ = require('underscore'),
+    _ = require('lodash'),
     logentries = require('node-logentries');
 
 // *******************************************************
@@ -51,30 +51,33 @@ log.info('Configuring for DB : ' + process.env.DB_URI);
 log.info('Mongo-db-native driver version : ' + mongodb.version);
 
 
-app.configure(function () {
-    app.use(express.logger({
-        format: process.env.LOG_TOKEN + ' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b res_time=:response-time ms',
-        stream: new net.Socket().connect(10000, 'api.logentries.com')
-    }));
-    app.use(express.json());
-    app.use(app.router);
-    app.use(function(req, res, next){
-      res.set('NODE_ENV', process.env.NODE_ENV);
-      next();
-    });
+var morgan = require('morgan');
+var bodyParser = require('body-parser');
+var compress = require('compression');
+var errorhandler = require('errorhandler');
+var timeout = require('connect-timeout');
 
+app.use(morgan({
+    format: process.env.LOG_TOKEN + ' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b res_time=:response-time ms',
+    stream: new net.Socket().connect(10000, 'api.logentries.com')
+}));
+app.use(bodyParser());
+app.use(compress());
+app.use(function(req, res, next){
+  res.set('NODE_ENV', process.env.NODE_ENV);
+  next();
 });
 
 switch(process.env.NODE_ENV) {
     case 'production':
         log.level('debug');
-        app.use(express.timeout());
+        app.use(timeout());
         break;
     default:
         log.on('log', function (logline) {
             console.log(logline);
         });
-        app.use(express.errorHandler({
+        app.use(errorhandler({
             dumpExceptions: true,
             showStack: false
         }));
