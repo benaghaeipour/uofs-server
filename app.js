@@ -395,30 +395,6 @@ app.post('/recordings/:filename[/]?', function (req, res, next) {
 
 
 // *******************************************************
-//          Log enpoint
-
-/**
- * log req body into the db with a type & message minimum, and any other properties
- */
-app.post('/log[/]?', function (req, res, next) {
-    if (_.isEmpty(req.body.type) || _.isEmpty(req.body.type)) {
-        next(new Error('log does not have the required properties \'type\' and \'message\''));
-        return;
-    }
-    DB.logs.insert(req.body, {
-        safe: true
-    }, function (err, objects) {
-        if (err) {
-            log.err('error saving log : ' + err);
-            res.send(500);
-        } else {
-            res.send(201);
-        }
-    });
-});
-
-
-// *******************************************************
 //          Debug enpoints
 
 /**
