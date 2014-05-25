@@ -1,29 +1,23 @@
 /*jshint node:true*/
 /*globals mocha, expect, jasmine, it, xit, describe*/
 
-beforeEach(function (done) {
-    var mongodb = require('mongodb'),
-        db;
+var mongodb = require('mongodb'),
+    db;
 
-    function drop() {}
-
-    mongodb.connect(process.env.DB_URI, {}, function (err, dbconnection) {
-        if (err) { throw (err);}
-        db = dbconnection;
-        db.collection('users').drop();
-        db.collection('centers').drop();
-        console.log('done');
-        done();
-    });
-});
+//beforeEach(function (done) {
+//    function drop() {}
+//
+//    mongodb.connect(process.env.DB_URI, {}, function (err, dbconnection) {
+//        if (err) { throw (err);}
+//        db = dbconnection;
+//        db.collection('users').findAndRemove({});
+//        db.collection('centers').findAndRemove({});
+//        db.close(done);
+//        console.log('done');
+//    });
+//});
 
 describe('uofs-server', function () {
-    it('wont do fuck all', function () {
-        expect(true).toBe(true);
-    });
-});
-
-xdescribe('uofs-server', function () {
     var request = require('supertest'),
         server = 'http://localhost:5000';
 
@@ -53,6 +47,56 @@ xdescribe('uofs-server', function () {
             .expect(401, done);
     });
 
+    var CreadtedCenterId = '';
+
+    it('should create a center', function (done) {
+        request(server)
+            .post('/center')
+            .send({
+                name: 'Manchester'
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect('Content-Type', /application\/json/)
+            .expect(function (res) {
+                CreadtedCenterId = res.body[0]._id;
+                expect(CreadtedCenterId).toMatch(/[a-f0-9]{24}/);
+            })
+            .expect(201, done);
+    });
+
+    it('should find center by name', function (done) {
+        request(server)
+            .post('/center/find')
+            .send({name: 'Manchester'})
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect('Content-Type', /application\/json/)
+            .expect(function (res) {
+                expect(res.body).toEqual(jasmine.any(Object));
+                expect(res.body._id).toMatch(/[a-f0-9]{24}/);
+                expect(res.body.name).toBe('Manchester');
+            })
+            .expect(200, done);
+    });
+
+    it('should find center by ID', function (done) {
+        request(server)
+            .post('/center/find')
+            .send({_id: CreadtedCenterId})
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect('Content-Type', /application\/json/)
+            .expect(function (res) {
+                expect(res.body).toEqual(jasmine.any(Object));
+                expect(res.body._id).toMatch(/[a-f0-9]{24}/);
+                expect(res.body.name).toBe('Manchester');
+            })
+            .expect(200, done);
+    });
+
+    var CreadtedUserId = '';
+
     it('should create a user', function (done) {
         request(server)
             .post('/student/update')
@@ -64,28 +108,10 @@ xdescribe('uofs-server', function () {
             .set('Content-Type', 'application/json')
             .expect('Content-Type', /application\/json/)
             .expect(function (res) {
-                expect(res.body[0]._id).toMatch(/[a-f0-9]{24}/);
+                CreadtedUserId = res.body[0]._id;
+                expect(CreadtedUserId).toMatch(/[a-f0-9]{24}/);
             })
             .expect(201, done);
-    });
-
-    it('should login', function (done) {
-        request(server)
-            .post('/login')
-            .send({pw1:"testPass",username:"testUser"})
-            .set('Accept', 'application/json')
-            .set('Content-Type', 'application/json')
-            .expect('Content-Type', /application\/json/)
-            .expect(function (res) {
-                expect(res.body._id).toMatch(/[a-f0-9]{24}/);
-            })
-            .expect(200, done);
-    });
-
-    it('should 404 with no recording', function (done) {
-        request(server)
-            .get('/recordings/123456789/1/2/3/4')
-            .expect(404, done);
     });
 
     it('should now have one student', function (done) {
@@ -102,18 +128,34 @@ xdescribe('uofs-server', function () {
             .expect(200, done);
     });
 
-    xit('should have one center', function (done) {
+    it('should login', function (done) {
         request(server)
-            .post('/center/find')
-            .send({name: 'Manchester'})
+            .post('/login')
+            .send({pw1:"testPass",username:"testUser"})
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
             .expect('Content-Type', /application\/json/)
             .expect(function (res) {
-                expect(res.body).toEqual(jasmine.any(Object));
-                expect(res.body.name).toBe('Manchester');
+                expect(res.body._id).toMatch(/[a-f0-9]{24}/);
             })
             .expect(200, done);
+    });
+
+    it('should remove student', function (done) {
+        request(server)
+            .post('/student/delete')
+            .send({
+                _id: CreadtedUserId
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect(202, done);
+    });
+
+    it('should 404 with no recording', function (done) {
+        request(server)
+            .get('/recordings/123456789/1/2/3/4')
+            .expect(404, done);
     });
 
     xit('should update a center', function (done) {

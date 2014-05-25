@@ -212,7 +212,7 @@ app.post('/student/delete[/]?', function (req, res, next) {
             return next(err);
         }
 
-        res.send(201);
+        res.send(202);
     });
 });
 
@@ -268,6 +268,22 @@ app.post('/student/update[/]?', function (req, res, next) {
 
 // *******************************************************
 //          Center endpoints
+
+app.route('/center')
+    .post(function (req, res, next) {
+        var query = req.body;
+
+        DB.centers.insert(query, {
+            safe: true
+        }, function (err, objects) {
+            if (err) {
+                return next(err);
+            }
+            log.info('Center Created : ', JSON.stringify(objects));
+            res.status(201);
+            res.send(objects);
+        });
+    });
 
 /**
  * Get center obj
