@@ -182,7 +182,7 @@ app.post('/student/find[/]?', function (req, res, next) {
         $exists: false
     };
 
-    log.info('Student/Find/ : ', JSON.stringify(query));
+    log.info('Student lookup : ', JSON.stringify(query));
 
     DB.users.find(query, options).toArray(function (err, records) {
         if (err) {
@@ -238,7 +238,7 @@ app.post('/student/update[/]?', function (req, res, next) {
             if (err) {
                 return next(err);
             }
-            log.info('Student Created : ', objects);
+            log.info('Student Created : ', JSON.stringify(objects));
             res.status(201);
             res.send(objects);
         });
@@ -278,13 +278,11 @@ app.post('/center/find[/]?', function (req, res, next) {
         $exists: false
     };
 
-    log.debug('Center/Find Query : ' + JSON.stringify(query));
+    log.debug('Center lookup : ' + JSON.stringify(query));
 
-    if (!query.name) {
+    if (!query.name || !query._id) {
         return next(new Error('need name or _id for this call'));
     }
-
-    log.info('Center find : ' + query.name);
 
     DB.centers.findOne(query, {
         limit: 1,
