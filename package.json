@@ -15,8 +15,8 @@
     "node-logentries": "~0.1.0"
   },
   "devDependencies": {
-    "supertest": "0.12.x",
-    "jasmine-node": "1.14.3"
+    "supertest": "0.13.x",
+    "jasmine-node": "^2.0.0"
   },
   "engines": {
     "node": "0.10.x"
@@ -31,8 +31,8 @@
     "LOG_TOKEN": "a15ad4d2-7c28-406d-bef0-9e12f39225b5"
   },
   "scripts": {
-    "test": "jasmine-node tests/ --forceexit",
-    "dev": "DB_URI=mongodb://c9:c9@oceanic.mongohq.com:10015/dev jasmine-node tests/ --forceexit --autotest --color",
+    "test": "jasmine-node tests/ --forceExit",
+    "dev": "DB_URI=mongodb://c9:c9@oceanic.mongohq.com:10015/dev jasmine-node tests/ --forceExit --autoTest",
     "postdeploy": "node post-deploy.js",
     "start": "node app.js"
   },

@@ -35,7 +35,7 @@ var log = logentries.logger({
 // set defaults to those needed for local dev
 app.set('env', (process.env.NODE_ENV || 'development'));
 process.env.LOG_TOKEN = process.env.LOG_TOKEN || 'a15ad4d2-7c28-406d-bef0-9e12f39225b5';
-process.env.DB_URI = process.env.DB_URI || 'mongodb://c9:c9@oceanic.mongohq.com:10015/dev';
+process.env.DB_URI = process.env.DB_URI;
 process.env.PORT = process.env.PORT || 5000;
 
 
@@ -270,6 +270,16 @@ app.post('/student/update[/]?', function (req, res, next) {
 //          Center endpoints
 
 app.route('/center')
+    .get(function (req, res, next) {
+        log.info('Center lookup : ', JSON.stringify(req.query));
+        DB.centers.find(req.query, {safe: true}).toArray(function (err, objects) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200);
+            res.send(objects);
+        });
+    })
     .post(function (req, res, next) {
         var query = req.body;
 
@@ -487,12 +497,13 @@ mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
         DB.centers = collection;
     });
 
-    //https.createServer(null, app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 443);
-    log.info('listening on ' + process.env.PORT);
-    http.createServer(app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
+    app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80).once('listening', function() {
+        log.info('listening on ' + process.env.PORT);
+    });
 });
 
 process.on('SIGHUP', function () {
     DB.close();
+    app.close();
     console.log('bye');
 });

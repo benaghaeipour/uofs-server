@@ -1,20 +1,15 @@
 /*jshint node:true*/
-/*globals mocha, expect, jasmine, it, xit, describe*/
+/*globals mocha, expect, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
 
-var mongodb = require('mongodb'),
-    db;
-
-//beforeEach(function (done) {
-//    function drop() {}
+//var app;
 //
-//    mongodb.connect(process.env.DB_URI, {}, function (err, dbconnection) {
-//        if (err) { throw (err);}
-//        db = dbconnection;
-//        db.collection('users').findAndRemove({});
-//        db.collection('centers').findAndRemove({});
-//        db.close(done);
-//        console.log('done');
-//    });
+//beforeEach(function (done) {
+//    app = require('../app');
+//    setTimeout(done, 5000);
+//});
+//
+//afterEach(function () {
+//    app.close();
 //});
 
 describe('uofs-server', function () {
@@ -65,7 +60,7 @@ describe('uofs-server', function () {
             .expect(201, done);
     });
 
-    it('should find center by name', function (done) {
+    xit('should find center by name', function (done) {
         request(server)
             .post('/center/find')
             .send({name: 'Manchester'})
@@ -80,7 +75,21 @@ describe('uofs-server', function () {
             .expect(200, done);
     });
 
-    it('should find center by ID', function (done) {
+    it('center get with query', function (done) {
+        request(server)
+            .get('/center')
+            .query({name: 'Manchester'})
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect('Content-Type', /application\/json/)
+            .expect(function (res) {
+                expect(res.body).toEqual(jasmine.any(Array));
+                expect(res.body.length).toBe(1);
+            })
+            .expect(200, done);
+    });
+
+    xit('should find center by ID', function (done) {
         request(server)
             .post('/center/find')
             .send({_id: CreadtedCenterId})
