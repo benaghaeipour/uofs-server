@@ -57,7 +57,7 @@ var compress = require('compression');
 var errorhandler = require('errorhandler');
 var timeout = require('connect-timeout');
 
-app.use(morgan({
+app.use(/((?!healthcheck).)*/, morgan({
     format: process.env.LOG_TOKEN + ' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b res_time=:response-time ms',
     stream: new net.Socket().connect(10000, 'api.logentries.com')
 }));
