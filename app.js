@@ -99,6 +99,10 @@ app.get('/favicon.ico', function (req, res, next) {
     res.send();
 });
 
+app.get('/healthcheck', function (req, res) {
+    res.send(200);
+});
+
 app.get('/crossdomain.xml', function (req, res, next) {
     //no favicon avaliable, but dont want 404 errors
     res.status(200);
