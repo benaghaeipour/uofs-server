@@ -57,10 +57,14 @@ var compress = require('compression');
 var errorhandler = require('errorhandler');
 var timeout = require('connect-timeout');
 
-app.use(/((?!healthcheck).)*/, morgan({
+app.use(morgan({
     format: process.env.LOG_TOKEN + ' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b res_time=:response-time ms',
-    stream: new net.Socket().connect(10000, 'api.logentries.com')
+    stream: new net.Socket().connect(80, 'api.logentries.com'),
+    skip: function (req) {
+        return !req.path.match(/^healthcheck/);
+    }
 }));
+
 app.use(bodyParser());
 app.use(compress());
 app.use(function(req, res, next){
