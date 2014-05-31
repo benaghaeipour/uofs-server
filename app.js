@@ -29,6 +29,12 @@ var DB = null,
 
 var pkg = require('./package.json');
 
+// set defaults to those needed for local dev
+app.set('env', (process.env.NODE_ENV || 'local'));
+process.env.LOG_TOKEN = process.env.LOG_TOKEN || pkg.env.LOG_TOKEN;
+process.env.DB_URI = process.env.DB_URI || pkg.env.DB_URI;
+process.env.PORT = process.env.PORT || 5000;
+
 var log = logentries.logger({
     token: process.env.LOG_TOKEN,
     timestamp: false,
@@ -41,13 +47,6 @@ var log = logentries.logger({
     }
 });
 
-// set defaults to those needed for local dev
-app.set('env', (process.env.NODE_ENV || 'local'));
-process.env.LOG_TOKEN = process.env.LOG_TOKEN || pkg.env.LOG_TOKEN;
-process.env.DB_URI = process.env.DB_URI || pkg.env.DB_URI;
-process.env.PORT = process.env.PORT || 5000;
-
-
 // *******************************************************
 //          expose 'app' for testing
 module.exports = app;
@@ -57,7 +56,7 @@ module.exports = app;
 
 log.info('Configuring Application for NODE_ENV: ' + app.get('env'));
 log.info('Configuring for DB : ' + process.env.DB_URI);
-log.info('Mongo-db-native driver version : ' + mongodb.version);
+log.info('Configuring for LE : ' + process.env.LOG_TOKEN);
 
 
 var morgan = require('morgan');
