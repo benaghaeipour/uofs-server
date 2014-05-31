@@ -27,6 +27,8 @@ var net = require('net'),
 var DB = null,
     app = express();
 
+var pkg = require('./package.json');
+
 var log = logentries.logger({
     token: process.env.LOG_TOKEN,
     timestamp: false,
@@ -40,9 +42,9 @@ var log = logentries.logger({
 });
 
 // set defaults to those needed for local dev
-app.set('env', (process.env.NODE_ENV || 'development'));
-process.env.LOG_TOKEN = process.env.LOG_TOKEN || 'a15ad4d2-7c28-406d-bef0-9e12f39225b5';
-process.env.DB_URI = process.env.DB_URI;
+app.set('env', (process.env.NODE_ENV || 'local'));
+process.env.LOG_TOKEN = process.env.LOG_TOKEN || pkg.env.LOG_TOKEN;
+process.env.DB_URI = process.env.DB_URI || pkg.env.DB_URI;
 process.env.PORT = process.env.PORT || 5000;
 
 
@@ -75,8 +77,9 @@ app.use(morgan({
 app.use(bodyParser());
 app.use(compress());
 app.use(function(req, res, next){
-  res.set('NODE_ENV', process.env.NODE_ENV);
-  next();
+    res.set('NODE_ENV', process.env.NODE_ENV);
+    res.set('Cache-Control', 'no-cache');
+    next();
 });
 
 switch(process.env.NODE_ENV) {
@@ -92,7 +95,7 @@ switch(process.env.NODE_ENV) {
             dumpExceptions: true,
             showStack: false
         }));
-        log.level('info');
+        log.level('debug');
         log.debug('Setting up debug level logging');
         break;
 }
@@ -116,6 +119,7 @@ app.get('/healthcheck', function (req, res) {
 
 app.get('/crossdomain.xml', function (req, res, next) {
     //no favicon avaliable, but dont want 404 errors
+    res.set('Cache-Control', 'public');
     res.status(200);
     res.send('' +
         '<?xml version="1.0"?>' +
@@ -159,7 +163,7 @@ app.post('/login[/]?', function (req, res, next) {
             log.info('Login Sucess : ', studentRecord.username, studentRecord._id);
             res.send(studentRecord);
         } else {
-            log.notice('Login Failed : ', JSON.stringify(query));
+            log.warn('Login Failed : ', JSON.stringify(query));
             res.send(401);
         }
     });

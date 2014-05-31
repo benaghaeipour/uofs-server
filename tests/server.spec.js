@@ -82,6 +82,7 @@ describe('uofs-server', function () {
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
             .expect('Content-Type', /application\/json/)
+            .expect('Cache-Control', /no/)
             .expect(function (res) {
                 expect(res.body).toEqual(jasmine.any(Array));
                 expect(res.body.length).toBe(1);
@@ -96,6 +97,7 @@ describe('uofs-server', function () {
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
             .expect('Content-Type', /application\/json/)
+            .expect('Cache-Control', /no/)
             .expect(function (res) {
                 expect(res.body).toEqual(jasmine.any(Object));
                 expect(res.body._id).toMatch(/[a-f0-9]{24}/);
@@ -164,6 +166,7 @@ describe('uofs-server', function () {
     it('should 404 with no recording', function (done) {
         request(server)
             .get('/recordings/123456789/1/2/3/4')
+            .expect('Cache-Control', /no/)
             .expect(404, done);
     });
 
