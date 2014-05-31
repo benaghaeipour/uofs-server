@@ -74,7 +74,9 @@ app.use(morgan({
     }
 }));
 
-app.use(bodyParser());
+app.use(bodyParser({
+    limit:1000000
+}));
 app.use(compress());
 app.use(function(req, res, next){
     res.set('NODE_ENV', process.env.NODE_ENV);
