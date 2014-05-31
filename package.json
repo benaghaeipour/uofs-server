@@ -33,7 +33,7 @@
   "scripts": {
     "test": "jasmine-node tests/ --forceExit",
     "dev": "DB_URI=mongodb://c9:c9@oceanic.mongohq.com:10015/dev jasmine-node tests/ --forceExit --autoTest",
-    "postdeploy": "node post-deploy.js",
+    "postdeploy": "echo \"a15ad4d2-7c28-406d-bef0-9e12f39225b5 Nodejitsu startup\" | nc data.logentries.com 80",
     "start": "node app.js"
   },
   "author": "Chris Matheson",
