@@ -29,7 +29,14 @@ var DB = null,
 
 var log = logentries.logger({
     token: process.env.LOG_TOKEN,
-    timestamp: false
+    timestamp: false,
+    levels: {
+        debug:0,
+        info:1,
+        warn:2,
+        error:3,
+        fatal:4
+    }
 });
 
 // set defaults to those needed for local dev
@@ -394,8 +401,7 @@ app.get('/recordings/:filename[/]?', function (req, res, next) {
  * https://github.com/mongodb/node-mongodb-native/blob/master/docs/gridfs.md
  */
 app.post('/recordings/:filename[/]?', function (req, res, next) {
-
-    log.debug('receieving recording file ' + req.params.filename);
+    log.debug('receieving recording filename=' + req.params.filename);
     var tempFileName = './tmp/' + req.params.filename;
     //buffer file upload into an actual file
     var uploadBuff = fs.createWriteStream(tempFileName);
@@ -403,6 +409,7 @@ app.post('/recordings/:filename[/]?', function (req, res, next) {
 
     //save this file off to DB
     req.on('end', function () {
+        log.debug('sending recording to mongo filename=' + req.params.filename);
         var newRecording = new mongodb.GridStore(DB, req.params.filename, 'w', {
             "content_type": "binary/octet-stream",
             "chunk_size": 1024 * 4
@@ -415,9 +422,10 @@ app.post('/recordings/:filename[/]?', function (req, res, next) {
 
             gridStore.writeFile(tempFileName, function (err, filePointer) {
                 if (err) {
+                    log.error('uploading recording to mongo filename=' + req.params.filename);
                     return next(err);
                 }
-                log.debug('recoding file has been sucessfully saved');
+                log.debug('upload recording complete filename=' + req.params.filename);
                 res.send(201);
                 fs.unlink(tempFileName);
             });
