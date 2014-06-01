@@ -13,7 +13,7 @@ deploy:
   api_key:
     secure: kjYEiqdsNjGIMQod8nYUi1ePvdFIPLJiHAiHyNB7gzi7LpXNwvywgI4mhfGmqK6e68IimN+lapddBiT3FDyPOQNnyagIVeyHtD9ShAvjd9uNm+uRygGhhzLbszcduKC2vk7RqFI+YQ6UkjtHruPwmW/bBMV/NF1jS1DaFOOVr8A=
   on:
-      branch:
+    branch:
         - online
         - preview
         - dev

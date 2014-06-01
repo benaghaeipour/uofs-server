@@ -60,7 +60,7 @@ log.info('Configuring for LE : ' + process.env.LOG_TOKEN);
 
 
 var morgan = require('morgan');
-var bodyParser = require('body-parser');
+var bodyParser = require('body-parser')({limit:300000});
 var compress = require('compression');
 var errorhandler = require('errorhandler');
 var timeout = require('connect-timeout');
@@ -73,9 +73,6 @@ app.use(morgan({
     }
 }));
 
-app.use(bodyParser({
-    limit:1000000
-}));
 app.use(compress());
 app.use(function(req, res, next){
     res.set('NODE_ENV', process.env.NODE_ENV);
@@ -141,7 +138,7 @@ app.get('/crossdomain.xml', function (req, res, next) {
  *
  * check that req includes user, center & pass
  */
-app.post('/login[/]?', function (req, res, next) {
+app.post('/login[/]?', bodyParser, function (req, res, next) {
     //sanitize
     var query = _.extend({
         username: "",
@@ -176,7 +173,7 @@ app.post('/login[/]?', function (req, res, next) {
 /**
  * Does a find on the DB from the posted object
  */
-app.post('/student/find[/]?', function (req, res, next) {
+app.post('/student/find[/]?', bodyParser, function (req, res, next) {
     var query = req.body;
     var options = {};
     if (query._id) {
@@ -216,7 +213,7 @@ app.post('/student/find[/]?', function (req, res, next) {
 /**
  * Deletes the object found by the post data. (only if 1 is found)
  */
-app.post('/student/delete[/]?', function (req, res, next) {
+app.post('/student/delete[/]?', bodyParser, function (req, res, next) {
     var query = req.body;
     log.info('Student Deleted : ', query._id);
     query._id = new mongodb.ObjectID(query._id);
@@ -240,7 +237,7 @@ app.post('/student/delete[/]?', function (req, res, next) {
  * Create SR if _id == null
  * Update SR if _id == something
  */
-app.post('/student/update[/]?', function (req, res, next) {
+app.post('/student/update[/]?', bodyParser, function (req, res, next) {
     var query = req.body;
 
     if (query.username) {
@@ -290,6 +287,7 @@ app.post('/student/update[/]?', function (req, res, next) {
 //          Center endpoints
 
 app.route('/center')
+    .all(bodyParser)
     .get(function (req, res, next) {
         log.info('Center lookup : ', JSON.stringify(req.query));
         DB.centers.find(req.query, {safe: true}).toArray(function (err, objects) {
@@ -318,7 +316,7 @@ app.route('/center')
 /**
  * Get center obj
  */
-app.post('/center/find[/]?', function (req, res, next) {
+app.post('/center/find[/]?', bodyParser, function (req, res, next) {
     var query = req.body;
     query.deleted ={
         $exists: false
@@ -349,7 +347,7 @@ app.post('/center/find[/]?', function (req, res, next) {
 /**
  * Can only update if you have _id value. new centers created by us
  */
-app.post('/center/update[/]?', function (req, res, next) {
+app.post('/center/update[/]?', bodyParser, function (req, res, next) {
     var query = req.body;
     if (!query._id) {
         return next(new Error('need object _id for this call'));
