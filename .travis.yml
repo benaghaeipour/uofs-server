@@ -13,7 +13,10 @@ deploy:
   api_key:
     secure: kjYEiqdsNjGIMQod8nYUi1ePvdFIPLJiHAiHyNB7gzi7LpXNwvywgI4mhfGmqK6e68IimN+lapddBiT3FDyPOQNnyagIVeyHtD9ShAvjd9uNm+uRygGhhzLbszcduKC2vk7RqFI+YQ6UkjtHruPwmW/bBMV/NF1jS1DaFOOVr8A=
   on:
-    repo: peachproductions/uofs-server
+      branch:
+        - online
+        - preview
+        - dev
 after_deploy: echo "a15ad4d2-7c28-406d-bef0-9e12f39225b5 Deploying Server for SHA=$TRAVIS_COMMIT build=$TRAVIS_BUILD_NUMBER" | nc data.logentries.com 80
 notifications:
   email: false
