@@ -31,8 +31,8 @@ describe('uofs-server', function () {
         request(server)
             .post('/student/update')
             .send({
-                username: 'testUser',
-                pw1: 'testPass'
+                username: 'scott',
+                pw1: 'iii'
             })
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
@@ -61,7 +61,7 @@ describe('uofs-server', function () {
     it('should login', function (done) {
         request(server)
             .post('/login')
-            .send({pw1:"testPass",username:"testUser"})
+            .send({pw1:"iii",username:"scott"})
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
             .expect('Content-Type', /application\/json/)
