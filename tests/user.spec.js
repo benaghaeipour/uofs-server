@@ -32,6 +32,7 @@ describe('uofs-server', function () {
             .post('/student/update')
             .send({
                 username: 'scott',
+                accountType: 0,  //so that when we use this external to tests it will be a "teacher"
                 pw1: 'iii'
             })
             .set('Accept', 'application/json')
