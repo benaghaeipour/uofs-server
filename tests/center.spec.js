@@ -1,17 +1,6 @@
 /*jshint node:true*/
 /*globals mocha, expect, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
 
-//var app;
-//
-//beforeEach(function (done) {
-//    app = require('../app');
-//    setTimeout(done, 5000);
-//});
-//
-//afterEach(function () {
-//    app.close();
-//});
-
 describe('uofs-server', function () {
     var request = require('supertest'),
         server = 'http://localhost:5000';
