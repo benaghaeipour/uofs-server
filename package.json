@@ -15,8 +15,9 @@
     "node-logentries": "~0.1.0"
   },
   "devDependencies": {
+    "jasmine-node": "^2.0.0",
     "supertest": "0.13.x",
-    "jasmine-node": "^2.0.0"
+    "uuid": "^1.4.1"
   },
   "engines": {
     "node": "0.10.x"
