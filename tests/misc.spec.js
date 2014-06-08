@@ -11,14 +11,17 @@ describe('uofs-server', function () {
             .expect(200, done);
     });
 
-    it('should redirect /uk and /us', function (done) {
-        request(server)
-            .get('/uk/something')
-            .expect('Location', /static\.unitsofsound\.net\/uk\/something/)
-            .expect(302, done);
+    it('should redirect /us', function (done) {
         request(server)
             .get('/us/something')
             .expect('Location', /static\.unitsofsound\.net\/us\/something/)
+            .expect(302, done);
+    });
+
+    it('should redirect /uk', function (done) {
+        request(server)
+            .get('/uk/something')
+            .expect('Location', /static\.unitsofsound\.net\/uk\/something/)
             .expect(302, done);
     });
 });
