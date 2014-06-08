@@ -31,7 +31,7 @@ var pkg = require('./package.json');
 
 // set defaults to those needed for local dev
 app.set('env', (process.env.NODE_ENV || 'local'));
-process.env.LOG_TOKEN = process.env.LOG_TOKEN || pkg.env.LOG_TOKEN;
+process.env.LOG_TOKEN = process.env.LOG_TOKEN || 'local';
 process.env.DB_URI = process.env.DB_URI || pkg.env.DB_URI;
 process.env.PORT = process.env.PORT || 5000;
 
