@@ -1,20 +1,12 @@
 /*jshint node:true*/
 /*globals mocha, expect, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
 
-//var app;
-//
-//beforeEach(function (done) {
-//    app = require('../app');
-//    setTimeout(done, 5000);
-//});
-//
-//afterEach(function () {
-//    app.close();
-//});
+var app;
 
 describe('uofs-server', function () {
     var request = require('supertest'),
-        server = 'http://localhost:5000';
+        server = 'http://localhost:5000',
+        expect = require('expect.js');
 
     it('should fail to login', function (done) {
         request(server)
@@ -40,7 +32,7 @@ describe('uofs-server', function () {
             .expect('Content-Type', /application\/json/)
             .expect(function (res) {
                 CreadtedUserId = res.body[0]._id;
-                expect(CreadtedUserId).toMatch(/[a-f0-9]{24}/);
+                expect(CreadtedUserId).to.match(/[a-f0-9]{24}/);
             })
             .expect(201, done);
     });
@@ -53,8 +45,8 @@ describe('uofs-server', function () {
             .set('Content-Type', 'application/json')
             .expect('Content-Type', /application\/json/)
             .expect(function (res) {
-                expect(res.body).toEqual(jasmine.any(Array));
-                expect(res.body.length).toBeGreaterThan(0);
+                expect(res.body).to.be.an('array');
+                expect(res.body.length).to.be.greaterThan(0);
             })
             .expect(200, done);
     });
@@ -67,7 +59,7 @@ describe('uofs-server', function () {
             .set('Content-Type', 'application/json')
             .expect('Content-Type', /application\/json/)
             .expect(function (res) {
-                expect(res.body._id).toMatch(/[a-f0-9]{24}/);
+                expect(res.body._id).to.match(/[a-f0-9]{24}/);
             })
             .expect(200, done);
     });

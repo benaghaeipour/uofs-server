@@ -3,7 +3,8 @@
 
 describe('uofs-server', function () {
     var request = require('supertest'),
-        server = 'http://localhost:5000';
+        server = 'http://localhost:5000',
+        expect = require('expect.js');
 
     var CreadtedCenterId = '';
 
@@ -18,7 +19,7 @@ describe('uofs-server', function () {
             .expect('Content-Type', /application\/json/)
             .expect(function (res) {
                 CreadtedCenterId = res.body[0]._id;
-                expect(CreadtedCenterId).toMatch(/[a-f0-9]{24}/);
+                expect(CreadtedCenterId).to.match(/[a-f0-9]{24}/);
             })
             .expect(201, done);
     });
@@ -31,9 +32,9 @@ describe('uofs-server', function () {
             .set('Content-Type', 'application/json')
             .expect('Content-Type', /application\/json/)
             .expect(function (res) {
-                expect(res.body).toEqual(jasmine.any(Object));
-                expect(res.body._id).toMatch(/[a-f0-9]{24}/);
-                expect(res.body.name).toBe('Manchester');
+                expect(res.body).to.equal(jasmine.any(Object));
+                expect(res.body._id).to.match(/[a-f0-9]{24}/);
+                expect(res.body.name).to.be('Manchester');
             })
             .expect(200, done);
     });
@@ -47,8 +48,8 @@ describe('uofs-server', function () {
             .expect('Content-Type', /application\/json/)
             .expect('Cache-Control', /no/)
             .expect(function (res) {
-                expect(res.body).toEqual(jasmine.any(Array));
-                expect(res.body.length).toBe(1);
+                expect(res.body).to.be.an('array');
+                expect(res.body.length).to.be(1);
             })
             .expect(200, done);
     });
@@ -62,22 +63,29 @@ describe('uofs-server', function () {
             .expect('Content-Type', /application\/json/)
             .expect('Cache-Control', /no/)
             .expect(function (res) {
-                expect(res.body).toEqual(jasmine.any(Object));
-                expect(res.body._id).toMatch(/[a-f0-9]{24}/);
-                expect(res.body.name).toBe('Manchester');
+                expect(res.body).to.equal(jasmine.any(Object));
+                expect(res.body._id).to.match(/[a-f0-9]{24}/);
+                expect(res.body.name).to.be('Manchester');
             })
             .expect(200, done);
     });
 
-    var CreadtedUserId = '';
-
     xit('should update a center', function (done) {
         request(server)
             .post('/center/update')
-            .send({_id: 'a12321312321321321ab5555', blah:'blah'})
+            .send({_id: CreadtedCenterId, blah:'blah'})
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
             .expect('Content-Type', /application\/json/)
             .expect(201, done);
+    });
+
+    xit('should remove center', function (done) {
+        request(server)
+            .delete('/center/' + CreadtedCenterId)
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect('Content-Type', /application\/json/)
+            .expect(200, done);
     });
 });

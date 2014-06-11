@@ -338,7 +338,7 @@ app.post('/center/find[/]?', bodyParser, function (req, res, next) {
             return next(err);
         }
 
-        // log.debug('Returning : '+ JSON.stringify(records));
+        log.debug('Returning : '+ JSON.stringify(records));
 
         res.send(records);
     });
