@@ -19,7 +19,7 @@ var net = require('net'),
     fs = require('fs'),
     express = require('express'),
     mongodb = require('mongodb'),
-    _ = require('underscore'),
+    _ = require('lodash'),
     logentries = require('node-logentries');
 
 // *******************************************************
@@ -27,17 +27,25 @@ var net = require('net'),
 var DB = null,
     app = express();
 
-var log = logentries.logger({
-    token: process.env.LOG_TOKEN,
-    timestamp: false
-});
+var pkg = require('./package.json');
 
 // set defaults to those needed for local dev
-app.set('env', (process.env.NODE_ENV || 'development'));
-process.env.LOG_TOKEN = process.env.LOG_TOKEN || 'a15ad4d2-7c28-406d-bef0-9e12f39225b5';
-process.env.DB_URI = process.env.DB_URI || 'mongodb://c9:c9@oceanic.mongohq.com:10015/dev';
+app.set('env', (process.env.NODE_ENV || 'local'));
+process.env.LOG_TOKEN = process.env.LOG_TOKEN || 'local';
+process.env.DB_URI = process.env.DB_URI || pkg.env.DB_URI;
 process.env.PORT = process.env.PORT || 5000;
 
+var log = logentries.logger({
+    token: process.env.LOG_TOKEN,
+    timestamp: false,
+    levels: {
+        debug:0,
+        info:1,
+        warn:2,
+        error:3,
+        fatal:4
+    }
+});
 
 // *******************************************************
 //          expose 'app' for testing
@@ -48,37 +56,44 @@ module.exports = app;
 
 log.info('Configuring Application for NODE_ENV: ' + app.get('env'));
 log.info('Configuring for DB : ' + process.env.DB_URI);
-log.info('Mongo-db-native driver version : ' + mongodb.version);
+log.info('Configuring for LE : ' + process.env.LOG_TOKEN);
 
 
-app.configure(function () {
-    app.use(express.logger({
-        format: process.env.LOG_TOKEN + ' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b res_time=:response-time ms',
-        stream: new net.Socket().connect(10000, 'api.logentries.com')
-    }));
-    app.use(express.json());
-    app.use(app.router);
-    app.use(function(req, res, next){
-      res.set('NODE_ENV', process.env.NODE_ENV);
-      next();
-    });
+var morgan = require('morgan');
+var bodyParser = require('body-parser')({limit:300000});
+var compress = require('compression');
+var errorhandler = require('errorhandler');
+var timeout = require('connect-timeout');
 
+app.use(morgan({
+    format: process.env.LOG_TOKEN + ' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b res_time=:response-time ms',
+    stream: new net.Socket().connect(80, 'api.logentries.com'),
+    skip: function (req) {
+        return !req.path.match(/^healthcheck/);
+    }
+}));
+
+app.use(compress());
+app.use(function(req, res, next){
+    res.set('NODE_ENV', process.env.NODE_ENV);
+    res.set('Cache-Control', 'no-cache');
+    next();
 });
 
 switch(process.env.NODE_ENV) {
     case 'production':
-        log.level('info');
-        app.use(express.timeout());
+        log.level('debug');
+        app.use(timeout());
         break;
     default:
         log.on('log', function (logline) {
-            console.debug(logline);
+            console.log(logline);
         });
-        app.use(express.errorHandler({
+        app.use(errorhandler({
             dumpExceptions: true,
             showStack: false
         }));
-        log.level('info');
+        log.level('debug');
         log.debug('Setting up debug level logging');
         break;
 }
@@ -96,8 +111,13 @@ app.get('/favicon.ico', function (req, res, next) {
     res.send();
 });
 
+app.get('/healthcheck', function (req, res) {
+    res.send(200);
+});
+
 app.get('/crossdomain.xml', function (req, res, next) {
     //no favicon avaliable, but dont want 404 errors
+    res.set('Cache-Control', 'public');
     res.status(200);
     res.send('' +
         '<?xml version="1.0"?>' +
@@ -118,7 +138,7 @@ app.get('/crossdomain.xml', function (req, res, next) {
  *
  * check that req includes user, center & pass
  */
-app.post('/login[/]?', function (req, res, next) {
+app.post('/login[/]?', bodyParser, function (req, res, next) {
     //sanitize
     var query = _.extend({
         username: "",
@@ -141,7 +161,7 @@ app.post('/login[/]?', function (req, res, next) {
             log.info('Login Sucess : ', studentRecord.username, studentRecord._id);
             res.send(studentRecord);
         } else {
-            log.notice('Login Failed : ', JSON.stringify(query));
+            log.warn('Login Failed : ', JSON.stringify(query));
             res.send(401);
         }
     });
@@ -153,7 +173,7 @@ app.post('/login[/]?', function (req, res, next) {
 /**
  * Does a find on the DB from the posted object
  */
-app.post('/student/find[/]?', function (req, res, next) {
+app.post('/student/find[/]?', bodyParser, function (req, res, next) {
     var query = req.body;
     var options = {};
     if (query._id) {
@@ -179,7 +199,7 @@ app.post('/student/find[/]?', function (req, res, next) {
         $exists: false
     };
 
-    log.info('Student/Find/ : ', JSON.stringify(query));
+    log.info('Student lookup : ', JSON.stringify(query));
 
     DB.users.find(query, options).toArray(function (err, records) {
         if (err) {
@@ -193,7 +213,7 @@ app.post('/student/find[/]?', function (req, res, next) {
 /**
  * Deletes the object found by the post data. (only if 1 is found)
  */
-app.post('/student/delete[/]?', function (req, res, next) {
+app.post('/student/delete[/]?', bodyParser, function (req, res, next) {
     var query = req.body;
     log.info('Student Deleted : ', query._id);
     query._id = new mongodb.ObjectID(query._id);
@@ -209,7 +229,7 @@ app.post('/student/delete[/]?', function (req, res, next) {
             return next(err);
         }
 
-        res.send(201);
+        res.send(202);
     });
 });
 
@@ -217,7 +237,7 @@ app.post('/student/delete[/]?', function (req, res, next) {
  * Create SR if _id == null
  * Update SR if _id == something
  */
-app.post('/student/update[/]?', function (req, res, next) {
+app.post('/student/update[/]?', bodyParser, function (req, res, next) {
     var query = req.body;
 
     if (query.username) {
@@ -235,7 +255,7 @@ app.post('/student/update[/]?', function (req, res, next) {
             if (err) {
                 return next(err);
             }
-            log.info('Student Created : ', objects);
+            log.info('Student Created : ', JSON.stringify(objects));
             res.status(201);
             res.send(objects);
         });
@@ -266,22 +286,70 @@ app.post('/student/update[/]?', function (req, res, next) {
 // *******************************************************
 //          Center endpoints
 
+app.route('/center')
+    .all(bodyParser)
+    .get(function (req, res, next) {
+        req.query.deleted = {$exists: false};
+        log.info('Center query : ', JSON.stringify(req.query));
+        DB.centers.find(req.query, {safe: true}).toArray(function (err, objects) {
+            if (err) {
+                return next(err);
+            }
+            log.debug('Returning : '+ JSON.stringify(objects));
+            res.status(200);
+            res.send(objects);
+        });
+    })
+    .put(function (req, res, next) {
+        var query = req.body;
+
+        log.info('Center create');
+        console.log('Center create', query);
+
+        DB.centers.insert(query, {
+            safe: true
+        }, function (err, objects) {
+            if (err) {
+                return next(err);
+            }
+            log.info('Center Created : ', JSON.stringify(objects));
+            res.status(201);
+            res.send(objects);
+        });
+    })
+    .post(function (req, res, next) {
+        var query = req.body;
+
+        DB.centers.update(_.pick(query, '_id'), _.omit(query, '_id'), {
+            safe: true
+        }, function (err, objects) {
+            console.log(err, objects);
+            if (err) {
+                return next(err);
+            }
+            log.info('Center update : ', JSON.stringify(objects));
+            res.status(202);
+            res.send(objects);
+        });
+    });
+
 /**
  * Get center obj
  */
-app.post('/center/find[/]?', function (req, res, next) {
+app.post('/center/find[/]?', bodyParser, function (req, res, next) {
     var query = req.body;
     query.deleted ={
         $exists: false
     };
 
-    log.debug('Center/Find Query : ' + JSON.stringify(query));
+    log.info('Center find query=' + JSON.stringify(_.pick(query, '_id', 'name')));
+    log.debug('Center/find query=' + JSON.stringify(query));
 
-    if (!query.name) {
+    var hasEitherProprty = _.has(query, 'name') || _.has(query, '_id');
+
+    if (!hasEitherProprty) {
         return next(new Error('need name or _id for this call'));
     }
-
-    log.info('Center find : ' + query.name);
 
     DB.centers.findOne(query, {
         limit: 1,
@@ -293,7 +361,7 @@ app.post('/center/find[/]?', function (req, res, next) {
             return next(err);
         }
 
-        // log.debug('Returning : '+ JSON.stringify(records));
+        log.debug('Returning : '+ JSON.stringify(records));
 
         res.send(records);
     });
@@ -302,7 +370,7 @@ app.post('/center/find[/]?', function (req, res, next) {
 /**
  * Can only update if you have _id value. new centers created by us
  */
-app.post('/center/update[/]?', function (req, res, next) {
+app.post('/center/update[/]?', bodyParser, function (req, res, next) {
     var query = req.body;
     if (!query._id) {
         return next(new Error('need object _id for this call'));
@@ -319,9 +387,8 @@ app.post('/center/update[/]?', function (req, res, next) {
         if (err) {
             return next(err);
         }
-        log.debug('Retuning : ' + JSON.stringify(objects));
-        res.status(201);
-        res.send(objects);
+        log.debug('Successful update id=',req.query._id);
+        res.send(201);
     });
 });
 
@@ -359,8 +426,7 @@ app.get('/recordings/:filename[/]?', function (req, res, next) {
  * https://github.com/mongodb/node-mongodb-native/blob/master/docs/gridfs.md
  */
 app.post('/recordings/:filename[/]?', function (req, res, next) {
-
-    log.debug('receieving recording file ' + req.params.filename);
+    log.debug('receieving recording filename=' + req.params.filename);
     var tempFileName = './tmp/' + req.params.filename;
     //buffer file upload into an actual file
     var uploadBuff = fs.createWriteStream(tempFileName);
@@ -368,6 +434,7 @@ app.post('/recordings/:filename[/]?', function (req, res, next) {
 
     //save this file off to DB
     req.on('end', function () {
+        log.debug('sending recording to mongo filename=' + req.params.filename);
         var newRecording = new mongodb.GridStore(DB, req.params.filename, 'w', {
             "content_type": "binary/octet-stream",
             "chunk_size": 1024 * 4
@@ -380,37 +447,14 @@ app.post('/recordings/:filename[/]?', function (req, res, next) {
 
             gridStore.writeFile(tempFileName, function (err, filePointer) {
                 if (err) {
+                    log.error('uploading recording to mongo filename=' + req.params.filename);
                     return next(err);
                 }
-                log.debug('recoding file has been sucessfully saved');
+                log.debug('upload recording complete filename=' + req.params.filename);
                 res.send(201);
                 fs.unlink(tempFileName);
             });
         });
-    });
-});
-
-
-// *******************************************************
-//          Log enpoint
-
-/**
- * log req body into the db with a type & message minimum, and any other properties
- */
-app.post('/log[/]?', function (req, res, next) {
-    if (_.isEmpty(req.body.type) || _.isEmpty(req.body.type)) {
-        next(new Error('log does not have the required properties \'type\' and \'message\''));
-        return;
-    }
-    DB.logs.insert(req.body, {
-        safe: true
-    }, function (err, objects) {
-        if (err) {
-            log.err('error saving log : ' + err);
-            res.send(500);
-        } else {
-            res.send(201);
-        }
     });
 });
 
@@ -494,17 +538,13 @@ mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
         DB.centers = collection;
     });
 
-    //https.createServer(null, app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 443);
-    http.createServer(app).listen(process.env.PORT || process.env.VCAP_APP_PORT || 80);
-    log.debug('listening on %s', process.env.PORT);
+    app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80).once('listening', function() {
+        log.info('listening on ' + process.env.PORT);
+    });
 });
 
 process.on('SIGHUP', function () {
     DB.close();
+    app.close();
     console.log('bye');
-});
-
-process.on('uncaughtException', function (err) {
-    log.emerg("UNCAUGHT!!: " + err + err.stack);
-//    process.exit(1);
 });
