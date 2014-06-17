@@ -289,17 +289,22 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 app.route('/center')
     .all(bodyParser)
     .get(function (req, res, next) {
-        log.info('Center lookup : ', JSON.stringify(req.query));
+        req.query.deleted = {$exists: false};
+        log.info('Center query : ', JSON.stringify(req.query));
         DB.centers.find(req.query, {safe: true}).toArray(function (err, objects) {
             if (err) {
                 return next(err);
             }
+            log.debug('Returning : '+ JSON.stringify(objects));
             res.status(200);
             res.send(objects);
         });
     })
-    .post(function (req, res, next) {
+    .put(function (req, res, next) {
         var query = req.body;
+
+        log.info('Center create');
+        console.log('Center create', query);
 
         DB.centers.insert(query, {
             safe: true
@@ -309,6 +314,21 @@ app.route('/center')
             }
             log.info('Center Created : ', JSON.stringify(objects));
             res.status(201);
+            res.send(objects);
+        });
+    })
+    .post(function (req, res, next) {
+        var query = req.body;
+
+        DB.centers.update(_.pick(query, '_id'), _.omit(query, '_id'), {
+            safe: true
+        }, function (err, objects) {
+            console.log(err, objects);
+            if (err) {
+                return next(err);
+            }
+            log.info('Center update : ', JSON.stringify(objects));
+            res.status(202);
             res.send(objects);
         });
     });
@@ -322,9 +342,12 @@ app.post('/center/find[/]?', bodyParser, function (req, res, next) {
         $exists: false
     };
 
-    log.debug('Center lookup : ' + JSON.stringify(query));
+    log.info('Center find query=' + JSON.stringify(_.pick(query, '_id', 'name')));
+    log.debug('Center/find query=' + JSON.stringify(query));
 
-    if (!query.name || !query._id) {
+    var hasEitherProprty = _.has(query, 'name') || _.has(query, '_id');
+
+    if (!hasEitherProprty) {
         return next(new Error('need name or _id for this call'));
     }
 
@@ -364,9 +387,8 @@ app.post('/center/update[/]?', bodyParser, function (req, res, next) {
         if (err) {
             return next(err);
         }
-        log.debug('Retuning : ' + JSON.stringify(objects));
-        res.status(201);
-        res.send(objects);
+        log.debug('Successful update id=',req.query._id);
+        res.send(201);
     });
 });
 

@@ -33,8 +33,8 @@
     "LOG_TOKEN": "a15ad4d2-7c28-406d-bef0-9e12f39225b5"
   },
   "scripts": {
-    "test": "mocha -R spec",
-    "dev": "mocha -w -R spec",
+    "test": "mocha -R spec -t 4000 -b",
+    "dev": "mocha -w -R spec -t 4000 -b",
     "postdeploy": "echo \"a15ad4d2-7c28-406d-bef0-9e12f39225b5 Nodejitsu startup\" | nc data.logentries.com 80",
     "start": "node app.js"
   },
