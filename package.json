@@ -35,7 +35,7 @@
   "scripts": {
     "test": "mocha -R spec -t 4000 -b",
     "dev": "mocha -w -R spec -t 4000 -b",
-    "postdeploy": "echo \"a15ad4d2-7c28-406d-bef0-9e12f39225b5 Nodejitsu startup\" | nc data.logentries.com 80",
+    "postdeploy": "echo \"174fa695-751c-41fc-bd3b-5a11cd44b4b4 Nodejitsu startup\" | nc data.logentries.com 80",
     "start": "node app.js"
   },
   "author": "Chris Matheson",
