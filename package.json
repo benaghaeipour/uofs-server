@@ -29,7 +29,7 @@
   },
   "env": {
     "NODE_ENV": "develoment",
-    "DB_URI": "mongodb://c9:c9@oceanic.mongohq.com:10040/preview",
+    "DB_URI": "mongodb://online:1DpMYRx6qVAo@candidate.33.mongolayer.com:10140/online",
     "LOG_TOKEN": "b35f4fab-88ce-4613-8e05-63dff3cc398a"
   },
   "scripts": {
