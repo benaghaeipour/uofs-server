@@ -543,9 +543,9 @@ mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
     });
 });
 
-//process.on('uncaughtexception', function () {
-//    log.fatal('UNCAUGHT EXCEPTION -  should not');
-//});
+process.on('uncaughtexception', function () {
+    log.fatal('UNCAUGHT EXCEPTION -  should not');
+});
 
 process.on('SIGHUP', function () {
     DB.close();
