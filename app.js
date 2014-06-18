@@ -480,14 +480,14 @@ app.all('/dev/dump[/]?', function (req, res, next) {
     });
 });
 
-// app.all('/dev/crash[/]?', function(req, res, next) {
-//   console.error('This is a triggerd crash');
-//   log.crit('This is a triggerd crash');
-//   res.send('crashing app in 500ms');
-//   setTimeout(function() {
-//     throw new Error('this crash was triggered');
-//   }, 500);
-// });
+//app.all('/dev/crash[/]?', function(req, res, next) {
+//    console.error('This is a triggerd crash');
+//    log.crit('This is a triggerd crash');
+//    res.send('crashing app in 500ms');
+//    setTimeout(function() {
+//       throw new Error('this crash was triggered');
+//    }, 500);
+//});
 
 // *******************************************************
 //          Start of application doing things
@@ -542,6 +542,10 @@ mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
         log.info('listening on ' + process.env.PORT);
     });
 });
+
+//process.on('uncaughtexception', function () {
+//    log.fatal('UNCAUGHT EXCEPTION -  should not');
+//});
 
 process.on('SIGHUP', function () {
     DB.close();
