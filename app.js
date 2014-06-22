@@ -399,19 +399,20 @@ app.post('/center/update[/]?', bodyParser, function (req, res, next) {
  * Returns a file from GrdFS
  */
 app.get('/recordings/:filename[/]?', function (req, res, next) {
-    log.debug('request for ' + req.params.filename);
-    var storedRec = new mongodb.GridStore(DB, req.params.filename, 'r');
-    storedRec.open(function (err, gs) {
-        if (err) {
-            return res.send(404);
-        }
-
-        //file opened, can now do things with it
-        // Create a stream to the file
-        log.debug('request for existing recording');
-        var stream = gs.stream(true);
-        stream.pipe(res);
-    });
+//    log.debug('request for ' + req.params.filename);
+//    var storedRec = new mongodb.GridStore(DB, req.params.filename, 'r');
+//    storedRec.open(function (err, gs) {
+//        if (err) {
+//            return res.send(404);
+//        }
+//
+//        //file opened, can now do things with it
+//        // Create a stream to the file
+//        log.debug('request for existing recording');
+//        var stream = gs.stream(true);
+//        stream.pipe(res);
+//    });
+    res.send(200);
 });
 
 /**
@@ -426,36 +427,37 @@ app.get('/recordings/:filename[/]?', function (req, res, next) {
  * https://github.com/mongodb/node-mongodb-native/blob/master/docs/gridfs.md
  */
 app.post('/recordings/:filename[/]?', function (req, res, next) {
-    log.debug('receieving recording filename=' + req.params.filename);
-    var tempFileName = './tmp/' + req.params.filename;
-    //buffer file upload into an actual file
-    var uploadBuff = fs.createWriteStream(tempFileName);
-    req.pipe(uploadBuff);
-
-    //save this file off to DB
-    req.on('end', function () {
-        log.debug('sending recording to mongo filename=' + req.params.filename);
-        var newRecording = new mongodb.GridStore(DB, req.params.filename, 'w', {
-            "content_type": "binary/octet-stream",
-            "chunk_size": 1024 * 4
-        });
-
-        newRecording.open(function (err, gridStore) {
-            if (err) {
-                return next(err);
-            }
-
-            gridStore.writeFile(tempFileName, function (err, filePointer) {
-                if (err) {
-                    log.error('uploading recording to mongo filename=' + req.params.filename);
-                    return next(err);
-                }
-                log.debug('upload recording complete filename=' + req.params.filename);
-                res.send(201);
-                fs.unlink(tempFileName);
-            });
-        });
-    });
+//    log.debug('receieving recording filename=' + req.params.filename);
+//    var tempFileName = './tmp/' + req.params.filename;
+//    //buffer file upload into an actual file
+//    var uploadBuff = fs.createWriteStream(tempFileName);
+//    req.pipe(uploadBuff);
+//
+//    //save this file off to DB
+//    req.on('end', function () {
+//        log.debug('sending recording to mongo filename=' + req.params.filename);
+//        var newRecording = new mongodb.GridStore(DB, req.params.filename, 'w', {
+//            "content_type": "binary/octet-stream",
+//            "chunk_size": 1024 * 4
+//        });
+//
+//        newRecording.open(function (err, gridStore) {
+//            if (err) {
+//                return next(err);
+//            }
+//
+//            gridStore.writeFile(tempFileName, function (err, filePointer) {
+//                if (err) {
+//                    log.error('uploading recording to mongo filename=' + req.params.filename);
+//                    return next(err);
+//                }
+//                log.debug('upload recording complete filename=' + req.params.filename);
+//                res.send(201);
+//                fs.unlink(tempFileName);
+//            });
+//        });
+//    });
+    res.send(200);
 });
 
 
@@ -480,14 +482,14 @@ app.all('/dev/dump[/]?', function (req, res, next) {
     });
 });
 
-// app.all('/dev/crash[/]?', function(req, res, next) {
-//   console.error('This is a triggerd crash');
-//   log.crit('This is a triggerd crash');
-//   res.send('crashing app in 500ms');
-//   setTimeout(function() {
-//     throw new Error('this crash was triggered');
-//   }, 500);
-// });
+//app.all('/dev/crash[/]?', function(req, res, next) {
+//    console.error('This is a triggerd crash');
+//    log.crit('This is a triggerd crash');
+//    res.send('crashing app in 500ms');
+//    setTimeout(function() {
+//       throw new Error('this crash was triggered');
+//    }, 500);
+//});
 
 // *******************************************************
 //          Start of application doing things
@@ -541,6 +543,10 @@ mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
     app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80).once('listening', function() {
         log.info('listening on ' + process.env.PORT);
     });
+});
+
+process.on('uncaughtexception', function () {
+    log.fatal('UNCAUGHT EXCEPTION -  should not');
 });
 
 process.on('SIGHUP', function () {
