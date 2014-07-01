@@ -398,7 +398,7 @@ app.post('/center/update[/]?', bodyParser, function (req, res, next) {
 /**
  * Returns a file from GrdFS
  */
-app.get('/recordings/:filename[/]?', function (req, res, next) {
+app.get('/recordings/:filename', function (req, res, next) {
     log.debug('request for ' + req.params.filename);
     var storedRec = new mongodb.GridStore(DB, req.params.filename, 'r');
     storedRec.open(function (err, gs) {
@@ -425,7 +425,7 @@ app.get('/recordings/:filename[/]?', function (req, res, next) {
  *
  * https://github.com/mongodb/node-mongodb-native/blob/master/docs/gridfs.md
  */
-app.post('/recordings/:filename[/]?', function (req, res, next) {
+app.post('/recordings/:filename', function (req, res, next) {
     log.debug('receieving recording filename=' + req.params.filename);
     var tempFileName = './tmp/' + req.params.filename;
     //buffer file upload into an actual file
