@@ -442,6 +442,7 @@ app.post('/recordings/:filename', function (req, res, next) {
 
         newRecording.open(function (err, gridStore) {
             if (err) {
+                log.error('could not open Gridstore item filename=' + req.params.filename);
                 return next(err);
             }
 
