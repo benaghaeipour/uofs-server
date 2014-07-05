@@ -426,36 +426,18 @@ app.get('/recordings/:filename', function (req, res, next) {
  * https://github.com/mongodb/node-mongodb-native/blob/master/docs/gridfs.md
  */
 app.post('/recordings/:filename', function (req, res, next) {
-    log.debug('receieving recording filename=' + req.params.filename);
-    var tempFileName = './tmp/' + req.params.filename;
-    //buffer file upload into an actual file
-    var uploadBuff = fs.createWriteStream(tempFileName);
-    req.pipe(uploadBuff);
+    log.debug('sending recording to mongo filename=' + req.params.filename);
+    var newRecording = new mongodb.GridStore(DB, req.params.filename, 'w', {
+        "content_type": "binary/octet-stream",
+        "chunk_size": 1024 * 4
+    });
 
-    //save this file off to DB
-    req.on('end', function () {
-        log.debug('sending recording to mongo filename=' + req.params.filename);
-        var newRecording = new mongodb.GridStore(DB, req.params.filename, 'w', {
-            "content_type": "binary/octet-stream",
-            "chunk_size": 1024 * 4
-        });
-
-        newRecording.open(function (err, gridStore) {
-            if (err) {
-                log.error('could not open Gridstore item filename=' + req.params.filename);
-                return next(err);
-            }
-
-            gridStore.writeFile(tempFileName, function (err, filePointer) {
-                if (err) {
-                    log.error('uploading recording to mongo filename=' + req.params.filename);
-                    return next(err);
-                }
-                log.debug('upload recording complete filename=' + req.params.filename);
-                res.send(201);
-                fs.unlink(tempFileName);
-            });
-        });
+    newRecording.open(function (err, gridStore) {
+        if (err) {
+            log.error('could not open Gridstore item filename=' + req.params.filename);
+            return next(err);
+        }
+        req.pipe(gridStore);
     });
 });
 
