@@ -1,0 +1,15 @@
+<html>
+    <head>
+        <script type="application/javascript" src="//cdn.jsdelivr.net/angularjs/1.2.17/angular.min.js"></script>
+        <link type="text/css" rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.min.css"></link>
+        <script type="application/javascript" src="index.js"></script>
+    </head>
+    <body ng-app="admin" class="container">
+        <section ng-controller="centers">
+            <div class="page-header">
+                <h1>Centers</h1>
+            </div>
+            <p>{{centerlist | json}}</p>
+        </section>
+    </body>
+</html>

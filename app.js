@@ -58,6 +58,8 @@ log.info('Configuring Application for NODE_ENV: ' + app.get('env'));
 log.info('Configuring for DB : ' + process.env.DB_URI);
 log.info('Configuring for LE : ' + process.env.LOG_TOKEN);
 
+app.set('view engine', 'html');
+app.engine('html', require('hbs').__express);
 
 var morgan = require('morgan');
 var bodyParser = require('body-parser')({limit:300000});
@@ -129,6 +131,11 @@ app.get('/crossdomain.xml', function (req, res, next) {
         '<allow-http-request-headers-from domain="*" headers="*" secure="false"/>' +
         '</cross-domain-policy>');
 });
+
+// *******************************************************
+//          Admin Views
+
+app.use('/admin', require('serve-static')('admin'));
 
 // *******************************************************
 //          Login endpoint
