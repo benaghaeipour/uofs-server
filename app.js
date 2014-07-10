@@ -293,19 +293,29 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 // *******************************************************
 //          Center endpoints
 
-app.route('/center')
+app.route('/center(/:id)?')
     .all(bodyParser)
     .get(function (req, res, next) {
         req.query.deleted = {$exists: false};
         log.info('Center query : ', JSON.stringify(req.query));
-        DB.centers.find(req.query, {safe: true}).toArray(function (err, objects) {
-            if (err) {
-                return next(err);
-            }
-            log.debug('Returning : '+ JSON.stringify(objects));
-            res.status(200);
-            res.send(objects);
-        });
+        if (req.params.id) {
+            DB.centers.findOne(req.query, function (err, record) {
+                if (err) {
+                    return next(err);
+                }
+                log.debug('Returning : '+ JSON.stringify(record));
+                res.send(record);
+            });
+        } else {
+            DB.centers.find(req.query, {safe: true}).toArray(function (err, objects) {
+                if (err) {
+                    return next(err);
+                }
+                log.debug('Returning : '+ JSON.stringify(objects));
+                res.status(200);
+                res.send(objects);
+            });
+        }
     })
     .put(function (req, res, next) {
         var query = req.body;
