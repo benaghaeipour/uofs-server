@@ -17,6 +17,7 @@ var net = require('net'),
     http = require('http'),
     https = require('https'),
     fs = require('fs'),
+    auth = require('basic-auth'),
     express = require('express'),
     mongodb = require('mongodb'),
     _ = require('lodash'),
@@ -135,6 +136,20 @@ app.get('/crossdomain.xml', function (req, res, next) {
 // *******************************************************
 //          Admin Views
 
+app.use('/admin', function (req, res, next) {
+    var user = auth(req) || {},
+        authed = false;
+
+    _.defaults(user, {user: '', pass: ''});
+    authed = user.name === process.env.ADMIN_USER && user.pass === process.env.ADMIN_PASS;
+
+    if (!authed) {
+        res.set({'WWW-Authenticate': 'Basic'});
+        res.send(401);//something
+    } else {
+        next();
+    }
+});
 app.use('/admin', require('serve-static')('admin'));
 
 // *******************************************************
