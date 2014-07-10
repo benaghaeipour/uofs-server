@@ -33,7 +33,9 @@
   "env": {
     "NODE_ENV": "develoment",
     "DB_URI": "mongodb://c9:c9@oceanic.mongohq.com:10015/dev",
-    "LOG_TOKEN": "a15ad4d2-7c28-406d-bef0-9e12f39225b5"
+    "LOG_TOKEN": "a15ad4d2-7c28-406d-bef0-9e12f39225b5",
+    "ADMIN_USER": "chris",
+    "ADMIN_PASS": "iii"
   },
   "scripts": {
     "test": "mocha -R spec -t 4000 -b",
