@@ -308,63 +308,6 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 // *******************************************************
 //          Center endpoints
 
-app.route('/center(/:id)?')
-    .all(bodyParser)
-    .get(function (req, res, next) {
-        req.query.deleted = {$exists: false};
-        log.info('Center query : ', JSON.stringify(req.query));
-        if (req.params.id) {
-            DB.centers.findOne(req.query, function (err, record) {
-                if (err) {
-                    return next(err);
-                }
-                log.debug('Returning : '+ JSON.stringify(record));
-                res.send(record);
-            });
-        } else {
-            DB.centers.find(req.query, {safe: true}).toArray(function (err, objects) {
-                if (err) {
-                    return next(err);
-                }
-                log.debug('Returning : '+ JSON.stringify(objects));
-                res.status(200);
-                res.send(objects);
-            });
-        }
-    })
-    .put(function (req, res, next) {
-        var query = req.body;
-
-        log.info('Center create');
-        console.log('Center create', query);
-
-        DB.centers.insert(query, {
-            safe: true
-        }, function (err, objects) {
-            if (err) {
-                return next(err);
-            }
-            log.info('Center Created : ', JSON.stringify(objects));
-            res.status(201);
-            res.send(objects);
-        });
-    })
-    .post(function (req, res, next) {
-        var query = req.body;
-
-        DB.centers.update(_.pick(query, '_id'), _.omit(query, '_id'), {
-            safe: true
-        }, function (err, objects) {
-            console.log(err, objects);
-            if (err) {
-                return next(err);
-            }
-            log.info('Center update : ', JSON.stringify(objects));
-            res.status(202);
-            res.send(objects);
-        });
-    });
-
 /**
  * Get center obj
  */
@@ -445,6 +388,63 @@ app.get('/recordings/:filename', function (req, res, next) {
         stream.pipe(res);
     });
 });
+
+app.route('/center(/:id)?')
+    .all(bodyParser)
+    .get(function (req, res, next) {
+        req.query.deleted = {$exists: false};
+        log.info('Center query : ', JSON.stringify(req.query));
+        if (req.params.id) {
+            DB.centers.findOne(req.query, function (err, record) {
+                if (err) {
+                    return next(err);
+                }
+                log.debug('Returning : '+ JSON.stringify(record));
+                res.send(record);
+            });
+        } else {
+            DB.centers.find(req.query, {safe: true}).toArray(function (err, objects) {
+                if (err) {
+                    return next(err);
+                }
+                log.debug('Returning : '+ JSON.stringify(objects));
+                res.status(200);
+                res.send(objects);
+            });
+        }
+    })
+    .put(function (req, res, next) {
+        var query = req.body;
+
+        log.info('Center create');
+        console.log('Center create', query);
+
+        DB.centers.insert(query, {
+            safe: true
+        }, function (err, objects) {
+            if (err) {
+                return next(err);
+            }
+            log.info('Center Created : ', JSON.stringify(objects));
+            res.status(201);
+            res.send(objects);
+        });
+    })
+    .post(function (req, res, next) {
+        var query = req.body;
+
+        DB.centers.update(_.pick(query, '_id'), _.omit(query, '_id'), {
+            safe: true
+        }, function (err, objects) {
+            console.log(err, objects);
+            if (err) {
+                return next(err);
+            }
+            log.info('Center update : ', JSON.stringify(objects));
+            res.status(202);
+            res.send(objects);
+        });
+    });
 
 /**
  * REST interface /<student id>/<lesson>/<page>/<block>/<word>/
