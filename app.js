@@ -389,12 +389,13 @@ app.get('/recordings/:filename', function (req, res, next) {
     });
 });
 
-app.route('/center(/:id)?')
+app.route('/center[/]?(:id)?')
     .all(bodyParser)
     .get(function (req, res, next) {
         req.query.deleted = {$exists: false};
-        log.info('Center query : ', JSON.stringify(req.query));
         if (req.params.id) {
+            req.query._id = new mongodb.ObjectID(req.params.id);
+            log.info('Center query : ', JSON.stringify(req.query));
             DB.centers.findOne(req.query, function (err, record) {
                 if (err) {
                     return next(err);
@@ -403,6 +404,7 @@ app.route('/center(/:id)?')
                 res.send(record);
             });
         } else {
+            log.info('Center query : ', JSON.stringify(req.query));
             DB.centers.find(req.query, {safe: true}).toArray(function (err, objects) {
                 if (err) {
                     return next(err);
