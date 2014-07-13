@@ -316,8 +316,11 @@ app.post('/center/find[/]?', bodyParser, function (req, res, next) {
     query.deleted ={
         $exists: false
     };
+    if (query._id) {
+        query._id = new mongodb.ObjectID(query._id);
+    }
 
-    log.info('Center find query=' + JSON.stringify(_.pick(query, '_id', 'name')));
+    log.info('Center/find query=' + JSON.stringify(_.pick(query, '_id', 'name')));
     log.debug('Center/find query=' + JSON.stringify(query));
 
     var hasEitherProprty = _.has(query, 'name') || _.has(query, '_id');
@@ -363,38 +366,21 @@ app.post('/center/update[/]?', bodyParser, function (req, res, next) {
             return next(err);
         }
         log.debug('Successful update id=',req.query._id);
-        res.send(201);
-    });
-});
-
-// *******************************************************
-//          Recordings enpoints
-
-/**
- * Returns a file from GrdFS
- */
-app.get('/recordings/:filename', function (req, res, next) {
-    log.debug('request for ' + req.params.filename);
-    var storedRec = new mongodb.GridStore(DB, req.params.filename, 'r');
-    storedRec.open(function (err, gs) {
-        if (err) {
-            return res.send(404);
-        }
-
-        //file opened, can now do things with it
-        // Create a stream to the file
-        log.debug('request for existing recording');
-        var stream = gs.stream(true);
-        stream.pipe(res);
+        res.send(202);
     });
 });
 
 app.route('/center[/]?(:id)?')
-    .all(bodyParser)
+    .all(bodyParser, function (req, res, next) {
+        if (req.params.id) {
+            req.params.id = new mongodb.ObjectID(req.params.id);
+        }
+        next();
+    })
     .get(function (req, res, next) {
         req.query.deleted = {$exists: false};
         if (req.params.id) {
-            req.query._id = new mongodb.ObjectID(req.params.id);
+            req.query._id = req.params.id;
             log.info('Center query : ', JSON.stringify(req.query));
             DB.centers.findOne(req.query, function (err, record) {
                 if (err) {
@@ -429,24 +415,50 @@ app.route('/center[/]?(:id)?')
             }
             log.info('Center Created : ', JSON.stringify(objects));
             res.status(201);
-            res.send(objects);
+            res.send(objects[0]);
         });
     })
     .post(function (req, res, next) {
         var query = req.body;
 
-        DB.centers.update(_.pick(query, '_id'), _.omit(query, '_id'), {
+        if (!req.params.id) {
+            return res.send(400);
+        }
+
+        DB.centers.update(req.params.id, _.omit(query, '_id'), {
             safe: true
         }, function (err, objects) {
-            console.log(err, objects);
             if (err) {
                 return next(err);
             }
             log.info('Center update : ', JSON.stringify(objects));
-            res.status(202);
-            res.send(objects);
+            res.send(202);
         });
     });
+
+
+
+// *******************************************************
+//          Recordings enpoints
+
+/**
+ * Returns a file from GrdFS
+ */
+app.get('/recordings/:filename', function (req, res, next) {
+    log.debug('request for ' + req.params.filename);
+    var storedRec = new mongodb.GridStore(DB, req.params.filename, 'r');
+    storedRec.open(function (err, gs) {
+        if (err) {
+            return res.send(404);
+        }
+
+        //file opened, can now do things with it
+        // Create a stream to the file
+        log.debug('request for existing recording');
+        var stream = gs.stream(true);
+        stream.pipe(res);
+    });
+});
 
 /**
  * REST interface /<student id>/<lesson>/<page>/<block>/<word>/
@@ -482,20 +494,20 @@ app.post('/recordings/:filename', function (req, res, next) {
 /**
  * dump will just dump req data to console.
  */
-app.all('/dev/dump[/]?', function (req, res, next) {
-    console.log('Params : ' + req.params);
-    console.log('Method : ' + req.method);
-    console.log('_method : ' + req._method);
-    console.log('headers : ' + JSON.stringify(req.headers));
-    console.log('Data : \n');
-
-    req.on('end', function () {
-        res.write('<h1>Headers</h1>\n' + JSON.stringify(req.headers));
-        res.write('<h1>Params</h1>\n' + JSON.stringify(req.params));
-        res.write('<h1>Data</h1>\n' + JSON.stringify(req.data));
-        res.send();
-    });
-});
+//app.all('/dev/dump[/]?', function (req, res, next) {
+//    console.log('Params : ' + req.params);
+//    console.log('Method : ' + req.method);
+//    console.log('_method : ' + req._method);
+//    console.log('headers : ' + JSON.stringify(req.headers));
+//    console.log('Data : \n');
+//
+//    req.on('end', function () {
+//        res.write('<h1>Headers</h1>\n' + JSON.stringify(req.headers));
+//        res.write('<h1>Params</h1>\n' + JSON.stringify(req.params));
+//        res.write('<h1>Data</h1>\n' + JSON.stringify(req.data));
+//        res.send();
+//    });
+//});
 
 // app.all('/dev/crash[/]?', function(req, res, next) {
 //   console.error('This is a triggerd crash');
