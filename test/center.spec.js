@@ -28,8 +28,7 @@ describe('uofs-server', function () {
         request(server)
             .post('/center/find')
             .send({
-                name: 'Manchester',
-                centerType: 'home'
+                name: 'Manchester'
             })
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
