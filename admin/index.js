@@ -14,7 +14,7 @@ angular.module('admin', ['ngResource'])
                 school: 'fa-building',
                 home :'fa-home'
             };
-            return mapping[centerType];
+            return mapping[centerType] || 'fa-question-circle';
         };
 
         var centerList = Center.query(function (data) {

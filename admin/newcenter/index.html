@@ -6,13 +6,15 @@
         <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.1.0/css/font-awesome.min.css">
         <script type="application/javascript" src="index.js"></script>
     </head>
-    <body ng-app="admin" class="container">
+    <body ng-app="newcenter" class="container">
         <section ng-controller="newcenter">
             <div class="page-header">
                 <h1>Create New Center</h1>
             </div>
-            <form method="post" ng-submit="">
-                <label>Name <input type="text"></label>
+            <form ng-submit="submit()">
+                <i class="fa fa-4x" ng-class="iconTypeForCenterType(center.centerType)"
+                   ng-click="incCenterType()"></i>
+                <label>Name <input ng-model="center.name" type="text"></label>
                 <button type="submit" class="btn btn-primary">Create</button>
             </form>
         </section>
