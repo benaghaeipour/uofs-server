@@ -5,7 +5,7 @@ var through = require('through2');
 var gutil = require('gulp-util');
 var PluginError = gutil.PluginError;
 
-function processBlock(block) {
+function processReadingBlocks(block) {
     if (!block.uos) {
         console.error('ERR:: ', block.uos);
         return block;
@@ -32,7 +32,17 @@ function paternize() {
         console.log('<= starting ', file.relative);
 
         var modelObject = JSON.parse(file.contents.toString());
-        modelObject.blocks = modelObject.blocks.map(processBlock);
+
+        switch (true) {
+          case /ReadingBlock/.test(file.relative):
+            modelObject.blocks = modelObject.blocks.map(processReadingBlocks);
+            break;
+
+          default:
+            console.error('ERRR: Missing handler for: ', file.relative);
+            break;
+        }
+
         file.contents = new Buffer(JSON.stringify(modelObject));
 
         this.push(file);
@@ -43,7 +53,7 @@ function paternize() {
 }
 
 gulp.task('paternize-json-models', function () {
-    gulp.src(['/users/chrismatheson/Dropbox/Units of Sound/Development/ModelsUK/*ReadingBlock.json'])
+    gulp.src(['/users/chrismatheson/Dropbox/Units of Sound/Development/ModelsUK/*.json'])
         .pipe(paternize())
         .pipe(gulp.dest('output'));
 });
