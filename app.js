@@ -153,6 +153,25 @@ app.use('/admin', function (req, res, next) {
 app.use('/admin', require('serve-static')('admin'));
 
 // *******************************************************
+//          Tools Area
+
+app.use('/tools', function (req, res, next) {
+    var user = auth(req) || {},
+        authed = false;
+
+    _.defaults(user, {user: '', pass: ''});
+    authed = user.pass === 'dyslexiaactionuser';
+
+    if (!authed) {
+        res.set({'WWW-Authenticate': 'Basic'});
+        res.send(401);//something
+    } else {
+        next();
+    }
+});
+app.use('/tools', require('serve-static')('tools'));
+
+// *******************************************************
 //          Login endpoint
 
 /**
