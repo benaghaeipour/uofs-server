@@ -3,7 +3,7 @@
 
 var app;
 
-describe('uofs-server', function () {
+describe('/user', function () {
     var request = require('supertest'),
         server = 'http://localhost:5000',
         expect = require('expect.js');

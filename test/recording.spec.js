@@ -11,7 +11,7 @@ beforeEach(function () {
     }
 });
 
-describe('recording endpoint', function () {
+describe('/recording', function () {
     var request = require('supertest'),
         server = 'http://localhost:5000';
 

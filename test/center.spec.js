@@ -1,7 +1,7 @@
 /*jshint node:true*/
 /*globals mocha, expect, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
 
-describe('uofs-server', function () {
+describe('/center', function () {
     var request = require('supertest'),
         server = 'http://localhost:5000',
         expect = require('expect.js');
@@ -71,48 +71,5 @@ describe('uofs-server', function () {
             .expect('Content-Type', /application\/json/)
             .expect('Cache-Control', /no/)
             .expect(200, done);
-    });
-
-    it('[old] should find center by name', function (done) {
-        request(server)
-            .post('/center/find')
-            .send({
-                name: 'Manchester'
-            })
-            .set('Accept', 'application/json')
-            .set('Content-Type', 'application/json')
-            .expect('Content-Type', /application\/json/)
-            .expect(function (res) {
-                expect(res.body).to.be.an(Object);
-                expect(res.body._id).to.match(/[a-f0-9]{24}/);
-                expect(res.body.name).to.be('Manchester');
-            })
-            .expect(200, done);
-    });
-
-    it('[old] should find center by ID', function (done) {
-        request(server)
-            .post('/center/find')
-            .send({_id: CreadtedCenterId})
-            .set('Accept', 'application/json')
-            .set('Content-Type', 'application/json')
-            .expect('Content-Type', /application\/json/)
-            .expect('Cache-Control', /no/)
-            .expect(function (res) {
-                expect(res.body).to.be.an('object');
-                expect(res.body._id).to.eql(CreadtedCenterId);
-                expect(res.body.name).to.be('Manchester');
-            })
-            .expect(200, done);
-    });
-
-    it('[old] should update a center', function (done) {
-        request(server)
-            .post('/center/update')
-            .send({_id: CreadtedCenterId, blah:'blah'})
-            .set('Accept', 'application/json')
-            .set('Content-Type', 'application/json')
-            .expect('Cache-Control', /no/)
-            .expect(202, done);
     });
 });

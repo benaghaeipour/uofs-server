@@ -327,68 +327,6 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 // *******************************************************
 //          Center endpoints
 
-/**
- * Get center obj
- */
-app.post('/center/find[/]?', bodyParser, function (req, res, next) {
-    var query = req.body;
-    query.deleted ={
-        $exists: false
-    };
-    if (query._id) {
-        query._id = new mongodb.ObjectID(query._id);
-    }
-
-    log.info('Center/find query=' + JSON.stringify(_.pick(query, '_id', 'name')));
-    log.debug('Center/find query=' + JSON.stringify(query));
-
-    var hasEitherProprty = _.has(query, 'name') || _.has(query, '_id');
-
-    if (!hasEitherProprty) {
-        return next(new Error('need name or _id for this call'));
-    }
-
-    DB.centers.findOne(query, {
-        limit: 1,
-        fields: {
-            purchaseOrders: 0
-        }
-    }, function (err, records) {
-        if (err) {
-            return next(err);
-        }
-
-        log.debug('Returning : '+ JSON.stringify(records));
-
-        res.send(records);
-    });
-});
-
-/**
- * Can only update if you have _id value. new centers created by us
- */
-app.post('/center/update[/]?', bodyParser, function (req, res, next) {
-    var query = req.body;
-    if (!query._id) {
-        return next(new Error('need object _id for this call'));
-    }
-
-    query._id = new mongodb.ObjectID(query._id);
-
-    log.info('Updating Center : ' + JSON.stringify(query._id));
-    log.debug('Center/Update query : ' + JSON.stringify(query));
-
-    DB.centers.update(_.pick(query, '_id'), _.omit(query, '_id'), {
-        safe: true
-    }, function (err, objects) {
-        if (err) {
-            return next(err);
-        }
-        log.debug('Successful update id=',req.query._id);
-        res.send(202);
-    });
-});
-
 app.route('/center[/]?(:id)?')
     .all(bodyParser, function (req, res, next) {
         if (req.params.id) {
