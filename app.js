@@ -17,6 +17,7 @@ var net = require('net'),
     http = require('http'),
     https = require('https'),
     fs = require('fs'),
+    auth = require('basic-auth'),
     express = require('express'),
     mongodb = require('mongodb'),
     _ = require('lodash'),
@@ -58,6 +59,8 @@ log.info('Configuring Application for NODE_ENV: ' + app.get('env'));
 log.info('Configuring for DB : ' + process.env.DB_URI);
 log.info('Configuring for LE : ' + process.env.LOG_TOKEN);
 
+app.set('view engine', 'html');
+app.engine('html', require('hbs').__express);
 
 var morgan = require('morgan');
 var bodyParser = require('body-parser')({limit:300000});
@@ -129,6 +132,44 @@ app.get('/crossdomain.xml', function (req, res, next) {
         '<allow-http-request-headers-from domain="*" headers="*" secure="false"/>' +
         '</cross-domain-policy>');
 });
+
+// *******************************************************
+//          Admin Views
+
+app.use('/admin', function (req, res, next) {
+    var user = auth(req) || {},
+        authed = false;
+
+    _.defaults(user, {user: '', pass: ''});
+    authed = user.name === process.env.ADMIN_USER && user.pass === process.env.ADMIN_PASS;
+
+    if (!authed) {
+        res.set({'WWW-Authenticate': 'Basic'});
+        res.send(401);//something
+    } else {
+        next();
+    }
+});
+app.use('/admin', require('serve-static')('admin'));
+
+// *******************************************************
+//          Tools Area
+
+app.use('/tools', function (req, res, next) {
+    var user = auth(req) || {},
+        authed = false;
+
+    _.defaults(user, {user: '', pass: ''});
+    authed = user.pass === 'dyslexiaactionuser';
+
+    if (!authed) {
+        res.set({'WWW-Authenticate': 'Basic'});
+        res.send(401);//something
+    } else {
+        next();
+    }
+});
+app.use('/tools', require('serve-static')('tools'));
 
 // *******************************************************
 //          Login endpoint
@@ -286,19 +327,36 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 // *******************************************************
 //          Center endpoints
 
-app.route('/center')
-    .all(bodyParser)
+app.route('/center[/]?(:id)?')
+    .all(bodyParser, function (req, res, next) {
+        if (req.params.id) {
+            req.params.id = new mongodb.ObjectID(req.params.id);
+        }
+        next();
+    })
     .get(function (req, res, next) {
         req.query.deleted = {$exists: false};
-        log.info('Center query : ', JSON.stringify(req.query));
-        DB.centers.find(req.query, {safe: true}).toArray(function (err, objects) {
-            if (err) {
-                return next(err);
-            }
-            log.debug('Returning : '+ JSON.stringify(objects));
-            res.status(200);
-            res.send(objects);
-        });
+        if (req.params.id) {
+            req.query._id = req.params.id;
+            log.info('Center query : ', JSON.stringify(req.query));
+            DB.centers.findOne(req.query, function (err, record) {
+                if (err) {
+                    return next(err);
+                }
+                log.debug('Returning : '+ JSON.stringify(record));
+                res.send(record);
+            });
+        } else {
+            log.info('Center query : ', JSON.stringify(req.query));
+            DB.centers.find(req.query, {safe: true}).toArray(function (err, objects) {
+                if (err) {
+                    return next(err);
+                }
+                log.debug('Returning : '+ JSON.stringify(objects));
+                res.status(200);
+                res.send(objects);
+            });
+        }
     })
     .put(function (req, res, next) {
         var query = req.body;
@@ -314,83 +372,28 @@ app.route('/center')
             }
             log.info('Center Created : ', JSON.stringify(objects));
             res.status(201);
-            res.send(objects);
+            res.send(objects[0]);
         });
     })
     .post(function (req, res, next) {
         var query = req.body;
 
-        DB.centers.update(_.pick(query, '_id'), _.omit(query, '_id'), {
+        if (!req.params.id) {
+            return res.send(400);
+        }
+
+        DB.centers.update(req.params.id, _.omit(query, '_id'), {
             safe: true
         }, function (err, objects) {
-            console.log(err, objects);
             if (err) {
                 return next(err);
             }
             log.info('Center update : ', JSON.stringify(objects));
-            res.status(202);
-            res.send(objects);
+            res.send(202);
         });
     });
 
-/**
- * Get center obj
- */
-app.post('/center/find[/]?', bodyParser, function (req, res, next) {
-    var query = req.body;
-    query.deleted ={
-        $exists: false
-    };
 
-    log.info('Center find query=' + JSON.stringify(_.pick(query, '_id', 'name')));
-    log.debug('Center/find query=' + JSON.stringify(query));
-
-    var hasEitherProprty = _.has(query, 'name') || _.has(query, '_id');
-
-    if (!hasEitherProprty) {
-        return next(new Error('need name or _id for this call'));
-    }
-
-    DB.centers.findOne(query, {
-        limit: 1,
-        fields: {
-            purchaseOrders: 0
-        }
-    }, function (err, records) {
-        if (err) {
-            return next(err);
-        }
-
-        log.debug('Returning : '+ JSON.stringify(records));
-
-        res.send(records);
-    });
-});
-
-/**
- * Can only update if you have _id value. new centers created by us
- */
-app.post('/center/update[/]?', bodyParser, function (req, res, next) {
-    var query = req.body;
-    if (!query._id) {
-        return next(new Error('need object _id for this call'));
-    }
-
-    query._id = new mongodb.ObjectID(query._id);
-
-    log.info('Updating Center : ' + JSON.stringify(query._id));
-    log.debug('Center/Update query : ' + JSON.stringify(query));
-
-    DB.centers.update(_.pick(query, '_id'), _.omit(query, '_id'), {
-        safe: true
-    }, function (err, objects) {
-        if (err) {
-            return next(err);
-        }
-        log.debug('Successful update id=',req.query._id);
-        res.send(201);
-    });
-});
 
 // *******************************************************
 //          Recordings enpoints
@@ -398,21 +401,20 @@ app.post('/center/update[/]?', bodyParser, function (req, res, next) {
 /**
  * Returns a file from GrdFS
  */
-app.get('/recordings/:filename[/]?', function (req, res, next) {
-//    log.debug('request for ' + req.params.filename);
-//    var storedRec = new mongodb.GridStore(DB, req.params.filename, 'r');
-//    storedRec.open(function (err, gs) {
-//        if (err) {
-//            return res.send(404);
-//        }
-//
-//        //file opened, can now do things with it
-//        // Create a stream to the file
-//        log.debug('request for existing recording');
-//        var stream = gs.stream(true);
-//        stream.pipe(res);
-//    });
-    res.send(200);
+app.get('/recordings/:filename', function (req, res, next) {
+    log.debug('request for ' + req.params.filename);
+    var storedRec = new mongodb.GridStore(DB, req.params.filename, 'r');
+    storedRec.open(function (err, gs) {
+        if (err) {
+            return res.send(404);
+        }
+
+        //file opened, can now do things with it
+        // Create a stream to the file
+        log.debug('request for existing recording');
+        var stream = gs.stream(true);
+        stream.pipe(res);
+    });
 });
 
 /**
@@ -426,38 +428,20 @@ app.get('/recordings/:filename[/]?', function (req, res, next) {
  *
  * https://github.com/mongodb/node-mongodb-native/blob/master/docs/gridfs.md
  */
-app.post('/recordings/:filename[/]?', function (req, res, next) {
-//    log.debug('receieving recording filename=' + req.params.filename);
-//    var tempFileName = './tmp/' + req.params.filename;
-//    //buffer file upload into an actual file
-//    var uploadBuff = fs.createWriteStream(tempFileName);
-//    req.pipe(uploadBuff);
-//
-//    //save this file off to DB
-//    req.on('end', function () {
-//        log.debug('sending recording to mongo filename=' + req.params.filename);
-//        var newRecording = new mongodb.GridStore(DB, req.params.filename, 'w', {
-//            "content_type": "binary/octet-stream",
-//            "chunk_size": 1024 * 4
-//        });
-//
-//        newRecording.open(function (err, gridStore) {
-//            if (err) {
-//                return next(err);
-//            }
-//
-//            gridStore.writeFile(tempFileName, function (err, filePointer) {
-//                if (err) {
-//                    log.error('uploading recording to mongo filename=' + req.params.filename);
-//                    return next(err);
-//                }
-//                log.debug('upload recording complete filename=' + req.params.filename);
-//                res.send(201);
-//                fs.unlink(tempFileName);
-//            });
-//        });
-//    });
-    res.send(200);
+app.post('/recordings/:filename', function (req, res, next) {
+    log.debug('sending recording to mongo filename=' + req.params.filename);
+    var newRecording = new mongodb.GridStore(DB, req.params.filename, 'w', {
+        "content_type": "binary/octet-stream",
+        "chunk_size": 1024 * 4
+    });
+
+    newRecording.open(function (err, gridStore) {
+        if (err) {
+            log.error('could not open Gridstore item filename=' + req.params.filename);
+            return next(err);
+        }
+        req.pipe(gridStore);
+    });
 });
 
 
@@ -467,20 +451,20 @@ app.post('/recordings/:filename[/]?', function (req, res, next) {
 /**
  * dump will just dump req data to console.
  */
-app.all('/dev/dump[/]?', function (req, res, next) {
-    console.log('Params : ' + req.params);
-    console.log('Method : ' + req.method);
-    console.log('_method : ' + req._method);
-    console.log('headers : ' + JSON.stringify(req.headers));
-    console.log('Data : \n');
-
-    req.on('end', function () {
-        res.write('<h1>Headers</h1>\n' + JSON.stringify(req.headers));
-        res.write('<h1>Params</h1>\n' + JSON.stringify(req.params));
-        res.write('<h1>Data</h1>\n' + JSON.stringify(req.data));
-        res.send();
-    });
-});
+//app.all('/dev/dump[/]?', function (req, res, next) {
+//    console.log('Params : ' + req.params);
+//    console.log('Method : ' + req.method);
+//    console.log('_method : ' + req._method);
+//    console.log('headers : ' + JSON.stringify(req.headers));
+//    console.log('Data : \n');
+//
+//    req.on('end', function () {
+//        res.write('<h1>Headers</h1>\n' + JSON.stringify(req.headers));
+//        res.write('<h1>Params</h1>\n' + JSON.stringify(req.params));
+//        res.write('<h1>Data</h1>\n' + JSON.stringify(req.data));
+//        res.send();
+//    });
+//});
 
 //app.all('/dev/crash[/]?', function(req, res, next) {
 //    console.error('This is a triggerd crash');
