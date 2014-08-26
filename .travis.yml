@@ -8,6 +8,11 @@ before_script:
   - npm config set ca ""
   - npm start &
 deploy:
+  - provider: heroku
+    api_key:
+      secure: HTevOVyDZ+AdyZtmwGLK3rJbmxNvnqveV7v7kQJcuiSiWBJaebcXOWXXlrdeMp8NR2nVr/VXAoQo8PdQbG4KVpo6t/5LcCHjwOJdiGw7Q60Q/dfDupodWhae7BL3DlOH8pwwosjqcLL76xm0+h6og8YjLyY3k5ji1KTcpKeYUkY=
+    app:
+      dev: uos-dev
   - provider: nodejitsu
     user: chrismatheson
     api_key:
@@ -17,11 +22,6 @@ deploy:
         - online
         - preview
         - dev
-  - provider: heroku
-    api_key:
-      secure: HTevOVyDZ+AdyZtmwGLK3rJbmxNvnqveV7v7kQJcuiSiWBJaebcXOWXXlrdeMp8NR2nVr/VXAoQo8PdQbG4KVpo6t/5LcCHjwOJdiGw7Q60Q/dfDupodWhae7BL3DlOH8pwwosjqcLL76xm0+h6og8YjLyY3k5ji1KTcpKeYUkY=
-    app:
-      dev: uos-dev
 after_deploy: echo "a15ad4d2-7c28-406d-bef0-9e12f39225b5 Deploying Server for SHA=$TRAVIS_COMMIT build=$TRAVIS_BUILD_NUMBER" | nc data.logentries.com 80
 notifications:
   email: false
