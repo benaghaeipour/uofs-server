@@ -34,6 +34,8 @@ var pkg = require('./package.json');
 app.set('env', (process.env.NODE_ENV || 'local'));
 process.env.LOG_TOKEN = process.env.LOG_TOKEN || 'local';
 process.env.DB_URI = process.env.DB_URI || pkg.env.DB_URI;
+process.env.ADMIN_USER = process.env.ADMIN_USER || pkg.env.ADMIN_USER;
+process.env.ADMIN_PASS = process.env.ADMIN_PASS || pkg.env.ADMIN_PASS;
 process.env.PORT = process.env.PORT || 5000;
 
 var log = logentries.logger({
@@ -142,7 +144,6 @@ app.use('/admin', function (req, res, next) {
 
     _.defaults(user, {user: '', pass: ''});
     authed = user.name === process.env.ADMIN_USER && user.pass === process.env.ADMIN_PASS;
-
     if (!authed) {
         res.set({'WWW-Authenticate': 'Basic'});
         res.send(401);//something
