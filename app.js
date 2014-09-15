@@ -153,6 +153,10 @@ app.use('/admin', function (req, res, next) {
 });
 app.use('/admin', require('serve-static')('admin'));
 
+app.get('/admin/edit/[a-f0-9]{24}', function (req, res, next) {
+    res.sendFile(process.cwd() + '/admin/edit/index.html');
+});
+
 // *******************************************************
 //          Tools Area
 

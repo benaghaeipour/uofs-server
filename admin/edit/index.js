@@ -1,7 +1,10 @@
 /*globals angular*/
 angular.module('editcenter', [])
     .value('eCenterTypes', ['home', 'school'])
-    .controller('newcenter', function ($scope, $http, eCenterTypes) {
+    .controller('editcenter', function ($scope, $http, $location, eCenterTypes) {
+
+
+//        var centerGuid = '54170fba86391f3662fa2ebb';
 
         $scope.iconTypeForCenterType = function (centerType) {
             var mapping = {
@@ -24,10 +27,10 @@ angular.module('editcenter', [])
             }
         }
 
-        function sendCreateCommand() {
+        function sendSaveCommand() {
             $http({
                 method: 'POST',
-                url: '/center',
+                url: '/center/' + centerGuid,
                 data: $scope.center
             });
         }
@@ -36,5 +39,13 @@ angular.module('editcenter', [])
         $scope.center = {
             centerType: eCenterTypes[0]
         };
-        $scope.submit = sendCreateCommand;
+        $scope.submit = sendSaveCommand;
+
+        var centerGuid = $location.absUrl().match(/edit\/([a-f0-9]{24})\/?$/)[1];
+        $http({
+            method: 'GET',
+            url: '/center/' + centerGuid
+        }).then(function (res) {
+            $scope.center = res.data;
+        });
     });

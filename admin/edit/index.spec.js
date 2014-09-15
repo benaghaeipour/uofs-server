@@ -7,33 +7,51 @@ describe('edit center', function () {
         $httpBackend.verifyNoOutstandingExpectation();
     }));
 
-    it('should send POST', inject(function ($controller, $rootScope, $httpBackend) {
-        $controller('newcenter', {
+    it('should send POST', inject(function ($controller, $rootScope, $httpBackend, $location) {
+        $location.url('/edit/aaaaaaaaaaaaaaaaaaaaaaaa');
+        $httpBackend.whenGET('/center/aaaaaaaaaaaaaaaaaaaaaaaa').respond({
+            name: 'London',
+            centerType: 'home'
+        });
+
+        $controller('editcenter', {
             $scope: $rootScope
         });
 
         $rootScope.center = {
             name: 'London',
-            centerType: 'home'
+            centerType: 'school'
         };
         $rootScope.submit();
 
-        $httpBackend.expectPOST('/center', {
+        $httpBackend.expectPOST('/center/aaaaaaaaaaaaaaaaaaaaaaaa', {
             name: 'London',
-            centerType: 'home'
+            centerType: 'school'
         }).respond(202);
     }));
 
-    it('should have centerType home', inject(function ($controller, $rootScope) {
-        $controller('newcenter', {
+    it('should load center ', inject(function ($controller, $rootScope, $httpBackend, $location) {
+        $location.url('/edit/aaaaaaaaaaaaaaaaaaaaaaaa');
+        $controller('editcenter', {
             $scope: $rootScope
         });
 
-        expect($rootScope.center.centerType).toBe('home');
+        $httpBackend.expectGET('/center/aaaaaaaaaaaaaaaaaaaaaaaa').respond({
+            name: 'London',
+            centerType: 'home'
+        });
+
+        expect($location.url()).toMatch(/aaaaaaaaaaaaaaaaaaaaaaaa/);
     }));
 
-    it('should inciment centerType', inject(function ($controller, $rootScope) {
-        $controller('newcenter', {
+    it('should inciment centerType', inject(function ($controller, $rootScope, $httpBackend, $location) {
+        $location.url('/edit/aaaaaaaaaaaaaaaaaaaaaaaa');
+        $httpBackend.whenGET('/center/aaaaaaaaaaaaaaaaaaaaaaaa').respond({
+            name: 'London',
+            centerType: 'home'
+        });
+
+        $controller('editcenter', {
             $scope: $rootScope
         });
 
@@ -42,5 +60,25 @@ describe('edit center', function () {
         expect($rootScope.center.centerType).toBe('school');
         $rootScope.incCenterType();
         expect($rootScope.center.centerType).toBe('home');
+    }));
+
+    it('should save updates', inject(function ($controller, $rootScope, $httpBackend, $location) {
+        $location.url('/edit/aaaaaaaaaaaaaaaaaaaaaaaa');
+        $httpBackend.whenGET('/center/aaaaaaaaaaaaaaaaaaaaaaaa').respond({
+            name: 'London',
+            centerType: 'home'
+        });
+        $httpBackend.expectPOST('/center/aaaaaaaaaaaaaaaaaaaaaaaa').respond({
+            name: 'New York',
+            centerType: 'home'
+        });
+
+        $controller('editcenter', {
+            $scope: $rootScope
+        });
+
+        $rootScope.center.name = 'New York';
+        $rootScope.submit();
+
     }));
 });
