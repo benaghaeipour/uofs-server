@@ -20,13 +20,15 @@ describe('edit center', function () {
 
         $rootScope.center = {
             name: 'London',
-            centerType: 'school'
+            centerType: 'school',
+            maxLicensedStudnetsForThisCenter: 10
         };
         $rootScope.submit();
 
         $httpBackend.expectPOST('/center/aaaaaaaaaaaaaaaaaaaaaaaa', {
             name: 'London',
-            centerType: 'school'
+            centerType: 'school',
+            maxLicensedStudnetsForThisCenter: 10
         }).respond(202);
     }));
 

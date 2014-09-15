@@ -1,7 +1,6 @@
 <html>
     <head>
         <script type="application/javascript" src="//cdn.jsdelivr.net/angularjs/1.2.17/angular.min.js"></script>
-        <script type="application/javascript" src="//cdn.jsdelivr.net/angularjs/1.2.17/angular-resource.min.js"></script>
         <link type="text/css" rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.1.0/css/font-awesome.min.css">
         <script type="application/javascript" src="index.js"></script>
@@ -15,6 +14,7 @@
                 <i class="fa fa-4x" ng-class="iconTypeForCenterType(center.centerType)"
                    ng-click="incCenterType()"></i>
                 <label>Name <input ng-model="center.name" type="text"></label>
+                <label>Max No. Students <input ng-model="center.maxLicencedStudentsForThisCenter" type="number"></label>
                 <button type="submit" class="btn btn-primary">Save</button>
             </form>
         </section>

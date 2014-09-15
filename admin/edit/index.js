@@ -32,6 +32,8 @@ angular.module('editcenter', [])
                 method: 'POST',
                 url: '/center/' + centerGuid,
                 data: $scope.center
+            }).then(function () {
+                $location.url('/admin/');
             });
         }
 

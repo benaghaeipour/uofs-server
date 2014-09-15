@@ -146,7 +146,7 @@ app.use('/admin', function (req, res, next) {
     authed = user.name === process.env.ADMIN_USER && user.pass === process.env.ADMIN_PASS;
     if (!authed) {
         res.set({'WWW-Authenticate': 'Basic'});
-        res.send(401);//something
+        res.status(401).end();//something
     } else {
         next();
     }
@@ -169,7 +169,7 @@ app.use('/tools', function (req, res, next) {
 
     if (!authed) {
         res.set({'WWW-Authenticate': 'Basic'});
-        res.send(401);//something
+        res.status(401).end();
     } else {
         next();
     }
@@ -208,7 +208,7 @@ app.post('/login[/]?', bodyParser, function (req, res, next) {
             res.send(studentRecord);
         } else {
             log.warn('Login Failed : ', JSON.stringify(query));
-            res.send(401);
+            res.status(401).end();
         }
     });
 });
@@ -275,7 +275,7 @@ app.post('/student/delete[/]?', bodyParser, function (req, res, next) {
             return next(err);
         }
 
-        res.send(202);
+        res.status(202).end();
     });
 });
 
@@ -382,19 +382,20 @@ app.route('/center[/]?(:id)?')
     })
     .post(function (req, res, next) {
         var query = req.body;
-
         if (!req.params.id) {
-            return res.send(400);
+            return res.status(400).end();
         }
 
-        DB.centers.update(req.params.id, _.omit(query, '_id'), {
+        DB.centers.update({_id: mongodb.ObjectID(req.params.id)}, _.omit(query, '_id'), {
+            upsert:true,
+            w:1,
             safe: true
         }, function (err, objects) {
             if (err) {
                 return next(err);
             }
             log.info('Center update : ', JSON.stringify(objects));
-            res.send(202);
+            res.status(202).end();
         });
     });
 
@@ -411,7 +412,7 @@ app.get('/recordings/:filename', function (req, res, next) {
     var storedRec = new mongodb.GridStore(DB, req.params.filename, 'r');
     storedRec.open(function (err, gs) {
         if (err) {
-            return res.send(404);
+            return res.status(404).end();
         }
 
         //file opened, can now do things with it
