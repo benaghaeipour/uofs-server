@@ -1,10 +1,10 @@
 /*globals angular*/
 angular.module('editcenter', [])
+    .config(function ($locationProvider) {
+        $locationProvider.html5Mode(true);
+    })
     .value('eCenterTypes', ['home', 'school'])
-    .controller('editcenter', function ($scope, $http, $location, eCenterTypes) {
-
-
-//        var centerGuid = '54170fba86391f3662fa2ebb';
+    .controller('editcenter', function ($scope, $http, $location, $window, eCenterTypes) {
 
         $scope.iconTypeForCenterType = function (centerType) {
             var mapping = {
@@ -33,7 +33,7 @@ angular.module('editcenter', [])
                 url: '/center/' + centerGuid,
                 data: $scope.center
             }).then(function () {
-                $location.url('/admin/');
+                $window.location.href = '..';
             });
         }
 
@@ -43,7 +43,7 @@ angular.module('editcenter', [])
         };
         $scope.submit = sendSaveCommand;
 
-        var centerGuid = $location.absUrl().match(/edit\/([a-f0-9]{24})\/?$/)[1];
+        var centerGuid = $location.path().match(/edit\/([a-f0-9]{24})\/?$/)[1];
         $http({
             method: 'GET',
             url: '/center/' + centerGuid
