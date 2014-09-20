@@ -51,6 +51,30 @@ describe('/user', function () {
             .expect(200, done);
     });
 
+    it('should not allow duplicates', function (done) {
+        request(server)
+            .post('/student/')
+            .send({
+                username: 'scott',
+                pw1: 'iii'
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect(409, done);
+    });
+
+    it('should respond OK to new username/pw combinations', function (done) {
+        request(server)
+            .post('/student/')
+            .send({
+                username: 'not-here',
+                pw1: 'iii'
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect(200, done);
+    });
+
     it('should login', function (done) {
         request(server)
             .post('/login')

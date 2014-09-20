@@ -216,6 +216,34 @@ app.post('/login[/]?', bodyParser, function (req, res, next) {
 // *******************************************************
 //          Student endpoints
 
+app.route('/student')
+    .post(bodyParser, function (req, res, next) {
+        var query = req.body;
+        var options = {};
+        if (query.username) {
+            query.username.toLowerCase();
+        }
+        if (query.pw1) {
+            query.pw1.toLowerCase();
+        }
+        log.debug('Create student : ', JSON.stringify(query));
+        log.info('Create student req ');
+
+        DB.users.find(query, options).toArray(function (err, records) {
+            if (err) {
+                return next(err);
+            }
+            if (records.length) {
+                log.info('Student allready exists');
+                log.debug('Student allready exists : ', JSON.stringify(records));
+                res.status(409).end();
+            } else {
+                log.info('Student creds ok to create');
+                res.status(200).end();
+            }
+        });
+    });
+
 /**
  * Does a find on the DB from the posted object
  */
