@@ -72,7 +72,14 @@ var bodyParser = require('body-parser')({limit:300000});
 var compress = require('compression');
 var errorhandler = require('errorhandler');
 var timeout = require('connect-timeout');
-var sesclient = ses.createClient({key:process.env.SES_KEY, secret:process.env.SES_SECRET});
+
+var sesclient = {
+    sendemail: function () {}
+};
+
+if (!app.get('env').match(/local|travis/)) {
+    sesclient = ses.createClient({key:process.env.SES_KEY, secret:process.env.SES_SECRET});
+}
 
 app.use(morgan({
     format: process.env.LOG_TOKEN + ' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b res_time=:response-time ms',
