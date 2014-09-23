@@ -60,8 +60,14 @@ describe('/student', function () {
                 .set('Content-Type', 'application/json')
                 .expect('Content-Type', /application\/json/)
                 .expect(function (res) {
-                    CreadtedUserId = res.body[0]._id;
-                    expect(CreadtedUserId).to.match(/[a-f0-9]{24}/);
+                    var CreadtedUser = res.body[0];
+                    CreadtedUserId = CreadtedUser._id;
+                    expect(CreadtedUser._id).to.match(/[a-f0-9]{24}/);
+                    expect(CreadtedUser.spellingSyllabus.length).to.be(150);
+                    expect(CreadtedUser.memorySyllabus.length).to.be(150);
+                    expect(CreadtedUser.dictationSyllabus.length).to.be(150);
+                    expect(CreadtedUser.readingSyllabus.length).to.be(299);
+                    expect(CreadtedUser.voiceDialect).to.be(2);
                 })
                 .expect(201, done);
         });

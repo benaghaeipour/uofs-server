@@ -16,6 +16,21 @@ before(function (done) {
     });
 });
 
+after(function (done) {
+    var request = require('supertest');
+
+        request('http://localhost:5000')
+            .post('/student/update')
+            .send({
+                username: 'scott',
+                center: 'Manchester',
+                pw1: 'iii'
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect(201, done);
+});
+
 //before(function (done) {
 //    this.timeout = 5000;
 //

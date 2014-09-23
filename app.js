@@ -17,6 +17,7 @@ var net = require('net'),
     http = require('http'),
     https = require('https'),
     fs = require('fs'),
+    ses = require('node-ses'),
     auth = require('basic-auth'),
     express = require('express'),
     mongodb = require('mongodb'),
@@ -31,11 +32,13 @@ var DB = null,
 var pkg = require('./package.json');
 
 // set defaults to those needed for local dev
-app.set('env', (process.env.NODE_ENV || 'local'));
-process.env.LOG_TOKEN = process.env.LOG_TOKEN || 'local';
-process.env.DB_URI = process.env.DB_URI || pkg.env.DB_URI;
-process.env.ADMIN_USER = process.env.ADMIN_USER || pkg.env.ADMIN_USER;
-process.env.ADMIN_PASS = process.env.ADMIN_PASS || pkg.env.ADMIN_PASS;
+_.defaults(process.env, {
+    NODE_ENV: 'local',
+    LOG_TOKEN: 'local'
+}, pkg.env);
+
+app.set('env', process.env.NODE_ENV);
+
 process.env.PORT = process.env.PORT || 5000;
 
 var log = logentries.logger({
@@ -69,6 +72,7 @@ var bodyParser = require('body-parser')({limit:300000});
 var compress = require('compression');
 var errorhandler = require('errorhandler');
 var timeout = require('connect-timeout');
+var sesclient = ses.createClient({key:process.env.SES_KEY, secret:process.env.SES_SECRET});
 
 app.use(morgan({
     format: process.env.LOG_TOKEN + ' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b res_time=:response-time ms',
@@ -363,7 +367,7 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
             safe: true
         }, function (err, objects) {
             if (err) {
-                log.emerg('Update error : ', JSON.stringify(err));
+                log.error('Update error : ', JSON.stringify(err));
                 return next(err);
             }
             log.info("Student Update : success");
@@ -436,6 +440,16 @@ app.route('/center[/]?(:id)?')
             log.info('Center Created : ', JSON.stringify(objects));
             res.status(201);
             res.send(objects[0]);
+            sesclient.sendemail({
+                from: 'hello@unitsofsound.com',
+                to: query.mainContact,
+                subject: 'Welcome to your unitsofsound center',
+                message: 'something to tell you what to do'
+            }, function (err, data, res) {
+                if (err) {
+                    log.error('Failed center setup email for : ' + query.mainContact, err);
+                }
+            });
         });
     })
     .post(function (req, res, next) {
@@ -567,14 +581,14 @@ options.logger.debug = function (message, object) {
 
 mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
     if (err) {
-        log.emerg('error opening database');
+        log.error('error opening database');
         throw (err);
     }
     DB = dbconnection; //make the db globally avaliable
 
     DB.collection('users', function (err, collection) {
         if (err) {
-            log.emerg('cannot open users collection');
+            log.error('cannot open users collection');
             throw (err);
         }
         DB.users = collection;
@@ -582,7 +596,7 @@ mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
 
     DB.collection('centers', function (err, collection) {
         if (err) {
-            log.emerg('cannot open centers collection');
+            log.error('cannot open centers collection');
             throw (err);
         }
         DB.centers = collection;
