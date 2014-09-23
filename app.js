@@ -235,7 +235,7 @@ app.route('/student')
             }
             if (records.length) {
                 log.info('Student allready exists');
-                log.debug('Student allready exists : ', JSON.stringify(records));
+                log.debug('Student allready exists : ', JSON.stringify(_.pluck(records, 'username', 'pw1')));
                 res.status(409).end();
             } else {
                 log.info('Student creds ok to create');
@@ -307,6 +307,8 @@ app.post('/student/delete[/]?', bodyParser, function (req, res, next) {
     });
 });
 
+var defaultStudentRecord = require('./default-user.json');
+
 /**
  * Create SR if _id == null
  * Update SR if _id == something
@@ -321,19 +323,34 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
         query.pw1.toLowerCase();
     }
 
-    if (_.isEmpty(query._id) || _.isNull(query._id) || _.isUndefined(query._id)) {
+    if (!query._id) {
+        log.debug('student create bcause no _id');
+        _.defaults(query, defaultStudentRecord);
+
+        var hasUsername = !!query.username;
+        var hasPassword = !!query.pw1;
+        var hasCenter = !!query.center;
+
+        var hasRequiredFields = hasCenter && hasPassword && hasUsername;
+        if (!hasRequiredFields) {
+            log.info('student create missing username:', hasUsername, ' password:', hasPassword, ' center', hasCenter);
+            return res.status(400).send();
+        }
+
         //create new record
+        log.info('student create :', _.pick(query, 'username', 'pw1', 'center'));
         DB.users.insert(query, {
             safe: true
         }, function (err, objects) {
             if (err) {
                 return next(err);
             }
-            log.info('Student Created : ', JSON.stringify(objects));
+            log.info('Student Created');
             res.status(201);
             res.send(objects);
         });
     } else {
+        log.debug('student update _id:', query._id);
         //update record by matchin _id
         query._id = new mongodb.ObjectID(query._id);
 
@@ -349,7 +366,7 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
                 log.emerg('Update error : ', JSON.stringify(err));
                 return next(err);
             }
-            log.info("Student Update : success", objects);
+            log.info("Student Update : success");
             res.status(201);
             res.send(objects);
         });
@@ -393,6 +410,19 @@ app.route('/center[/]?(:id)?')
     })
     .put(function (req, res, next) {
         var query = req.body;
+        query = _.defaults({
+            maxLicencedStudentsForThisCenter: 0,
+            expiryDate: null,
+            defaultVoice: 0,
+            sourceNumber: 1
+        }, query);
+
+        //bail if no email for user
+        var hasValidMainContact = /.+@.+\..+/.test(query.mainContact);
+        if (!hasValidMainContact) {
+            res.status(400).send();
+            return;
+        }
 
         log.info('Center create');
         console.log('Center create', query);
@@ -565,6 +595,7 @@ mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
 
 process.on('uncaughtexception', function () {
     log.fatal('UNCAUGHT EXCEPTION -  should not');
+    process.exit(1);
 });
 
 process.on('SIGHUP', function () {
