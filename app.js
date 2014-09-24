@@ -21,8 +21,7 @@ var net = require('net'),
     auth = require('basic-auth'),
     express = require('express'),
     mongodb = require('mongodb'),
-    _ = require('lodash'),
-    logentries = require('node-logentries');
+    _ = require('lodash');
 
 // *******************************************************
 //          Global Variables
@@ -41,18 +40,6 @@ app.set('env', process.env.NODE_ENV);
 
 process.env.PORT = process.env.PORT || 5000;
 
-var log = logentries.logger({
-    token: process.env.LOG_TOKEN,
-    timestamp: false,
-    levels: {
-        debug:0,
-        info:1,
-        warn:2,
-        error:3,
-        fatal:4
-    }
-});
-
 // *******************************************************
 //          expose 'app' for testing
 module.exports = app;
@@ -60,9 +47,9 @@ module.exports = app;
 // *******************************************************
 //          Server Configuration
 
-log.info('Configuring Application for NODE_ENV: ' + app.get('env'));
-log.info('Configuring for DB : ' + process.env.DB_URI);
-log.info('Configuring for LE : ' + process.env.LOG_TOKEN);
+console.info('Configuring Application for NODE_ENV: ' + app.get('env'));
+console.info('Configuring for DB : ' + process.env.DB_URI);
+console.info('Configuring for LE : ' + process.env.LOG_TOKEN);
 
 app.set('view engine', 'html');
 app.engine('html', require('hbs').__express);
@@ -83,7 +70,6 @@ if (!app.get('env').match(/local|travis/)) {
 
 app.use(morgan({
     format: process.env.LOG_TOKEN + ' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b res_time=:response-time ms',
-    stream: new net.Socket().connect(80, 'api.logentries.com'),
     skip: function (req) {
         return !req.path.match(/^healthcheck/);
     }
@@ -98,19 +84,13 @@ app.use(function(req, res, next){
 
 switch(process.env.NODE_ENV) {
     case 'production':
-        log.level('debug');
         app.use(timeout());
         break;
     default:
-        log.on('log', function (logline) {
-            console.log(logline);
-        });
         app.use(errorhandler({
             dumpExceptions: true,
             showStack: false
         }));
-        log.level('debug');
-        log.debug('Setting up debug level logging');
         break;
 }
 
@@ -215,10 +195,10 @@ app.post('/login[/]?', bodyParser, function (req, res, next) {
         }
 
         if (studentRecord) {
-            log.info('Login Sucess : ', studentRecord.username, studentRecord._id);
+            console.info('Login Sucess : ', studentRecord.username, studentRecord._id);
             res.send(studentRecord);
         } else {
-            log.warn('Login Failed : ', JSON.stringify(query));
+            console.warn('Login Failed : ', JSON.stringify(query));
             res.status(401).end();
         }
     });
@@ -237,19 +217,19 @@ app.route('/student')
         if (query.pw1) {
             query.pw1.toLowerCase();
         }
-        log.debug('Create student : ', JSON.stringify(query));
-        log.info('Create student req ');
+        console.log('Create student : ', JSON.stringify(query));
+        console.info('Create student req ');
 
         DB.users.find(query, options).toArray(function (err, records) {
             if (err) {
                 return next(err);
             }
             if (records.length) {
-                log.info('Student allready exists');
-                log.debug('Student allready exists : ', JSON.stringify(_.pluck(records, 'username', 'pw1')));
+                console.info('Student allready exists');
+                console.log('Student allready exists : ', JSON.stringify(_.pluck(records, 'username', 'pw1')));
                 res.status(409).end();
             } else {
-                log.info('Student creds ok to create');
+                console.info('Student creds ok to create');
                 res.status(200).end();
             }
         });
@@ -284,13 +264,13 @@ app.post('/student/find[/]?', bodyParser, function (req, res, next) {
         $exists: false
     };
 
-    log.info('Student lookup : ', JSON.stringify(query));
+    console.info('Student lookup : ', JSON.stringify(query));
 
     DB.users.find(query, options).toArray(function (err, records) {
         if (err) {
             return next(err);
         }
-        log.debug('Returning : ', JSON.stringify(records));
+        console.log('Returning : ', JSON.stringify(records));
         res.send(records);
     });
 });
@@ -300,7 +280,7 @@ app.post('/student/find[/]?', bodyParser, function (req, res, next) {
  */
 app.post('/student/delete[/]?', bodyParser, function (req, res, next) {
     var query = req.body;
-    log.info('Student Deleted : ', query._id);
+    console.info('Student Deleted : ', query._id);
     query._id = new mongodb.ObjectID(query._id);
 
     DB.users.update(_.pick(query, '_id'), {
@@ -335,7 +315,7 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
     }
 
     if (!query._id) {
-        log.debug('student create bcause no _id');
+        console.log('student create bcause no _id');
         _.defaults(query, defaultStudentRecord);
 
         var hasUsername = !!query.username;
@@ -344,29 +324,29 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 
         var hasRequiredFields = hasCenter && hasPassword && hasUsername;
         if (!hasRequiredFields) {
-            log.info('student create missing username:', hasUsername, ' password:', hasPassword, ' center', hasCenter);
+            console.info('student create missing username:', hasUsername, ' password:', hasPassword, ' center', hasCenter);
             return res.status(400).send();
         }
 
         //create new record
-        log.info('student create :', _.pick(query, 'username', 'pw1', 'center'));
+        console.info('student create :', _.pick(query, 'username', 'pw1', 'center'));
         DB.users.insert(query, {
             safe: true
         }, function (err, objects) {
             if (err) {
                 return next(err);
             }
-            log.info('Student Created');
+            console.info('Student Created');
             res.status(201);
             res.send(objects);
         });
     } else {
-        log.debug('student update _id:', query._id);
+        console.log('student update _id:', query._id);
         //update record by matchin _id
         query._id = new mongodb.ObjectID(query._id);
 
-        log.info('Student Updated : ', query._id);
-        // log.debug('Update query : ', JSON.stringify(query));
+        console.info('Student Updated : ', query._id);
+        // console.log('Update query : ', JSON.stringify(query));
 
         DB.users.update(_.pick(query, '_id'), {
             $set: _.omit(query, '_id')
@@ -374,10 +354,10 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
             safe: true
         }, function (err, objects) {
             if (err) {
-                log.error('Update error : ', JSON.stringify(err));
+                console.error('Update error : ', JSON.stringify(err));
                 return next(err);
             }
-            log.info("Student Update : success");
+            console.info("Student Update : success");
             res.status(201);
             res.send(objects);
         });
@@ -399,34 +379,34 @@ app.route('/center[/]?(:id)?')
         req.query.deleted = {$exists: false};
         if (req.params.id) {
             req.query._id = req.params.id;
-            log.info('Center query : ', JSON.stringify(req.query));
+            console.info('Center query : ', JSON.stringify(req.query));
             DB.centers.findOne(req.query, function (err, record) {
                 if (err) {
                     return next(err);
                 }
-                log.debug('Returning : '+ JSON.stringify(record));
+                console.log('Returning : '+ JSON.stringify(record));
                 res.send(record);
             });
         } else {
-            log.info('Center query : ', JSON.stringify(req.query));
+            console.info('Center query : ', JSON.stringify(req.query));
             DB.centers.find(req.query, {safe: true}).toArray(function (err, objects) {
                 if (err) {
                     return next(err);
                 }
-                log.debug('Returning : '+ JSON.stringify(objects));
+                console.log('Returning : '+ JSON.stringify(objects));
                 res.status(200);
                 res.send(objects);
             });
         }
     })
     .put(function (req, res, next) {
-        var query = req.body;
-        query = _.defaults({
+        var query = {};
+        _.defaults(query, req.body, {
             maxLicencedStudentsForThisCenter: 0,
             expiryDate: null,
             defaultVoice: 0,
             sourceNumber: 1
-        }, query);
+        });
 
         //bail if no email for user
         var hasValidMainContact = /.+@.+\..+/.test(query.mainContact);
@@ -435,7 +415,7 @@ app.route('/center[/]?(:id)?')
             return;
         }
 
-        log.info('Center create');
+        console.info('Center create');
         console.log('Center create', query);
 
         DB.centers.insert(query, {
@@ -444,7 +424,7 @@ app.route('/center[/]?(:id)?')
             if (err) {
                 return next(err);
             }
-            log.info('Center Created : ', JSON.stringify(objects));
+            console.info('Center Created : ', JSON.stringify(objects));
             res.status(201);
             res.send(objects[0]);
             sesclient.sendemail({
@@ -454,7 +434,7 @@ app.route('/center[/]?(:id)?')
                 message: 'something to tell you what to do'
             }, function (err, data, res) {
                 if (err) {
-                    log.error('Failed center setup email for : ' + query.mainContact, err);
+                    console.error('Failed center setup email for : ' + query.mainContact, err);
                 }
             });
         });
@@ -473,7 +453,7 @@ app.route('/center[/]?(:id)?')
             if (err) {
                 return next(err);
             }
-            log.info('Center update : ', JSON.stringify(objects));
+            console.info('Center update : ', JSON.stringify(objects));
             res.status(202).end();
         });
     });
@@ -487,7 +467,7 @@ app.route('/center[/]?(:id)?')
  * Returns a file from GrdFS
  */
 app.get('/recordings/:filename', function (req, res, next) {
-    log.debug('request for ' + req.params.filename);
+    console.log('request for ' + req.params.filename);
     var storedRec = new mongodb.GridStore(DB, req.params.filename, 'r');
     storedRec.open(function (err, gs) {
         if (err) {
@@ -496,7 +476,7 @@ app.get('/recordings/:filename', function (req, res, next) {
 
         //file opened, can now do things with it
         // Create a stream to the file
-        log.debug('request for existing recording');
+        console.log('request for existing recording');
         var stream = gs.stream(true);
         stream.pipe(res);
     });
@@ -514,7 +494,7 @@ app.get('/recordings/:filename', function (req, res, next) {
  * https://github.com/mongodb/node-mongodb-native/blob/master/docs/gridfs.md
  */
 app.post('/recordings/:filename', function (req, res, next) {
-    log.debug('sending recording to mongo filename=' + req.params.filename);
+    console.log('sending recording to mongo filename=' + req.params.filename);
     var newRecording = new mongodb.GridStore(DB, req.params.filename, 'w', {
         "content_type": "binary/octet-stream",
         "chunk_size": 1024 * 4
@@ -522,7 +502,7 @@ app.post('/recordings/:filename', function (req, res, next) {
 
     newRecording.open(function (err, gridStore) {
         if (err) {
-            log.error('could not open Gridstore item filename=' + req.params.filename);
+            console.error('could not open Gridstore item filename=' + req.params.filename);
             return next(err);
         }
         req.pipe(gridStore);
@@ -553,7 +533,7 @@ app.post('/recordings/:filename', function (req, res, next) {
 
 //app.all('/dev/crash[/]?', function(req, res, next) {
 //    console.error('This is a triggerd crash');
-//    log.crit('This is a triggerd crash');
+//    console.crit('This is a triggerd crash');
 //    res.send('crashing app in 500ms');
 //    setTimeout(function() {
 //       throw new Error('this crash was triggered');
@@ -573,29 +553,29 @@ options.logger.doDebug = true;
 options.logger.debug = function (message, object) {
     // print the mongo command:
     // "writing command to mongodb"
-    log.debug(message);
+    console.log(message);
 
     // print the collection name
-    log.debug(object.json.collectionName);
+    console.log(object.json.collectionName);
 
     // print the json query sent to MongoDB
-    log.debug(object.json.query);
+    console.log(object.json.query);
 
     // // print the binary object
     // console.log(object.binary)
-    // log.debug(object.binary)
+    // console.log(object.binary)
 };
 
 mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
     if (err) {
-        log.error('error opening database');
+        console.error('error opening database');
         throw (err);
     }
     DB = dbconnection; //make the db globally avaliable
 
     DB.collection('users', function (err, collection) {
         if (err) {
-            log.error('cannot open users collection');
+            console.error('cannot open users collection');
             throw (err);
         }
         DB.users = collection;
@@ -603,19 +583,19 @@ mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
 
     DB.collection('centers', function (err, collection) {
         if (err) {
-            log.error('cannot open centers collection');
+            console.error('cannot open centers collection');
             throw (err);
         }
         DB.centers = collection;
     });
 
     app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80).once('listening', function() {
-        log.info('listening on ' + process.env.PORT);
+        console.info('listening on ' + process.env.PORT);
     });
 });
 
 process.on('uncaughtexception', function () {
-    log.fatal('UNCAUGHT EXCEPTION -  should not');
+    console.fatal('UNCAUGHT EXCEPTION -  should not');
     process.exit(1);
 });
 

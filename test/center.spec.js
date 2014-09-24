@@ -1,7 +1,7 @@
 /*jshint node:true*/
 /*globals mocha, expect, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
 
-describe('/center', function () {
+describe.only('/center', function () {
     var request = require('supertest'),
         server = 'http://localhost:5000',
         expect = require('expect.js');
@@ -34,6 +34,11 @@ describe('/center', function () {
             .expect(function (res) {
                 CreadtedCenterId = res.body._id;
                 expect(CreadtedCenterId).to.match(/[a-f0-9]{24}/);
+
+                var center = res.body;
+                expect(center.name).to.be('Manchester');
+                expect(center.mainContact).to.be('blah@blah.com');
+                expect(center.defaultVoice).to.be(0);
             })
             .expect(201, done);
     });
@@ -75,10 +80,19 @@ describe('/center', function () {
     it('should update a center', function (done) {
         request(server)
             .post('/center/' + CreadtedCenterId)
-            .send({blah:'blah'})
+            .send({
+                name: 'Manchester',
+                centerType: 'home',
+                mainContact: 'nope@blah.com'
+            })
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
             .expect('Cache-Control', /no/)
+            .expect(function (res) {
+                expect(res.body).to.be.an('object');
+                console.log(res.body);
+//                expect(res.body.mainContact).to.match(/nope/);
+            })
             .expect(202, done);
     });
 
