@@ -29,7 +29,8 @@ angular.module('newcenter', [])
                 method: 'PUT',
                 url: '/center',
                 data: $scope.center
-            }).then(function () {
+            })
+            .then(function () {
                 $window.location.href = '..';
             });
         }

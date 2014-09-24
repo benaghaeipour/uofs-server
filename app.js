@@ -17,7 +17,7 @@ var net = require('net'),
     http = require('http'),
     https = require('https'),
     fs = require('fs'),
-    ses = require('node-ses'),
+    aws = require('aws-sdk'),
     auth = require('basic-auth'),
     express = require('express'),
     mongodb = require('mongodb'),
@@ -60,14 +60,6 @@ var compress = require('compression');
 var errorhandler = require('errorhandler');
 var timeout = require('connect-timeout');
 
-var sesclient = {
-    sendemail: function () {}
-};
-
-if (!app.get('env').match(/local|travis/)) {
-    sesclient = ses.createClient({key:process.env.SES_KEY, secret:process.env.SES_SECRET});
-}
-
 app.use(morgan({
     format: process.env.LOG_TOKEN + ' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b res_time=:response-time ms',
     skip: function (req) {
@@ -82,17 +74,43 @@ app.use(function(req, res, next){
     next();
 });
 
+
 switch(process.env.NODE_ENV) {
     case 'production':
         app.use(timeout());
+        ses = new aws.SES({
+            accessKeyId: process.env.SES_KEY,
+            secretAccessKey: process.env.SES_SECRET,
+            region: 'eu-west-1',
+            logger: console.log
+        });
+        break;
+    case 'development':
+        ses = new aws.SES({
+            accessKeyId: process.env.SES_KEY,
+            secretAccessKey: process.env.SES_SECRET,
+            region: 'eu-west-1',
+            logger: console.log
+        });
         break;
     default:
+        ses= {
+            sendEmail: function () {}
+        };
         app.use(errorhandler({
             dumpExceptions: true,
             showStack: false
         }));
         break;
 }
+
+//http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/frames.html#!AWS/SES.html
+var ses = new aws.SES({
+    accessKeyId: process.env.SES_KEY,
+    secretAccessKey: process.env.SES_SECRET,
+    region: 'eu-west-1',
+    logger: console.log
+});
 
 // *******************************************************
 //          Some standrad routes etc
@@ -427,16 +445,28 @@ app.route('/center[/]?(:id)?')
             console.info('Center Created : ', JSON.stringify(objects));
             res.status(201);
             res.send(objects[0]);
-            sesclient.sendemail({
-                from: 'hello@unitsofsound.com',
-                to: query.mainContact,
-                subject: 'Welcome to your unitsofsound center',
-                message: 'something to tell you what to do'
-            }, function (err, data, res) {
-                if (err) {
-                    console.error('Failed center setup email for : ' + query.mainContact, err);
-                }
-            });
+//            ses.sendEmail({
+//                Destination: {
+//                    ToAddresses: [query.mainContact]
+//                },
+//                Message: {
+//                    Body: {
+//                        Text: {
+//                            Data: 'something to tell you what to do'
+//                        }
+//                    },
+//                    Subject: {
+//                        Data: 'Welcome to your unitsofsound center'
+//                    }
+//                },
+//                Source: 'hello@unitsofsound.com'
+//            }, function (err, data) {
+//                if (err) {
+//                    console.error('Failed center setup email for : ' + query.mainContact, err);
+//                    return;
+//                }
+//                console.log('Sucessfull email');
+//            });
         });
     })
     .post(function (req, res, next) {

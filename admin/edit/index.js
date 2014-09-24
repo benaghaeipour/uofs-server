@@ -47,7 +47,36 @@ angular.module('editcenter', [])
         $http({
             method: 'GET',
             url: '/center/' + centerGuid
-        }).then(function (res) {
+        })
+        .then(function (res) {
             $scope.center = res.data;
+            return res;
+        })
+        .then(function (res) {
+            $http({
+                method: 'POST',
+                url: '/student/find',
+                data: {
+                    username: res.data.mainContact
+                }
+            }).then(function (res) {
+                if (res.data.length !== 0) {
+                    $scope.user = res.data;
+                }
+            });
         });
+
+        $scope.createUser =  function () {
+            $http({
+                method: 'POST',
+                url: '/student/update',
+                data: {
+                    center: $scope.center.name,
+                    username: $scope.center.mainContact,
+                    pw1: 'changeme'
+                }
+            }).then(function (res) {
+                $scope.user = res.data;
+            });
+        };
     });
