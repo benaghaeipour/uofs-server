@@ -1,7 +1,7 @@
 /*jshint node:true*/
 /*globals mocha, expect, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
 
-describe.only('/center', function () {
+describe('/center', function () {
     var request = require('supertest'),
         server = 'http://localhost:5000',
         expect = require('expect.js');
