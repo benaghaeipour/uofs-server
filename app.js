@@ -355,7 +355,7 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
                 return next(err);
             }
             console.info('Student Created');
-            res.status(201).send(objects);
+            res.sendStatus(201).send(objects);
         });
     } else {
         console.log('student update _id:', query._id);
@@ -374,7 +374,7 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
                 console.error('Update error : ', JSON.stringify(err));
                 return next(err);
             }
-            res.status(201).send(objects);
+            res.sendStatus(201).send(objects);
         });
     }
 });
