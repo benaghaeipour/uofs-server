@@ -1,4 +1,4 @@
-/*globals describe, module, inject, beforeEach, it*/
+/*globals describe, module, inject, beforeEach, it, beforeEach, afterEach, expect*/
 describe('centers', function () {
 
     beforeEach(module('admin'));

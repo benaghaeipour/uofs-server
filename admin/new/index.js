@@ -1,7 +1,7 @@
 /*globals angular*/
 angular.module('newcenter', [])
     .value('eCenterTypes', ['home', 'school'])
-    .controller('newcenter', function ($scope, $http, eCenterTypes) {
+    .controller('newcenter', function ($scope, $http, $window, eCenterTypes) {
 
         $scope.iconTypeForCenterType = function (centerType) {
             var mapping = {
@@ -29,6 +29,9 @@ angular.module('newcenter', [])
                 method: 'PUT',
                 url: '/center',
                 data: $scope.center
+            })
+            .then(function () {
+                $window.location.href = '..';
             });
         }
 

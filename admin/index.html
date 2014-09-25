@@ -9,22 +9,14 @@
     <body ng-app="admin" class="container">
         <section ng-controller="centers">
             <div class="page-header">
-                <h1>Centers <a class="fa pull-right fa-plus" href="newcenter"></a></h1>
+                <h1>Centers <a class="fa pull-right fa-plus" href="new"></a></h1>
 
             </div>
-            <div ng-repeat="center in list">
-                <div class="media">
-                    <i class="pull-left" href="#">
-                        <i class="fa fa-4x" ng-class="iconTypeForCenterType(center.centerType)"></i>
-                    </i>
-                    <div class="media-body">
-                        <h4 class="media-heading">{{center.name}} <small>{{center._id}}</small></h4>
-                        <p>Max Students : {{center.maxStudents}}</p>
-                        <ul class="list-group" ng-repeat="order in purchaseOrders">
-                            <li class="list-group-item">{{order.value}} </li>
-                        </ul>
-                    </div>
-                </div>
+            <div class="row" ng-repeat="center in list">
+                <i class="col-md-1 pull-left" href="#">
+                    <i class="fa fa-4x" ng-class="iconTypeForCenterType(center.centerType)"></i>
+                </i>
+                <h2 class="col-md-9 media-heading">{{center.name}} <small><a ng-href="edit/{{center._id}}">{{center._id}}</a></small></h2>
             </div>
         </section>
     </body>

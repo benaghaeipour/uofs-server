@@ -8,7 +8,7 @@ describe('/center', function () {
 
     var CreadtedCenterId = '';
 
-    it('should create a center', function (done) {
+    it('should bounce missing mainContact', function (done) {
         request(server)
             .put('/center')
             .send({
@@ -17,10 +17,28 @@ describe('/center', function () {
             })
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
+            .expect(400, done);
+    });
+
+    it('should create a center', function (done) {
+        request(server)
+            .put('/center')
+            .send({
+                name: 'Manchester',
+                centerType: 'home',
+                mainContact: 'blah@blah.com'
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
             .expect('Content-Type', /application\/json/)
             .expect(function (res) {
                 CreadtedCenterId = res.body._id;
                 expect(CreadtedCenterId).to.match(/[a-f0-9]{24}/);
+
+                var center = res.body;
+                expect(center.name).to.be('Manchester');
+                expect(center.mainContact).to.be('blah@blah.com');
+                expect(center.defaultVoice).to.be(0);
             })
             .expect(201, done);
     });
@@ -48,7 +66,13 @@ describe('/center', function () {
             .expect('Content-Type', /application\/json/)
             .expect('Cache-Control', /no/)
             .expect(function (res) {
-                expect(res.body).to.be.an('object');
+                var center = res.body;
+                expect(center).to.be.an('object');
+                expect(center.maxLicencedStudentsForThisCenter).to.be(0);
+                expect(center.expiryDate).to.be(null);
+                expect(center.mainContact).to.match(/.+@.+\..+/);
+                expect(center.defaultVoice).to.be(0);
+                expect(center.sourceNumber).to.be(1);
             })
             .expect(200, done);
     });
@@ -56,10 +80,19 @@ describe('/center', function () {
     it('should update a center', function (done) {
         request(server)
             .post('/center/' + CreadtedCenterId)
-            .send({blah:'blah'})
+            .send({
+                name: 'Manchester',
+                centerType: 'home',
+                mainContact: 'nope@blah.com'
+            })
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
             .expect('Cache-Control', /no/)
+            .expect(function (res) {
+                expect(res.body).to.be.an('object');
+                console.log(res.body);
+//                expect(res.body.mainContact).to.match(/nope/);
+            })
             .expect(202, done);
     });
 

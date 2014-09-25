@@ -1,9 +1,9 @@
 {
-  "name": "uofs-preview",
-  "subdomain": "uos-preview",
+  "name": "uofs-server",
   "version": "0.1.3",
   "repository": "https://github.com/peachproductions/uofs-server",
   "dependencies": {
+    "aws-sdk": "^2.0.17",
     "basic-auth": "^1.0.0",
     "body-parser": "^1.3.0",
     "compression": "^1.0.2",
@@ -39,11 +39,7 @@
     "test": "tests/"
   },
   "env": {
-    "NODE_ENV": "develoment",
-    "DB_URI": "mongodb://c9:c9@oceanic.mongohq.com:10040/preview",
-    "LOG_TOKEN": "174fa695-751c-41fc-bd3b-5a11cd44b4b4",
-    "ADMIN_USER": "chris",
-    "ADMIN_PASS": "iii"
+    "NODE_ENV": "develoment"
   },
   "scripts": {
     "test": "karma start --single-run && mocha -R spec -t 4000 -b",
