@@ -355,8 +355,7 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
                 return next(err);
             }
             console.info('Student Created');
-            res.status(201);
-            res.send(objects);
+            res.status(201).json(objects);
         });
     } else {
         console.log('student update _id:', query._id);
@@ -375,9 +374,7 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
                 console.error('Update error : ', JSON.stringify(err));
                 return next(err);
             }
-            console.info("Student Update : success");
-            res.status(201);
-            res.send(objects);
+            res.status(201).json(objects);
         });
     }
 });
@@ -403,7 +400,7 @@ app.route('/center[/]?(:id)?')
                     return next(err);
                 }
                 console.log('Returning : '+ JSON.stringify(record));
-                res.send(record);
+                res.status(200).send(record);
             });
         } else {
             console.info('Center query : ', JSON.stringify(req.query));
@@ -412,8 +409,7 @@ app.route('/center[/]?(:id)?')
                     return next(err);
                 }
                 console.log('Returning : '+ JSON.stringify(objects));
-                res.status(200);
-                res.send(objects);
+                res.status(200).send(objects);
             });
         }
     })
