@@ -21,7 +21,7 @@
                         Main Contact
                         <div class="input-group">
                             <input name="centerContact" class="form-control" ng-model="center.mainContact" type="text" required>
-                            <span class="input-group-btn"><button class="btn btn-default" ng-click="createUser()" disabled="{{user}}">create</button></span>
+                            <span class="input-group-btn"><button class="btn btn-default" ng-click="createUser()" ng-disabled="user">create</button></span>
                         </div>
                     </label>
                     <label class="col-md-6">Max No. Students <input class="form-control" ng-model="center.maxLicencedStudentsForThisCenter" type="number" min="0" max="99"></label>
