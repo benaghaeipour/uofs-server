@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <script type="application/javascript" src="//cdn.jsdelivr.net/angularjs/1.2.17/angular.min.js"></script>
+        <script type="application/javascript" src="//cdn.jsdelivr.net/angularjs/1.2.17/angular-resource.min.js"></script>
+        <link type="text/css" rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.min.css"></link>
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.1.0/css/font-awesome.min.css">
+        <script type="application/javascript" src="index.js"></script>
+    </head>
+    <body ng-app="admin" class="container">
+        <section ng-controller="centers">
+            <div class="page-header">
+                <h1>Centers <a class="fa pull-right fa-plus" href="new"></a></h1>
+
+            </div>
+            <div class="row" ng-repeat="center in list">
+                <i class="col-md-1 pull-left" href="#">
+                    <i class="fa fa-4x" ng-class="iconTypeForCenterType(center.centerType)"></i>
+                </i>
+                <h2 class="col-md-9 media-heading">{{center.name}} <small><a ng-href="edit/{{center._id}}">{{center._id}}</a></small></h2>
+            </div>
+        </section>
+    </body>
+</html>

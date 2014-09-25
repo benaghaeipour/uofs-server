@@ -1,7 +1,7 @@
 /*jshint node:true*/
 /*globals mocha, expect, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
 
-describe('uofs-server', function () {
+describe('/', function () {
     var request = require('supertest'),
         server = 'http://localhost:5000';
 
