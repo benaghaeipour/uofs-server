@@ -28,7 +28,7 @@ after(function (done) {
             })
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
-            .expect(200, done);
+            .expect(201, done);
 });
 
 //before(function (done) {

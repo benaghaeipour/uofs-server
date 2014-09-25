@@ -69,7 +69,7 @@ describe('/student', function () {
                     expect(CreadtedUser.readingSyllabus.length).to.be(299);
                     expect(CreadtedUser.voiceDialect).to.be(2);
                 })
-                .expect(200, done);
+                .expect(201, done);
         });
     });
 
