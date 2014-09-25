@@ -355,7 +355,6 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
                 return next(err);
             }
             console.info('Student Created');
-            res.status(201);
             res.send(objects);
         });
     } else {
@@ -376,7 +375,6 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
                 return next(err);
             }
             console.info("Student Update : success");
-            res.status(201);
             res.send(objects);
         });
     }

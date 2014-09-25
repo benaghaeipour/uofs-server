@@ -27,8 +27,7 @@ after(function (done) {
                 pw1: 'iii'
             })
             .set('Accept', 'application/json')
-            .set('Content-Type', 'application/json')
-            .expect(201, done);
+            .set('Content-Type', 'application/json');
 });
 
 //before(function (done) {
