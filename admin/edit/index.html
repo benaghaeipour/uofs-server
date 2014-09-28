@@ -1,36 +1,54 @@
 <html>
+
     <head>
         <script type="application/javascript" src="//cdn.jsdelivr.net/angularjs/1.2.17/angular.min.js"></script>
         <link type="text/css" rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.1.0/css/font-awesome.min.css">
         <script type="application/javascript" src="index.js"></script>
     </head>
+
     <body ng-app="editcenter" class="container">
         <section ng-controller="editcenter">
             <div class="page-header">
                 <h1>Edit Center</h1>
             </div>
             <form name="form" class="row" ng-submit="submit()">
-                <i class="fa fa-4x col-md-1" ng-class="iconTypeForCenterType(center.centerType)"
-                   ng-click="incCenterType()"></i>
+                <i class="fa fa-4x col-md-1" ng-class="iconTypeForCenterType(center.centerType)" ng-click="incCenterType()"></i>
                 <div class="col-md-10 form-group">
-                    <label class="col-md-6" ng-class="{'has-error': form.centerName.$invalid}">
-                        Name <input name="centerName" class="form-control" ng-model="center.name" type="text" required>
+                    <label class="col-md-6" ng-class="{'has-error': form.centerName.$invalid}">Name
+                        <input name="centerName" class="form-control" ng-model="center.name" type="text" required>
                     </label>
-                    <label class="col-md-5" ng-class="{'has-error': form.centerContact.$invalid}">
-                        Main Contact
+                    <label class="col-md-5" ng-class="{'has-error': form.centerContact.$invalid}">Main Contact
                         <input name="centerContact" class="form-control" ng-model="center.mainContact" type="text" required>
                     </label>
                     <label ng-if="!user">
                         <button class="col-md-1 btn btn-default form-control" ng-click="createUser()" ng-disabled="user">create</button>
                     </label>
-                    <label class="col-md-6">Max No. Students <input class="form-control" ng-model="center.maxLicencedStudentsForThisCenter" type="number" min="0" max="99"></label>
-                    <label class="col-md-6">Expiry Date <input class="form-control" ng-model="center.expiryDate" type="date"></label>
-                    <label class="col-md-6">Invoice Number <input class="form-control" ng-model="center.invoiceNumber" type="text"></label>
-                    <label class="col-md-6">Invoice Value &pound; <input class="form-control" ng-model="center.invoiceValue" type="number" min="0"></label>
+                    <label class="col-md-6">Max No. Students
+                        <input class="form-control" ng-model="center.maxLicencedStudentsForThisCenter" type="number" min="0" max="99">
+                    </label>
+                    <label class="col-md-6">Expiry Date
+                        <input class="form-control" ng-model="center.expiryDate" type="date">
+                    </label>
+                    <label class="col-md-6">Invoice Number
+                        <input class="form-control" ng-model="center.invoiceNumber" type="text">
+                    </label>
+                    <label class="col-md-6">Invoice Value &pound;
+                        <input class="form-control" ng-model="center.invoiceValue" type="number" min="0">
+                    </label>
+                    <div class="col-md-6">
+                        <label>Dialect of students</label>
+                        <label class="radio-inline">
+                            <input type="radio" name="vd" ng-model="center.defaultVoice" value="0">UK</label>
+                        <label class="radio-inline">
+                            <input type="radio" name="vd" ng-model="center.defaultVoice" value="1">UK (North)</label>
+                        <label class="radio-inline">
+                            <input type="radio" name="vd" ng-model="center.defaultVoice" value="2">US</label>
+                    </div>
                 </div>
                 <button type="submit" class="col-md-2 col-md-offset-2 btn btn-primary pull-right">Save</button>
             </form>
         </section>
     </body>
+
 </html>
