@@ -1,6 +1,6 @@
 {
   "name": "uofs-server",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "repository": "https://github.com/peachproductions/uofs-server",
   "dependencies": {
     "aws-sdk": "^2.0.17",
