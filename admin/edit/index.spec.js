@@ -7,31 +7,6 @@ describe('edit center', function () {
         $httpBackend.verifyNoOutstandingExpectation();
     }));
 
-    it('should send POST', inject(function ($controller, $rootScope, $httpBackend, $location) {
-        $location.url('/edit/aaaaaaaaaaaaaaaaaaaaaaaa');
-        $httpBackend.whenGET('/center/aaaaaaaaaaaaaaaaaaaaaaaa').respond({
-            name: 'London',
-            centerType: 'home'
-        });
-
-        $controller('editcenter', {
-            $scope: $rootScope
-        });
-
-        $rootScope.center = {
-            name: 'London',
-            centerType: 'school',
-            maxLicensedStudnetsForThisCenter: 10
-        };
-        $rootScope.submit();
-
-        $httpBackend.expectPOST('/center/aaaaaaaaaaaaaaaaaaaaaaaa', {
-            name: 'London',
-            centerType: 'school',
-            maxLicensedStudnetsForThisCenter: 10
-        }).respond(202);
-    }));
-
     it('should load center ', inject(function ($controller, $rootScope, $httpBackend, $location) {
         $location.url('/edit/aaaaaaaaaaaaaaaaaaaaaaaa');
         $controller('editcenter', {
@@ -81,6 +56,52 @@ describe('edit center', function () {
 
         $rootScope.center.name = 'New York';
         $rootScope.submit();
+    }));
 
+    it('should check mainContact exists', inject(function ($controller, $rootScope, $httpBackend, $location) {
+        $location.url('/edit/aaaaaaaaaaaaaaaaaaaaaaaa');
+        $httpBackend.whenGET('/center/aaaaaaaaaaaaaaaaaaaaaaaa').respond({
+            name: 'London',
+            mainContact: 'some@person.com',
+            centerType: 'home'
+        });
+
+        $httpBackend.expectPOST('/student/find', {
+            username: 'some@person.com'
+        }).respond({
+            username: 'some@person.com',
+            pw1: 'iii'
+        });
+
+        $controller('editcenter', {
+            $scope: $rootScope
+        });
+        $httpBackend.flush();
+    }));
+
+    it('should create user for mainContact', inject(function ($controller, $rootScope, $httpBackend, $location) {
+        $location.url('/edit/aaaaaaaaaaaaaaaaaaaaaaaa');
+        $httpBackend.whenGET('/center/aaaaaaaaaaaaaaaaaaaaaaaa').respond({
+            name: 'London',
+            mainContact: 'some@person.com',
+            centerType: 'home'
+        });
+
+        $httpBackend.whenPOST('/student/find').respond(404);
+
+        $controller('editcenter', {
+            $scope: $rootScope
+        });
+        $httpBackend.flush();
+
+        $rootScope.createUser();
+
+        $httpBackend.expectPOST('/student/update', {
+            center: 'London',
+            username: 'some@person.com',
+            pw1: 'changeme'
+        }).respond(201);
+
+        $httpBackend.flush();
     }));
 });
