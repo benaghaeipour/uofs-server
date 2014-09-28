@@ -67,7 +67,7 @@ describe('/student', function () {
                     expect(CreadtedUser.memorySyllabus.length).to.be(150);
                     expect(CreadtedUser.dictationSyllabus.length).to.be(150);
                     expect(CreadtedUser.readingSyllabus.length).to.be(299);
-                    expect(CreadtedUser.voiceDialect).to.be(2);
+                    expect(CreadtedUser.voiceDialect).to.be(0);
                 })
                 .expect(201, done);
         });
