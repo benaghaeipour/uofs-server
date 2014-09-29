@@ -7961,7 +7961,7 @@
     "recording" : true,
     "aPage" : false,
     "overlapReading" : true,
-    "placementReading" : true,
+    "placementReading" : false,
     "dictationSyllabus" : [
         {
             "workOnDate" : null,
@@ -9914,7 +9914,7 @@
             "notes" : ""
         }
     ],
-    "placementSpelling" : true,
+    "placementSpelling" : false,
     "syllabusTypeReading" : true,
     "studentEmail" : null,
     "syllabusTypeSpelling" : true,
