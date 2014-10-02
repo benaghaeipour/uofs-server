@@ -71,6 +71,47 @@ describe('/student', function () {
                 })
                 .expect(201, done);
         });
+
+        it('should not destroy syllabus', function (done) {
+            request(server)
+                .post('/student/update')
+                .send({
+                    _id: CreadtedUserId,
+                    username: 'scott',
+                    center: 'blah',
+                    pw1: 'iii',
+                    dictationSyllabus: [],
+                    spellingSyllabus: [],
+                    readingSyllabus: [],
+                    memorySyllabus: []
+                })
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .expect('Content-Type', /application\/json/)
+                .expect(201, done);
+        });
+
+        it('should still have syllabus info', function (done) {
+            request(server)
+                .post('/student/find')
+                .send({
+                    _id: CreadtedUserId
+                })
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .expect('Content-Type', /application\/json/)
+                .expect(function (res) {
+                    var CreadtedUser = res.body[0];
+                    CreadtedUserId = CreadtedUser._id;
+                    expect(CreadtedUser._id).to.match(/[a-f0-9]{24}/);
+                    expect(CreadtedUser.spellingSyllabus.length).to.be(150);
+                    expect(CreadtedUser.memorySyllabus.length).to.be(150);
+                    expect(CreadtedUser.dictationSyllabus.length).to.be(150);
+                    expect(CreadtedUser.readingSyllabus.length).to.be(299);
+                    expect(CreadtedUser.voiceDialect).to.be(0);
+                })
+                .expect(200, done);
+        });
     });
 
     describe('creation', function () {

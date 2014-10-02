@@ -362,6 +362,23 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
         //update record by matchin _id
         query._id = new mongodb.ObjectID(query._id);
 
+        if (query.spellingSyllabus < 100) {
+            console.warn('avoiding messing up spellingSyllabus for' + query._id);
+            delete query.spellingSyllabus;
+        }
+        if (query.memorySyllabus < 100) {
+            console.warn('avoiding messing up memorySyllabus for' + query._id);
+            delete query.memorySyllabus;
+        }
+        if (query.dictationSyllabus < 100) {
+            console.warn('avoiding messing up dictationSyllabus for' + query._id);
+            delete query.dictationSyllabus;
+        }
+        if (query.readingSyllabus < 100) {
+            console.warn('avoiding messing up readingSyllabus for' + query._id);
+            delete query.readingSyllabus;
+        }
+
         console.info('Student Updated : ', query._id);
         // console.log('Update query : ', JSON.stringify(query));
 
