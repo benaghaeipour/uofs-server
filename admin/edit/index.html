@@ -22,7 +22,7 @@
                         <input name="centerContact" class="form-control" ng-model="center.mainContact" type="text" required>
                     </label>
                     <label ng-if="!user">
-                        <button class="col-md-1 btn btn-default form-control" ng-click="createUser()" ng-disabled="user">create</button>
+                        <button type="button" class="col-md-1 btn btn-default form-control" ng-click="createUser()">create</button>
                     </label>
                     <label class="col-md-6">Max No. Students
                         <input class="form-control" ng-model="center.maxLicencedStudentsForThisCenter" type="number" min="0" max="99">

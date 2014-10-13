@@ -80,29 +80,29 @@ app.use(function(req, res, next){
 adjNoun.seed(401175);
 var transporter;
 
+if(process.env.SES_KEY && process.env.SES_SECRET) {
+    console.info('Using SES email trasnport');
+    transporter = nodemailer.createTransport(ses({
+        accessKeyId: process.env.SES_KEY,
+        secretAccessKey: process.env.SES_SECRET,
+        region: 'eu-west-1'
+    }));
+} else {
+    console.warn('Stubbing email trasnport');
+    transporter = nodemailer.createTransport(stubTransport());
+}
+
 switch(process.env.NODE_ENV) {
     case 'production':
         app.use(timeout());
-        transporter = nodemailer.createTransport(ses({
-            accessKeyId: process.env.SES_KEY,
-            secretAccessKey: process.env.SES_SECRET,
-            region: 'eu-west-1'
-        }));
-
         break;
     default:
-//        transporter = nodemailer.createTransport(stubTransport());
-        transporter = nodemailer.createTransport(ses({
-            accessKeyId:    'AKIAJBZLYCA4Z4EHP5GA',
-            secretAccessKey: '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',
-            region: 'eu-west-1'
-        }));
-        app.use(errorhandler({
-            dumpExceptions: true,
-            showStack: false
-        }));
         break;
 }
+app.use(errorhandler({
+    dumpExceptions: true,
+    showStack: true
+}));
 
 // *******************************************************
 //          Some standrad routes etc

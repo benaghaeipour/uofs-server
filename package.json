@@ -47,7 +47,7 @@
   },
   "scripts": {
     "test": "karma start --single-run && mocha -R spec -t 4000 -b",
-    "test-dev": "mocha -w -R spec -t 4000 -b",
+    "test-dev": "mocha -R spec -t 4000 -b",
     "start": "node app.js",
     "start-dev": "ADMIN_USER=chris ADMIN_PASS=iii nodemon app.js"
   },
