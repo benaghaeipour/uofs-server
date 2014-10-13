@@ -101,6 +101,7 @@ describe('edit center', function () {
             username: 'some@person.com',
             pw1: 'changeme'
         }).respond(201);
+        $httpBackend.expectGET('/login/reset?email=some@person.com').respond(200);
 
         $httpBackend.flush();
     }));
