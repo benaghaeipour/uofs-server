@@ -17,10 +17,13 @@ var net = require('net'),
     http = require('http'),
     https = require('https'),
     fs = require('fs'),
-    aws = require('aws-sdk'),
     auth = require('basic-auth'),
+    nodemailer = require('nodemailer'),
+    ses = require('nodemailer-ses-transport'),
+    stubTransport = require('nodemailer-stub-transport'),
     express = require('express'),
     mongodb = require('mongodb'),
+    adjNoun = require('adj-noun'),
     _ = require('lodash');
 
 // *******************************************************
@@ -74,43 +77,32 @@ app.use(function(req, res, next){
     next();
 });
 
+adjNoun.seed(401175);
+var transporter;
 
 switch(process.env.NODE_ENV) {
     case 'production':
         app.use(timeout());
-        ses = new aws.SES({
+        transporter = nodemailer.createTransport(ses({
             accessKeyId: process.env.SES_KEY,
             secretAccessKey: process.env.SES_SECRET,
-            region: 'eu-west-1',
-            logger: console.log
-        });
-        break;
-    case 'development':
-        ses = new aws.SES({
-            accessKeyId: process.env.SES_KEY,
-            secretAccessKey: process.env.SES_SECRET,
-            region: 'eu-west-1',
-            logger: console.log
-        });
+            region: 'eu-west-1'
+        }));
+
         break;
     default:
-        ses= {
-            sendEmail: function () {}
-        };
+//        transporter = nodemailer.createTransport(stubTransport());
+        transporter = nodemailer.createTransport(ses({
+            accessKeyId:    'AKIAJBZLYCA4Z4EHP5GA',
+            secretAccessKey: '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',
+            region: 'eu-west-1'
+        }));
         app.use(errorhandler({
             dumpExceptions: true,
             showStack: false
         }));
         break;
 }
-
-//http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/frames.html#!AWS/SES.html
-var ses = new aws.SES({
-    accessKeyId: process.env.SES_KEY,
-    secretAccessKey: process.env.SES_SECRET,
-    region: 'eu-west-1',
-    logger: console.log
-});
 
 // *******************************************************
 //          Some standrad routes etc
@@ -221,6 +213,35 @@ app.post('/login[/]?', bodyParser, function (req, res, next) {
         }
     });
 });
+
+app.route('/login/reset')
+    .get(function (req, res, next) {
+
+        if(!req.query.email) {
+            return next(new Error('Password reset requires an email parameter'));
+        }
+
+        var tempPassword = adjNoun().join('-');
+
+        console.log('reseting password for', {username: req.query.email});
+        DB.users.update({username: req.query.email}, {
+            $set: {pw1: tempPassword}
+        }, {
+            safe: true
+        }, function (err, objects) {
+            if (err) { return next(err);}
+
+            transporter.sendMail({
+                from: 'password-helper@unitsofsound.com',
+                to: req.query.email,
+                subject: 'Your new password',
+                text: 'Hi,\n your new password for ' + req.query.email + ' is ' + tempPassword
+            }, function (err) {
+                if (err) { return next(err);}
+                res.status(200).end();
+            });
+        });
+    });
 
 // *******************************************************
 //          Student endpoints
@@ -342,7 +363,7 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 
         var hasRequiredFields = hasCenter && hasPassword && hasUsername;
         if (!hasRequiredFields) {
-            console.info('student create missing username:', hasUsername, ' password:', hasPassword, ' center', hasCenter);
+            console.info('student create missing', {hasUsername:hasUsername, hasPassword:hasPassword, hasCenter:hasCenter});
             return res.status(400).send();
         }
 
