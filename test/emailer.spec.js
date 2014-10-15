@@ -1,16 +1,18 @@
 /*jshint node:true*/
-/*globals expect, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
+/*globals it, xit, describe, xdescribe, beforeEach, afterEach*/
 
 var proxyquire = require('proxyquire'),
-    sendMail = jasmine.createSpy('sendMail'),
-    createTransport = jasmine.createSpy('createTransport'),
-    sendPasswordReset = jasmine.createSpy('sendPasswordReset'),
+    expect = require('expect.js'),
+    sinon = require('sinon'),
+    sendMail = sinon.spy(),
+    createTransport = sinon.stub(),
+    sendPasswordReset = sinon.stub(),
     mailer = proxyquire('../emailer', {
         nodemailer: {
-            createTransport: createTransport.and.returnValue({
+            createTransport: createTransport.returns({
                 sendMail: sendMail
             }),
-            sendPasswordReset: sendPasswordReset.and.returnValue({
+            sendPasswordReset: sendPasswordReset.returns({
                 sendMail: sendMail
             })
         }
@@ -19,93 +21,94 @@ var proxyquire = require('proxyquire'),
 describe('emailer', function () {
 
     it('should expose a consistant API', function () {
-        expect(mailer.sendPasswordReset).toBeDefined();
-        expect(mailer.sendCenterCreate).toBeDefined();
+        expect(mailer.sendPasswordReset).to.be.a('function');
+        expect(mailer.sendCenterCreate).to.be.a('function');
     });
 
     it('should set up a transport', function () {
-        expect(createTransport).toHaveBeenCalled();
+        expect(createTransport.called).to.be(true);
     });
 
     describe('sendCenterCreate', function () {
 
         beforeEach(function () {
-            sendMail.calls.reset();
+            sendMail.reset();
         });
 
         it('should send an email', function () {
             mailer.sendCenterCreate({});
-            expect(sendMail).toHaveBeenCalled();
+            expect(sendMail.called).to.be(true);
         });
 
         it('should be to the right recipient', function () {
             mailer.sendCenterCreate({
                 mainContact: 'blah@example.com'
             });
-            var sendOpts = sendMail.calls.argsFor(0)[0];
-            expect(sendOpts.to).toEqual('blah@example.com');
+            var sendOpts = sendMail.getCall(0).args[0];
+            expect(sendOpts.to).to.equal('blah@example.com');
         });
 
         it('should have the right sender', function () {
             mailer.sendCenterCreate({});
-            var sendOpts = sendMail.calls.argsFor(0)[0];
-            expect(sendOpts.from).toEqual('setup-assitant@unitsofsound.com');
+            var sendOpts = sendMail.getCall(0).args[0];
+            expect(sendOpts.from).to.equal('setup-assitant@unitsofsound.com');
         });
 
         it('should have correct subject', function () {
             mailer.sendCenterCreate({});
-            var sendOpts = sendMail.calls.argsFor(0)[0];
-            expect(sendOpts.subject).toEqual('Your new Uints of Sound center.');
+            var sendOpts = sendMail.getCall(0).args[0];
+            expect(sendOpts.subject).to.equal('Your new Uints of Sound center.');
         });
 
         it('should show the right content', function () {
             mailer.sendCenterCreate({
                 name: 'test-center'
             });
-            var sendOpts = sendMail.calls.argsFor(0)[0];
-            expect(sendOpts.html).toMatch(/test-center/);
-            expect(sendOpts.html).toMatch(/created/);
-            expect(sendOpts.html).toMatch(/you as the main contact/);
+            var sendOpts = sendMail.getCall(0).args[0];
+            expect(sendOpts.html).to.match(/test-center/);
+            expect(sendOpts.html).to.match(/created/);
+            expect(sendOpts.html).to.match(/you as the main contact/);
         });
     });
 
     describe('sendPasswordReset', function () {
 
         beforeEach(function () {
-            sendMail.calls.reset();
+            sendMail.reset();
         });
 
         it('should send an email', function () {
             mailer.sendPasswordReset({});
-            expect(sendMail).toHaveBeenCalled();
+            expect(sendMail.called).to.be(true);
         });
 
         it('should be to the right recipient', function () {
             mailer.sendPasswordReset({
                 username: 'blah@example.com'
             });
-            var sendOpts = sendMail.calls.argsFor(0)[0];
-            expect(sendOpts.to).toEqual('blah@example.com');
+            var sendOpts = sendMail.getCall(0).args[0];
+            expect(sendOpts.to).to.equal('blah@example.com');
         });
 
         it('should have the right sender', function () {
             mailer.sendPasswordReset({});
-            var sendOpts = sendMail.calls.argsFor(0)[0];
-            expect(sendOpts.from).toEqual('setup-assitant@unitsofsound.com');
+            var sendOpts = sendMail.getCall(0).args[0];
+            expect(sendOpts.from).to.equal('setup-assitant@unitsofsound.com');
         });
 
         it('should have correct subject', function () {
             mailer.sendPasswordReset({});
-            var sendOpts = sendMail.calls.argsFor(0)[0];
-            expect(sendOpts.subject).toEqual('Your new password has been reset.');
+            var sendOpts = sendMail.getCall(0).args[0];
+            expect(sendOpts.subject).to.equal('Your new password has been reset.');
         });
 
         it('should show the right content', function () {
             mailer.sendPasswordReset({
-                name: 'test-center'
+                name: 'test-center',
+                pw1: 'ugly penguin'
             });
-            var sendOpts = sendMail.calls.argsFor(0)[0];
-            expect(sendOpts.html).toMatch(/Your new password is/);
+            var sendOpts = sendMail.getCall(0).args[0];
+            expect(sendOpts.html).to.match(/Your new password is : ugly penguin/);
         });
     });
 

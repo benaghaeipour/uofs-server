@@ -1,8 +1,21 @@
 /*jslint node:true*/
 var nodemailer = require('nodemailer'),
+    ses = require('nodemailer-ses-transport'),
     stubTransport = require('nodemailer-stub-transport');
 
-var transport = nodemailer.createTransport(stubTransport());
+var transport;
+
+if(process.env.SES_KEY && process.env.SES_SECRET) {
+    console.info('Using SES email trasnport');
+    transport = nodemailer.createTransport(ses({
+        accessKeyId: process.env.SES_KEY,
+        secretAccessKey: process.env.SES_SECRET,
+        region: 'eu-west-1'
+    }));
+} else {
+    console.warn('Stubbing email trasnport');
+    transport = nodemailer.createTransport(stubTransport());
+}
 
 module.exports = {
     sendPasswordReset: function (user, cb) {
@@ -10,7 +23,7 @@ module.exports = {
             to: user.username,
             from: 'setup-assitant@unitsofsound.com',
             subject: 'Your new password has been reset.',
-            html: '<p>Your new password is : </p>'
+            html: '<p>Your new password is : ' + user.pw1 + '</p>'
         }, cb);
     },
     sendCenterCreate: function (center, cb) {
