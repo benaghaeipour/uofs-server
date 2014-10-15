@@ -18,13 +18,11 @@ var net = require('net'),
     https = require('https'),
     fs = require('fs'),
     auth = require('basic-auth'),
-    nodemailer = require('nodemailer'),
-    ses = require('nodemailer-ses-transport'),
-    stubTransport = require('nodemailer-stub-transport'),
     express = require('express'),
     mongodb = require('mongodb'),
     adjNoun = require('adj-noun'),
-    _ = require('lodash');
+    _ = require('lodash'),
+    emailer = require('./emailer');
 
 // *******************************************************
 //          Global Variables
@@ -78,19 +76,6 @@ app.use(function(req, res, next){
 });
 
 adjNoun.seed(401175);
-var transporter;
-
-if(process.env.SES_KEY && process.env.SES_SECRET) {
-    console.info('Using SES email trasnport');
-    transporter = nodemailer.createTransport(ses({
-        accessKeyId: process.env.SES_KEY,
-        secretAccessKey: process.env.SES_SECRET,
-        region: 'eu-west-1'
-    }));
-} else {
-    console.warn('Stubbing email trasnport');
-    transporter = nodemailer.createTransport(stubTransport());
-}
 
 switch(process.env.NODE_ENV) {
     case 'production':
@@ -230,14 +215,14 @@ app.route('/login/reset')
             safe: true
         }, function (err, objects) {
             if (err) { return next(err);}
-
-            transporter.sendMail({
-                from: 'password-helper@unitsofsound.com',
-                to: req.query.email,
-                subject: 'Your new password',
-                text: 'Hi,\n your new password for ' + req.query.email + ' is ' + tempPassword
+            emailer.sendPasswordReset({
+                username: req.query.email,
+                pw1: tempPassword
             }, function (err) {
-                if (err) { return next(err);}
+                if (err) {
+                    console.error('Failed email sending for', req.query.email);
+                    return next(err);
+                }
                 res.status(200).end();
             });
         });
@@ -460,30 +445,13 @@ app.route('/center[/]?(:id)?')
                 return next(err);
             }
             console.info('Center Created : ', JSON.stringify(objects));
+            emailer.sendCenterCreate(objects, function (err) {
+                if(err) {
+                    console.error('Failed to send notification of center creation', objects);
+                }
+            });
             res.status(201);
             res.send(objects[0]);
-//            ses.sendEmail({
-//                Destination: {
-//                    ToAddresses: [query.mainContact]
-//                },
-//                Message: {
-//                    Body: {
-//                        Text: {
-//                            Data: 'something to tell you what to do'
-//                        }
-//                    },
-//                    Subject: {
-//                        Data: 'Welcome to your unitsofsound center'
-//                    }
-//                },
-//                Source: 'hello@unitsofsound.com'
-//            }, function (err, data) {
-//                if (err) {
-//                    console.error('Failed center setup email for : ' + query.mainContact, err);
-//                    return;
-//                }
-//                console.log('Sucessfull email');
-//            });
         });
     })
     .post(function (req, res, next) {
