@@ -445,7 +445,7 @@ app.route('/center[/]?(:id)?')
                 return next(err);
             }
             console.info('Center Created : ', JSON.stringify(objects));
-            emailer.sendCenterCreate(objects, function (err) {
+            emailer.sendCenterCreate(objects[0], function (err) {
                 if(err) {
                     console.error('Failed to send notification of center creation', objects);
                 }
