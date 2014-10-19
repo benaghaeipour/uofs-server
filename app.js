@@ -209,10 +209,11 @@ app.route('/login/reset')
         var tempPassword = adjNoun().join('-');
 
         console.log('reseting password for', {username: req.query.email});
-        DB.users.update({username: req.query.email}, {
+        DB.users.update({$or:[{username: req.query.email}, {email: req.query.email}]}, {
             $set: {pw1: tempPassword}
         }, {
-            safe: true
+            safe: true,
+            upsert: false
         }, function (err, objects) {
             if (err) { return next(err);}
             emailer.sendPasswordReset({
