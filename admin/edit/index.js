@@ -77,6 +77,13 @@ angular.module('editcenter', [])
                 }
             }).then(function (res) {
                 $scope.user = res.data;
+                $http({
+                    method: 'GET',
+                    url: '/login/reset',
+                    params:{
+                        email: $scope.center.mainContact
+                    }
+                });
             });
         };
     });

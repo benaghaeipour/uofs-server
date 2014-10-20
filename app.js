@@ -17,11 +17,12 @@ var net = require('net'),
     http = require('http'),
     https = require('https'),
     fs = require('fs'),
-    aws = require('aws-sdk'),
     auth = require('basic-auth'),
     express = require('express'),
     mongodb = require('mongodb'),
-    _ = require('lodash');
+    adjNoun = require('adj-noun'),
+    _ = require('lodash'),
+    emailer = require('./emailer');
 
 // *******************************************************
 //          Global Variables
@@ -74,43 +75,19 @@ app.use(function(req, res, next){
     next();
 });
 
+adjNoun.seed(401175);
 
 switch(process.env.NODE_ENV) {
     case 'production':
         app.use(timeout());
-        ses = new aws.SES({
-            accessKeyId: process.env.SES_KEY,
-            secretAccessKey: process.env.SES_SECRET,
-            region: 'eu-west-1',
-            logger: console.log
-        });
-        break;
-    case 'development':
-        ses = new aws.SES({
-            accessKeyId: process.env.SES_KEY,
-            secretAccessKey: process.env.SES_SECRET,
-            region: 'eu-west-1',
-            logger: console.log
-        });
         break;
     default:
-        ses= {
-            sendEmail: function () {}
-        };
-        app.use(errorhandler({
-            dumpExceptions: true,
-            showStack: false
-        }));
         break;
 }
-
-//http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/frames.html#!AWS/SES.html
-var ses = new aws.SES({
-    accessKeyId: process.env.SES_KEY,
-    secretAccessKey: process.env.SES_SECRET,
-    region: 'eu-west-1',
-    logger: console.log
-});
+app.use(errorhandler({
+    dumpExceptions: true,
+    showStack: true
+}));
 
 // *******************************************************
 //          Some standrad routes etc
@@ -221,6 +198,36 @@ app.post('/login[/]?', bodyParser, function (req, res, next) {
         }
     });
 });
+
+app.route('/login/reset')
+    .get(function (req, res, next) {
+
+        if(!req.query.email) {
+            return next(new Error('Password reset requires an email parameter'));
+        }
+
+        var tempPassword = adjNoun().join('-');
+
+        console.log('reseting password for', {username: req.query.email});
+        DB.users.update({$or:[{username: req.query.email}, {email: req.query.email}]}, {
+            $set: {pw1: tempPassword}
+        }, {
+            safe: true,
+            upsert: false
+        }, function (err, objects) {
+            if (err) { return next(err);}
+            emailer.sendPasswordReset({
+                username: req.query.email,
+                pw1: tempPassword
+            }, function (err) {
+                if (err) {
+                    console.error('Failed email sending for', req.query.email);
+                    return next(err);
+                }
+                res.status(200).end();
+            });
+        });
+    });
 
 // *******************************************************
 //          Student endpoints
@@ -342,7 +349,7 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 
         var hasRequiredFields = hasCenter && hasPassword && hasUsername;
         if (!hasRequiredFields) {
-            console.info('student create missing username:', hasUsername, ' password:', hasPassword, ' center', hasCenter);
+            console.info('student create missing', {hasUsername:hasUsername, hasPassword:hasPassword, hasCenter:hasCenter});
             return res.status(400).send();
         }
 
@@ -456,30 +463,13 @@ app.route('/center[/]?(:id)?')
                 return next(err);
             }
             console.info('Center Created : ', JSON.stringify(objects));
+            emailer.sendCenterCreate(objects[0], function (err) {
+                if(err) {
+                    console.error('Failed to send notification of center creation', objects);
+                }
+            });
             res.status(201);
             res.send(objects[0]);
-//            ses.sendEmail({
-//                Destination: {
-//                    ToAddresses: [query.mainContact]
-//                },
-//                Message: {
-//                    Body: {
-//                        Text: {
-//                            Data: 'something to tell you what to do'
-//                        }
-//                    },
-//                    Subject: {
-//                        Data: 'Welcome to your unitsofsound center'
-//                    }
-//                },
-//                Source: 'hello@unitsofsound.com'
-//            }, function (err, data) {
-//                if (err) {
-//                    console.error('Failed center setup email for : ' + query.mainContact, err);
-//                    return;
-//                }
-//                console.log('Sucessfull email');
-//            });
         });
     })
     .post(function (req, res, next) {
