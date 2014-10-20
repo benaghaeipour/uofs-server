@@ -48,6 +48,16 @@
                 </div>
                 <button type="submit" class="col-md-2 col-md-offset-2 btn btn-primary pull-right">Save</button>
             </form>
+            <table class="table table-striped">
+                <thead>
+                    <th>username</th><th>email</th><th>password</th>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="user in userList">
+                        <td>{{user.username}}</td><td>{{user.email}}</td><td>{{user.pw1}}</td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
     </body>
 

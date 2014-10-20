@@ -64,6 +64,18 @@ angular.module('editcenter', [])
                     $scope.user = res.data;
                 }
             });
+
+            $http({
+                method: 'POST',
+                url: '/student/find',
+                data: {
+                    center: res.data.name
+                }
+            }).then(function (res) {
+                if (res.data.length !== 0) {
+                    $scope.userList = res.data;
+                }
+            });
         });
 
         $scope.createUser =  function () {

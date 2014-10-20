@@ -21,7 +21,7 @@ module.exports = {
     sendPasswordReset: function (user, cb) {
         transport.sendMail({
             to: user.username,
-            from: 'setup-assitant@unitsofsound.com',
+            from: 'setup-assistant@unitsofsound.com',
             subject: 'Your new password has been reset.',
             html: '<p>Your new password is : ' + user.pw1 + '</p>'
         }, cb);

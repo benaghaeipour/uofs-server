@@ -76,6 +76,14 @@ describe('edit center', function () {
         $controller('editcenter', {
             $scope: $rootScope
         });
+
+        $httpBackend.expectPOST('/student/find', {
+            center: 'London'
+        }).respond([{
+            username: 'some@person.com',
+            pw1: 'iii'
+        }]);
+
         $httpBackend.flush();
     }));
 
