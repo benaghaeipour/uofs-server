@@ -28,10 +28,13 @@ module.exports = {
     },
     sendCenterCreate: function (center, cb) {
         transport.sendMail({
-            to: center.mainContact,
+            to: center.purchaser,
             from: 'setup-assitant@unitsofsound.com',
             subject: 'Your new Uints of Sound center.',
             html: '<p><b>' + center.name + '</b> has been created as a new Uints of Sound center, with you as the main contact</p><p>You should recieve a seccond email shortly with your new password</p>'
         }, cb);
+    },
+    renderNewCenterEmail: function (center) {
+
     }
 };

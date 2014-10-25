@@ -447,7 +447,7 @@ app.route('/center[/]?(:id)?')
         });
 
         //bail if no email for user
-        var hasValidMainContact = /.+@.+\..+/.test(query.mainContact);
+        var hasValidMainContact = /.+@.+\..+/.test(query.purchaser);
         if (!hasValidMainContact) {
             res.status(400).send();
             return;

@@ -19,6 +19,9 @@
                         Name <input name="centerName" class="form-control" ng-model="center.name" type="text" required>
                     </label>
                     <label class="col-md-6" ng-class="{'has-error': form.centerContact.$invalid}">
+                        Purchaser <input name="centerPurchaser" class="form-control" ng-model="center.purchaser" type="email" required>
+                    </label>
+                    <label class="col-md-6" ng-class="{'has-error': form.centerContact.$invalid}">
                         Main Contact <input name="centerContact" class="form-control" ng-model="center.mainContact" type="email" required>
                     </label>
                     <label class="col-md-6">Max No. Students <input class="form-control" ng-model="center.maxLicencedStudentsForThisCenter" type="number" min="0" max="99"></label>
