@@ -33,8 +33,7 @@ var pkg = require('./package.json');
 
 // set defaults to those needed for local dev
 _.defaults(process.env, {
-    NODE_ENV: 'local',
-    LOG_TOKEN: 'local'
+    NODE_ENV: 'local'
 }, pkg.env);
 
 app.set('env', process.env.NODE_ENV);
@@ -50,23 +49,14 @@ module.exports = app;
 
 console.info('Configuring Application for NODE_ENV: ' + app.get('env'));
 console.info('Configuring for DB : ' + process.env.DB_URI);
-console.info('Configuring for LE : ' + process.env.LOG_TOKEN);
 
 app.set('view engine', 'html');
-app.engine('html', require('hbs').__express);
 
 var morgan = require('morgan');
 var bodyParser = require('body-parser')({limit:300000});
 var compress = require('compression');
 var errorhandler = require('errorhandler');
 var timeout = require('connect-timeout');
-
-app.use(morgan({
-    format: process.env.LOG_TOKEN + ' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b res_time=:response-time ms',
-    skip: function (req) {
-        return !req.path.match(/^healthcheck/);
-    }
-}));
 
 app.use(compress());
 app.use(function(req, res, next){
