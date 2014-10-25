@@ -202,7 +202,6 @@ app.route('/login/reset')
         DB.users.update({$or:[{username: req.query.email}, {email: req.query.email}]}, {
             $set: {pw1: tempPassword}
         }, {
-            safe: true,
             upsert: false
         }, function (err, objects) {
             if (err) { return next(err);}
@@ -302,8 +301,6 @@ app.post('/student/delete[/]?', bodyParser, function (req, res, next) {
         $set: {
             deleted: new Date()
         }
-    }, {
-        safe: true
     }, function (err, objects) {
         if (err) {
             return next(err);
@@ -381,8 +378,6 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 
         DB.users.update(_.pick(query, '_id'), {
             $set: _.omit(query, '_id')
-        }, {
-            safe: true
         }, function (err, objects) {
             if (err) {
                 console.error('Update error : ', JSON.stringify(err));
@@ -470,8 +465,7 @@ app.route('/center[/]?(:id)?')
 
         DB.centers.update({_id: mongodb.ObjectID(req.params.id)}, _.omit(query, '_id'), {
             upsert:true,
-            w:1,
-            safe: true
+            w:1
         }, function (err, objects) {
             if (err) {
                 return next(err);
@@ -571,23 +565,6 @@ app.post('/recordings/:filename', function (req, res, next) {
 var options = {};
 options.autoreconnect = true;
 options.safe = true;
-options.logger = {};
-options.logger.doDebug = true;
-options.logger.debug = function (message, object) {
-    // print the mongo command:
-    // "writing command to mongodb"
-    console.log(message);
-
-    // print the collection name
-    console.log(object.json.collectionName);
-
-    // print the json query sent to MongoDB
-    console.log(object.json.query);
-
-    // // print the binary object
-    // console.log(object.binary)
-    // console.log(object.binary)
-};
 
 mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
     if (err) {
