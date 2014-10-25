@@ -42,7 +42,7 @@ describe('emailer', function () {
 
         it('should be to the right recipient', function () {
             mailer.sendCenterCreate({
-                mainContact: 'blah@example.com'
+                purchaser: 'blah@example.com'
             });
             var sendOpts = sendMail.getCall(0).args[0];
             expect(sendOpts.to).to.equal('blah@example.com');
@@ -51,7 +51,7 @@ describe('emailer', function () {
         it('should have the right sender', function () {
             mailer.sendCenterCreate({});
             var sendOpts = sendMail.getCall(0).args[0];
-            expect(sendOpts.from).to.equal('setup-assitant@unitsofsound.com');
+            expect(sendOpts.from).to.equal('setup-assistant@unitsofsound.com');
         });
 
         it('should have correct subject', function () {
@@ -93,7 +93,7 @@ describe('emailer', function () {
         it('should have the right sender', function () {
             mailer.sendPasswordReset({});
             var sendOpts = sendMail.getCall(0).args[0];
-            expect(sendOpts.from).to.equal('setup-assitant@unitsofsound.com');
+            expect(sendOpts.from).to.equal('password-reset@unitsofsound.com');
         });
 
         it('should have correct subject', function () {

@@ -8,7 +8,7 @@ describe('/center', function () {
 
     var CreadtedCenterId = '';
 
-    it('should bounce missing mainContact', function (done) {
+    it('should bounce missing purchaser', function (done) {
         request(server)
             .put('/center')
             .send({
@@ -26,7 +26,7 @@ describe('/center', function () {
             .send({
                 name: 'Manchester',
                 centerType: 'home',
-                mainContact: 'blah@blah.com'
+                purchaser: 'blah@blah.com'
             })
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
@@ -37,7 +37,7 @@ describe('/center', function () {
 
                 var center = res.body;
                 expect(center.name).to.be('Manchester');
-                expect(center.mainContact).to.be('blah@blah.com');
+                expect(center.purchaser).to.be('blah@blah.com');
                 expect(center.defaultVoice).to.be(0);
             })
             .expect(201, done);
@@ -70,7 +70,7 @@ describe('/center', function () {
                 expect(center).to.be.an('object');
                 expect(center.maxLicencedStudentsForThisCenter).to.be(0);
                 expect(center.expiryDate).to.be(null);
-                expect(center.mainContact).to.match(/.+@.+\..+/);
+                expect(center.purchaser).to.match(/.+@.+\..+/);
                 expect(center.defaultVoice).to.be(0);
                 expect(center.sourceNumber).to.be(1);
             })
@@ -83,7 +83,7 @@ describe('/center', function () {
             .send({
                 name: 'Manchester',
                 centerType: 'home',
-                mainContact: 'nope@blah.com'
+                purchaser: 'nope@blah.com'
             })
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
@@ -91,7 +91,7 @@ describe('/center', function () {
             .expect(function (res) {
                 expect(res.body).to.be.an('object');
                 console.log(res.body);
-//                expect(res.body.mainContact).to.match(/nope/);
+//                expect(res.body.purchaser).to.match(/nope/);
             })
             .expect(202, done);
     });
