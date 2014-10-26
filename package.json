@@ -4,6 +4,7 @@
   "repository": "https://github.com/peachproductions/uofs-server",
   "dependencies": {
     "adj-noun": "^0.1.0",
+    "async": "^0.9.0",
     "basic-auth": "^1.0.0",
     "body-parser": "^1.9.0",
     "compression": "^1.0.2",
