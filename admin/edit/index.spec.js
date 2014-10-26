@@ -86,31 +86,4 @@ describe('edit center', function () {
 
         $httpBackend.flush();
     }));
-
-    it('should create user for mainContact', inject(function ($controller, $rootScope, $httpBackend, $location) {
-        $location.url('/edit/aaaaaaaaaaaaaaaaaaaaaaaa');
-        $httpBackend.whenGET('/center/aaaaaaaaaaaaaaaaaaaaaaaa').respond({
-            name: 'London',
-            mainContact: 'some@person.com',
-            centerType: 'home'
-        });
-
-        $httpBackend.whenPOST('/student/find').respond(404);
-
-        $controller('editcenter', {
-            $scope: $rootScope
-        });
-        $httpBackend.flush();
-
-        $rootScope.createUser();
-
-        $httpBackend.expectPOST('/student/update', {
-            center: 'London',
-            username: 'some@person.com',
-            pw1: 'changeme'
-        }).respond(201);
-        $httpBackend.expectGET('/login/reset?email=some@person.com').respond(200);
-
-        $httpBackend.flush();
-    }));
 });

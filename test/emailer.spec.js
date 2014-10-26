@@ -67,7 +67,7 @@ describe('emailer', function () {
             var sendOpts = sendMail.getCall(0).args[0];
             expect(sendOpts.html).to.match(/test-center/);
             expect(sendOpts.html).to.match(/created/);
-            expect(sendOpts.html).to.match(/you as the main contact/);
+            expect(sendOpts.html).to.match(/this link/);
         });
     });
 

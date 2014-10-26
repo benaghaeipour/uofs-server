@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <script type="application/javascript" src="//cdn.jsdelivr.net/angularjs/1.2.17/angular.min.js"></script>
+        <link type="text/css" rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.min.css"></link>
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.1.0/css/font-awesome.min.css">
+        <script type="application/javascript" src="index.js"></script>
+    </head>
+    <body class="container">
+        <form ng-app="admin" name="form" ng-controller="setup">
+            <label>Main Contact <input ng-model="users[0]" type="email" required></label>
+            <label>Admin user 1 <input ng-model="users[1]" type="email"></label>
+            <label>Admin user 2 <input ng-model="users[2]" type="email"></label>
+            <label>Admin user 3 <input ng-model="users[3]" type="email"></label>
+            <label>Admin user 4 <input ng-model="users[4]" type="email"></label>
+            <button ng-click="send()">Finish.</button>
+        </form>
+    </body>
+</html>

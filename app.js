@@ -15,13 +15,15 @@
 //          Application includes
 var net = require('net'),
     http = require('http'),
-    https = require('https'),
     fs = require('fs'),
     auth = require('basic-auth'),
     express = require('express'),
     mongodb = require('mongodb'),
     adjNoun = require('adj-noun'),
     _ = require('lodash'),
+    mustache = require('mustache'),
+    async = require('async'),
+    request = require('superagent'),
     emailer = require('./emailer');
 
 // *******************************************************
@@ -131,6 +133,10 @@ app.use('/admin', require('serve-static')('admin'));
 
 app.get('/admin/edit/[a-f0-9]{24}', function (req, res, next) {
     res.sendFile(process.cwd() + '/admin/edit/index.html');
+});
+
+app.get('/admin/setup/[a-f0-9]{24}', function (req, res, next) {
+    res.sendFile(process.cwd() + '/admin/setup/index.html');
 });
 
 // *******************************************************
@@ -328,7 +334,7 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 
     if (!query._id) {
         console.log('student create bcause no _id');
-        _.defaults(query, defaultStudentRecord);
+        _.defaults(query, {pw1: adjNoun().join('-')}, defaultStudentRecord);
 
         var hasUsername = !!query.username;
         var hasPassword = !!query.pw1;
@@ -342,13 +348,12 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 
         //create new record
         console.info('student create :', _.pick(query, 'username', 'pw1', 'center'));
-        DB.users.insert(query, {
-            safe: true
-        }, function (err, objects) {
+        DB.users.insert(query, function (err, objects) {
             if (err) {
                 return next(err);
             }
             console.info('Student Created');
+            emailer.sendPasswordReset(objects[0]);
             res.status(201).json(objects);
         });
     } else {
@@ -392,6 +397,39 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 // *******************************************************
 //          Center endpoints
 
+app.route('/center/:id/welcome')
+    .get(function(req, res, next) {
+        async.parallel({
+            sorry: function (cb) {
+                request.get('https://www.google.co.uk/404').end(function (html) {
+                    console.log('got sorry');
+                    cb(null, html);
+                });
+            },
+            template: function (cb) {
+                request.get('http://help.unitsofsound.net/?document=center-welcome')
+                .redirects(2)
+                .end(function (html) {
+                    console.log('got template');
+                    cb(null, html);
+                });
+            },
+            center: function (cb) {
+                DB.centers.findOne({_id: new mongodb.ObjectID(req.params.id)}, cb);
+            }
+        }, function (err, results) {
+            var didntFindCenter = !results.center;
+            var centerHasNoPurchaser = results.center && !results.center.purchaser;
+            if (err || didntFindCenter || centerHasNoPurchaser) {
+                console.log('rendering sorry foundCenter: ', didntFindCenter, ' hasContact: ', centerHasNoPurchaser);
+                res.status(200).end(results.sorry.text);
+            } else {
+                console.log('rendering template with ', results.center);
+                res.status(200).end(mustache.render(results.template.text, results.center));
+            }
+        });
+    });
+
 app.route('/center[/]?(:id)?')
     .all(bodyParser, function (req, res, next) {
         if (req.params.id) {
@@ -413,7 +451,7 @@ app.route('/center[/]?(:id)?')
             });
         } else {
             console.info('Center query : ', JSON.stringify(req.query));
-            DB.centers.find(req.query, {safe: true}).toArray(function (err, objects) {
+            DB.centers.find(req.query).toArray(function (err, objects) {
                 if (err) {
                     return next(err);
                 }
@@ -441,9 +479,7 @@ app.route('/center[/]?(:id)?')
         console.info('Center create');
         console.log('Center create', query);
 
-        DB.centers.insert(query, {
-            safe: true
-        }, function (err, objects) {
+        DB.centers.insert(query, function (err, objects) {
             if (err) {
                 return next(err);
             }
@@ -533,20 +569,16 @@ app.post('/recordings/:filename', function (req, res, next) {
 /**
  * dump will just dump req data to console.
  */
-//app.all('/dev/dump[/]?', function (req, res, next) {
-//    console.log('Params : ' + req.params);
-//    console.log('Method : ' + req.method);
-//    console.log('_method : ' + req._method);
-//    console.log('headers : ' + JSON.stringify(req.headers));
-//    console.log('Data : \n');
-//
-//    req.on('end', function () {
-//        res.write('<h1>Headers</h1>\n' + JSON.stringify(req.headers));
-//        res.write('<h1>Params</h1>\n' + JSON.stringify(req.params));
-//        res.write('<h1>Data</h1>\n' + JSON.stringify(req.data));
-//        res.send();
-//    });
-//});
+app.all('/dev/dump[/]?', function (req, res, next) {
+    console.log('Params : ', req.params);
+    console.log('Query : ', req.query);
+    console.log('Method : ', req.method);
+    console.log('_method : ', req._method);
+    console.log('headers : ', JSON.stringify(req.headers));
+    console.log('Data : \n');
+
+    res.status(200).end();
+});
 
 //app.all('/dev/crash[/]?', function(req, res, next) {
 //    console.error('This is a triggerd crash');

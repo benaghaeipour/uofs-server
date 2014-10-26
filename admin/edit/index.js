@@ -77,25 +77,4 @@ angular.module('editcenter', [])
                 }
             });
         });
-
-        $scope.createUser =  function () {
-            $http({
-                method: 'POST',
-                url: '/student/update',
-                data: {
-                    center: $scope.center.name,
-                    username: $scope.center.mainContact,
-                    pw1: 'changeme'
-                }
-            }).then(function (res) {
-                $scope.user = res.data;
-                $http({
-                    method: 'GET',
-                    url: '/login/reset',
-                    params:{
-                        email: $scope.center.mainContact
-                    }
-                });
-            });
-        };
     });
