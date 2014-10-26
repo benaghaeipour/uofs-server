@@ -211,6 +211,10 @@ app.route('/login/reset')
             upsert: false
         }, function (err, objects) {
             if (err) { return next(err);}
+            if (objects === 0) {
+                return res.status(404).end();
+            }
+
             emailer.sendPasswordReset({
                 username: req.query.email,
                 pw1: tempPassword
