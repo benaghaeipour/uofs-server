@@ -31,7 +31,7 @@ module.exports = {
             to: center.purchaser,
             from: 'setup-assistant@unitsofsound.com',
             subject: 'Your new Uints of Sound center.',
-            html: '<p><b>' + center.name + '</b> has been created as a new Uints of Sound center.</p><p>Please follow <a href="admin-dev.unitsofsound.com/center/' + center._id + '/welcome">this link</a> to finish the set up process</p>'
+            html: '<p><b>' + center.name + '</b> has been created as a new Uints of Sound center.</p><p>Please follow <a href="https://tools-dev.unitsofsound.com/center/' + center._id + '/welcome">this link</a> to finish the set up process</p>'
         }, cb);
     },
     renderNewCenterEmail: function (center) {
