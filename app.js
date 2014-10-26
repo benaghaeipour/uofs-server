@@ -158,6 +158,8 @@ app.use('/tools', function (req, res, next) {
 });
 app.use('/tools', require('serve-static')('tools'));
 
+app.use('/setup', require('serve-static')('setup'));
+
 // *******************************************************
 //          Login endpoint
 
