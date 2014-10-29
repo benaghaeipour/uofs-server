@@ -19,10 +19,10 @@
                         <input name="centerName" class="form-control" ng-model="center.name" type="text" required>
                     </label>
                     <label class="col-md-6" ng-class="{'has-error': form.centerContact.$invalid}">Main Contact
-                        <input name="centerContact" class="form-control" ng-model="center.mainContact" type="text" required>
+                        <input name="centerContact" class="form-control" ng-model="center.mainContact" type="email" placeholder="email address" required>
                     </label>
                     <label class="col-md-6" ng-class="{'has-error': form.centerPurchaser.$invalid}">
-                        Purchaser <input name="centerPurchaser" class="form-control" ng-model="center.purchaser" type="email" required>
+                        Purchaser <input name="centerPurchaser" class="form-control" ng-model="center.purchaser" type="email" disabled>
                     </label>
                     <label class="col-md-6">Max No. Students
                         <input class="form-control" ng-model="center.maxLicencedStudentsForThisCenter" type="number" min="0" max="99">
@@ -45,6 +45,9 @@
                         <label class="radio-inline">
                             <input type="radio" name="vd" ng-model="center.defaultVoice" value="2">US</label>
                     </div>
+                    <label class="col-md-12">Notes
+                        <textarea class="form-control" ng-model="center.notes" type="number" min="0"></textarea>
+                    </label>
                 </div>
                 <button type="submit" class="col-md-2 col-md-offset-2 btn btn-primary pull-right">Save</button>
             </form>
