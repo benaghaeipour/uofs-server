@@ -1,16 +1,8 @@
 <?php
 class user
 {
-    public $accountType = null;
     public $center = null;
-    public $firstName = 'undefined';
-    public $ownPassWord = 'undefined';
-    public $passwordHint = 'undefined';
-    public $pw1 = 'undefined';
-    public $studentEmail = 'undefined';
-    public $surname = 'undefined';
-    public $username = 'undefined';
-    public $voiceDialect = 'undefined';
+    public $username = null;
 
     function save()
     {

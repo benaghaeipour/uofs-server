@@ -12,7 +12,7 @@ $chelmsford->save();
 $me = new user();
 $me->center = $chelmsford->name;
 $me->username = 'chris';
-$me->email = 'chris@blah.com';
+$me->email = 'chris@matheson.it';
 $me->accountType = 1;
 $me->voiceDialect = 2;
 $me->save();
