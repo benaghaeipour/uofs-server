@@ -59,8 +59,10 @@ var bodyParser = require('body-parser')({limit:300000});
 var compress = require('compression');
 var errorhandler = require('errorhandler');
 var timeout = require('connect-timeout');
+var methodOverride = require('method-override');
 
 app.use(compress());
+app.use(methodOverride('X-HTTP-Method-Override'));
 app.use(function(req, res, next){
     res.set('NODE_ENV', process.env.NODE_ENV);
     res.set('Cache-Control', 'no-cache');
