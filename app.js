@@ -69,6 +69,11 @@ app.use(function(req, res, next){
     next();
 });
 
+app.use(function (req, res, next) {
+    req.user = auth(req) || {name: 'unknown', pass: 'unknown'};
+    return next();
+});
+
 adjNoun.seed(401175);
 
 switch(process.env.NODE_ENV) {
@@ -119,11 +124,7 @@ app.get('/crossdomain.xml', function (req, res, next) {
 //          Admin Views
 
 app.use('/admin', function (req, res, next) {
-    var user = auth(req) || {},
-        authed = false;
-
-    _.defaults(user, {user: '', pass: ''});
-    authed = user.name === process.env.ADMIN_USER && user.pass === process.env.ADMIN_PASS;
+    var authed = req.user.name === process.env.ADMIN_USER && req.user.pass === process.env.ADMIN_PASS;
     if (!authed) {
         res.set({'WWW-Authenticate': 'Basic'});
         res.status(401).end();//something
