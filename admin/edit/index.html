@@ -16,7 +16,7 @@
                 <i class="fa fa-4x col-md-1" ng-class="iconTypeForCenterType(center.centerType)" ng-click="incCenterType()"></i>
                 <div class="col-md-10 form-group">
                     <label class="col-md-6" ng-class="{'has-error': form.centerName.$invalid}">Name
-                        <input name="centerName" class="form-control" ng-model="center.name" type="text" required>
+                        <input name="centerName" disabled class="form-control" ng-model="center.name" type="text" required>
                     </label>
                     <label class="col-md-6" ng-class="{'has-error': form.centerContact.$invalid}">Main Contact
                         <input name="centerContact" class="form-control" ng-model="center.mainContact" type="email" placeholder="email address" required>
