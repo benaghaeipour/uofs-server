@@ -37,11 +37,22 @@ angular.module('editcenter', [])
             });
         }
 
+        function sendDeleteCommand() {
+            debugger;
+            $http({
+                method: 'DELETE',
+                url: '/center/' + centerGuid
+            }).then(function () {
+                $window.location.href = '..';
+            });
+        }
+
         $scope.incCenterType = incCenterType;
         $scope.center = {
             centerType: eCenterTypes[0]
         };
         $scope.submit = sendSaveCommand;
+        $scope.delete = sendDeleteCommand;
 
         var centerGuid = $location.path().match(/edit\/([a-f0-9]{24})\/?$/)[1];
         $http({

@@ -517,6 +517,23 @@ app.route('/center[/]?(:id)?')
             console.info('Center update : ', JSON.stringify(objects));
             res.status(202).end();
         });
+    })
+    .delete(function (req, res, next) {
+        var query = req.body;
+        if (!req.params.id) {
+            return res.status(400).end();
+        }
+
+        DB.centers.remove({_id: mongodb.ObjectID(req.params.id)}, {
+            upsert:true,
+            w:1
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+            console.info('Center deleted : ', req.params.id);
+            res.status(204).end();
+        });
     });
 
 
