@@ -38,7 +38,6 @@ angular.module('editcenter', [])
         }
 
         function sendDeleteCommand() {
-            debugger;
             $http({
                 method: 'DELETE',
                 url: '/center/' + centerGuid
