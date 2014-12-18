@@ -18,8 +18,11 @@
                     <label class="col-md-6" ng-class="{'has-error': form.centerName.$invalid}">Name
                         <input name="centerName" disabled class="form-control" ng-model="center.name" type="text" required>
                     </label>
-                    <label class="col-md-6" ng-class="{'has-error': form.centerContact.$invalid}">Main Contact
-                        <input name="centerContact" class="form-control" ng-model="center.mainContact" type="email" placeholder="email address" required>
+                    <label class="col-md-5" ng-class="{'has-error': form.centerContact.$invalid}">Main Contact
+                        <input name="centerContact" class="form-control" ng-model="center.mainContact" type="text" required>
+                    </label>
+                    <label ng-if="!user">
+                        <button type="button" class="col-md-1 btn btn-default form-control" ng-click="createUser()">create</button>
                     </label>
                     <label class="col-md-6" ng-class="{'has-error': form.centerPurchaser.$invalid}">
                         Purchaser <input name="centerPurchaser" class="form-control" ng-model="center.purchaser" type="email" disabled>
