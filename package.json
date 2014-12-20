@@ -12,6 +12,7 @@
     "errorhandler": "^1.0.1",
     "express": "^4.9.5",
     "hbs": "^2.7.0",
+    "http-proxy": "^1.8.1",
     "lodash": "^2.4.1",
     "method-override": "^2.3.0",
     "mongodb": "^1.4.15",

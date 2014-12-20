@@ -24,7 +24,8 @@ var net = require('net'),
     mustache = require('mustache'),
     async = require('async'),
     request = require('superagent'),
-    emailer = require('./emailer');
+    emailer = require('./emailer'),
+    proxy = require('http-proxy').createProxyServer();
 
 // *******************************************************
 //          Global Variables
@@ -614,6 +615,18 @@ app.all('/dev/dump[/]?', function (req, res, next) {
 //       throw new Error('this crash was triggered');
 //    }, 500);
 //});
+
+
+// *******************************************************
+//          Compose.io proxy
+
+app.use('/mongo/:uri', function (req, res) {
+    req.headers.Authorization = 'Bearer ' + process.env.COMPOSE_API_TOKEN;
+    req.headers['Accept-Version'] = '2014-06';
+    proxy.web(req, res, {
+        target: 'https://api.compose.io/deployments/chris-matheson-it/online/mongodb/online/collections/' + req.param.uri
+    });
+});
 
 // *******************************************************
 //          Start of application doing things
