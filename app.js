@@ -1,5 +1,5 @@
-/*jslint node:true*/
-/*jshint multistr:true */
+/*jslint node:true nomen:true */
+/*globals console, process*/
 // *******************************************************
 // expressjs template
 //
@@ -56,7 +56,7 @@ console.info('Configuring for DB : ' + process.env.DB_URI);
 app.set('view engine', 'html');
 
 var morgan = require('morgan');
-var bodyParser = require('body-parser')({limit:300000});
+var bodyParser = require('body-parser')({limit: 300000});
 var compress = require('compression');
 var errorhandler = require('errorhandler');
 var timeout = require('connect-timeout');
@@ -64,7 +64,7 @@ var methodOverride = require('method-override');
 
 app.use(compress());
 app.use(methodOverride('X-HTTP-Method-Override'));
-app.use(function(req, res, next){
+app.use(function (req, res, next) {
     res.set('NODE_ENV', process.env.NODE_ENV);
     res.set('Cache-Control', 'no-cache');
     next();
@@ -77,7 +77,7 @@ app.use(function (req, res, next) {
 
 adjNoun.seed(401175);
 
-switch(process.env.NODE_ENV) {
+switch (process.env.NODE_ENV) {
     case 'production':
         app.use(timeout());
         break;
@@ -204,7 +204,7 @@ app.post('/login[/]?', bodyParser, function (req, res, next) {
 app.route('/login/reset')
     .get(function (req, res, next) {
 
-        if(!req.query.email) {
+        if (!req.query.email) {
             return next(new Error('Password reset requires an email parameter'));
         }
 
