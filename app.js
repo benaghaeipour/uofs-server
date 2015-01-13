@@ -336,10 +336,10 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
     var query = req.body;
 
     if (query.username) {
-        query.username.toLowerCase();
+        query.username = query.username.toLowerCase();
     }
     if (query.pw1) {
-        query.pw1.toLowerCase();
+        query.pw1 = query.pw1.toLowerCase();
     }
 
     if (!query._id) {
