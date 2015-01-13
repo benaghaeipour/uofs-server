@@ -18,10 +18,6 @@ angular.module('admin', ['ngResource'])
         };
 
         var centerList = Center.query(function (data) {
-            $q.all(data.map(function (obj) {
-                return Center.get(obj);
-            })).then(function (listData) {
-                $scope.list = listData;
-            });
+            $scope.list = data;
         });
     });

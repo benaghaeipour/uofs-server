@@ -37,11 +37,21 @@ angular.module('editcenter', [])
             });
         }
 
+        function sendDeleteCommand() {
+            $http({
+                method: 'DELETE',
+                url: '/center/' + centerGuid
+            }).then(function () {
+                $window.location.href = '..';
+            });
+        }
+
         $scope.incCenterType = incCenterType;
         $scope.center = {
             centerType: eCenterTypes[0]
         };
         $scope.submit = sendSaveCommand;
+        $scope.delete = sendDeleteCommand;
 
         var centerGuid = $location.path().match(/edit\/([a-f0-9]{24})\/?$/)[1];
         $http({
@@ -77,18 +87,4 @@ angular.module('editcenter', [])
                 }
             });
         });
-
-        $scope.createUser =  function () {
-            $http({
-                method: 'POST',
-                url: '/student/update',
-                data: {
-                    center: $scope.center.name,
-                    username: $scope.center.mainContact,
-                    pw1: 'changeme'
-                }
-            }).then(function (res) {
-                $scope.user = res.data;
-            });
-        };
     });

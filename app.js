@@ -15,13 +15,16 @@
 //          Application includes
 var net = require('net'),
     http = require('http'),
-    https = require('https'),
     fs = require('fs'),
-    aws = require('aws-sdk'),
     auth = require('basic-auth'),
     express = require('express'),
     mongodb = require('mongodb'),
-    _ = require('lodash');
+    adjNoun = require('adj-noun'),
+    _ = require('lodash'),
+    mustache = require('mustache'),
+    async = require('async'),
+    request = require('superagent'),
+    emailer = require('./emailer');
 
 // *******************************************************
 //          Global Variables
@@ -32,8 +35,7 @@ var pkg = require('./package.json');
 
 // set defaults to those needed for local dev
 _.defaults(process.env, {
-    NODE_ENV: 'local',
-    LOG_TOKEN: 'local'
+    NODE_ENV: 'local'
 }, pkg.env);
 
 app.set('env', process.env.NODE_ENV);
@@ -49,68 +51,37 @@ module.exports = app;
 
 console.info('Configuring Application for NODE_ENV: ' + app.get('env'));
 console.info('Configuring for DB : ' + process.env.DB_URI);
-console.info('Configuring for LE : ' + process.env.LOG_TOKEN);
 
 app.set('view engine', 'html');
-app.engine('html', require('hbs').__express);
 
 var morgan = require('morgan');
 var bodyParser = require('body-parser')({limit:300000});
 var compress = require('compression');
 var errorhandler = require('errorhandler');
 var timeout = require('connect-timeout');
-
-app.use(morgan({
-    format: process.env.LOG_TOKEN + ' :req[x-forwarded-for] [req] :method :url [res] :status :res[content-length] b res_time=:response-time ms',
-    skip: function (req) {
-        return !req.path.match(/^healthcheck/);
-    }
-}));
+var methodOverride = require('method-override');
 
 app.use(compress());
+app.use(methodOverride('X-HTTP-Method-Override'));
 app.use(function(req, res, next){
     res.set('NODE_ENV', process.env.NODE_ENV);
     res.set('Cache-Control', 'no-cache');
     next();
 });
 
+adjNoun.seed(401175);
 
 switch(process.env.NODE_ENV) {
     case 'production':
         app.use(timeout());
-        ses = new aws.SES({
-            accessKeyId: process.env.SES_KEY,
-            secretAccessKey: process.env.SES_SECRET,
-            region: 'eu-west-1',
-            logger: console.log
-        });
-        break;
-    case 'development':
-        ses = new aws.SES({
-            accessKeyId: process.env.SES_KEY,
-            secretAccessKey: process.env.SES_SECRET,
-            region: 'eu-west-1',
-            logger: console.log
-        });
         break;
     default:
-        ses= {
-            sendEmail: function () {}
-        };
-        app.use(errorhandler({
-            dumpExceptions: true,
-            showStack: false
-        }));
         break;
 }
-
-//http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/frames.html#!AWS/SES.html
-var ses = new aws.SES({
-    accessKeyId: process.env.SES_KEY,
-    secretAccessKey: process.env.SES_SECRET,
-    region: 'eu-west-1',
-    logger: console.log
-});
+app.use(errorhandler({
+    dumpExceptions: true,
+    showStack: true
+}));
 
 // *******************************************************
 //          Some standrad routes etc
@@ -166,6 +137,10 @@ app.get('/admin/edit/[a-f0-9]{24}', function (req, res, next) {
     res.sendFile(process.cwd() + '/admin/edit/index.html');
 });
 
+app.get('/admin/setup/[a-f0-9]{24}', function (req, res, next) {
+    res.sendFile(process.cwd() + '/admin/setup/index.html');
+});
+
 // *******************************************************
 //          Tools Area
 
@@ -184,6 +159,8 @@ app.use('/tools', function (req, res, next) {
     }
 });
 app.use('/tools', require('serve-static')('tools'));
+
+app.use('/setup', require('serve-static')('setup'));
 
 // *******************************************************
 //          Login endpoint
@@ -221,6 +198,39 @@ app.post('/login[/]?', bodyParser, function (req, res, next) {
         }
     });
 });
+
+app.route('/login/reset')
+    .get(function (req, res, next) {
+
+        if(!req.query.email) {
+            return next(new Error('Password reset requires an email parameter'));
+        }
+
+        var tempPassword = adjNoun().join('-');
+
+        console.log('reseting password for', {username: req.query.email});
+        DB.users.update({$or:[{username: req.query.email}, {email: req.query.email}]}, {
+            $set: {pw1: tempPassword}
+        }, {
+            upsert: false
+        }, function (err, objects) {
+            if (err) { return next(err);}
+            if (objects === 0) {
+                return res.status(404).end();
+            }
+
+            emailer.sendPasswordReset({
+                username: req.query.email,
+                pw1: tempPassword
+            }, function (err) {
+                if (err) {
+                    console.error('Failed email sending for', req.query.email);
+                    return next(err);
+                }
+                res.status(200).end();
+            });
+        });
+    });
 
 // *******************************************************
 //          Student endpoints
@@ -305,8 +315,6 @@ app.post('/student/delete[/]?', bodyParser, function (req, res, next) {
         $set: {
             deleted: new Date()
         }
-    }, {
-        safe: true
     }, function (err, objects) {
         if (err) {
             return next(err);
@@ -334,7 +342,7 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 
     if (!query._id) {
         console.log('student create bcause no _id');
-        _.defaults(query, defaultStudentRecord);
+        _.defaults(query, {pw1: adjNoun().join('-')}, defaultStudentRecord);
 
         var hasUsername = !!query.username;
         var hasPassword = !!query.pw1;
@@ -342,19 +350,18 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 
         var hasRequiredFields = hasCenter && hasPassword && hasUsername;
         if (!hasRequiredFields) {
-            console.info('student create missing username:', hasUsername, ' password:', hasPassword, ' center', hasCenter);
+            console.info('student create missing', {hasUsername:hasUsername, hasPassword:hasPassword, hasCenter:hasCenter});
             return res.status(400).send();
         }
 
         //create new record
         console.info('student create :', _.pick(query, 'username', 'pw1', 'center'));
-        DB.users.insert(query, {
-            safe: true
-        }, function (err, objects) {
+        DB.users.insert(query, function (err, objects) {
             if (err) {
                 return next(err);
             }
             console.info('Student Created');
+            emailer.sendPasswordReset(objects[0]);
             res.status(201).json(objects);
         });
     } else {
@@ -384,8 +391,6 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 
         DB.users.update(_.pick(query, '_id'), {
             $set: _.omit(query, '_id')
-        }, {
-            safe: true
         }, function (err, objects) {
             if (err) {
                 console.error('Update error : ', JSON.stringify(err));
@@ -399,6 +404,39 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 
 // *******************************************************
 //          Center endpoints
+
+app.route('/center/:id/welcome')
+    .get(function(req, res, next) {
+        async.parallel({
+            sorry: function (cb) {
+                request.get('https://www.google.co.uk/404').end(function (html) {
+                    console.log('got sorry');
+                    cb(null, html);
+                });
+            },
+            template: function (cb) {
+                request.get('http://help.unitsofsound.net/?document=center-welcome')
+                .redirects(2)
+                .end(function (html) {
+                    console.log('got template');
+                    cb(null, html);
+                });
+            },
+            center: function (cb) {
+                DB.centers.findOne({_id: new mongodb.ObjectID(req.params.id)}, cb);
+            }
+        }, function (err, results) {
+            var didntFindCenter = !results.center;
+            var centerHasNoPurchaser = results.center && !results.center.purchaser;
+            if (err || didntFindCenter || centerHasNoPurchaser) {
+                console.log('rendering sorry foundCenter: ', didntFindCenter, ' hasContact: ', centerHasNoPurchaser);
+                res.status(200).end(results.sorry.text);
+            } else {
+                console.log('rendering template with ', results.center);
+                res.status(200).end(mustache.render(results.template.text, results.center));
+            }
+        });
+    });
 
 app.route('/center[/]?(:id)?')
     .all(bodyParser, function (req, res, next) {
@@ -421,7 +459,7 @@ app.route('/center[/]?(:id)?')
             });
         } else {
             console.info('Center query : ', JSON.stringify(req.query));
-            DB.centers.find(req.query, {safe: true}).toArray(function (err, objects) {
+            DB.centers.find(req.query).toArray(function (err, objects) {
                 if (err) {
                     return next(err);
                 }
@@ -440,7 +478,7 @@ app.route('/center[/]?(:id)?')
         });
 
         //bail if no email for user
-        var hasValidMainContact = /.+@.+\..+/.test(query.mainContact);
+        var hasValidMainContact = /.+@.+\..+/.test(query.purchaser);
         if (!hasValidMainContact) {
             res.status(400).send();
             return;
@@ -449,37 +487,18 @@ app.route('/center[/]?(:id)?')
         console.info('Center create');
         console.log('Center create', query);
 
-        DB.centers.insert(query, {
-            safe: true
-        }, function (err, objects) {
+        DB.centers.insert(query, function (err, objects) {
             if (err) {
                 return next(err);
             }
             console.info('Center Created : ', JSON.stringify(objects));
+            emailer.sendCenterCreate(objects[0], function (err) {
+                if(err) {
+                    console.error('Failed to send notification of center creation', objects);
+                }
+            });
             res.status(201);
             res.send(objects[0]);
-//            ses.sendEmail({
-//                Destination: {
-//                    ToAddresses: [query.mainContact]
-//                },
-//                Message: {
-//                    Body: {
-//                        Text: {
-//                            Data: 'something to tell you what to do'
-//                        }
-//                    },
-//                    Subject: {
-//                        Data: 'Welcome to your unitsofsound center'
-//                    }
-//                },
-//                Source: 'hello@unitsofsound.com'
-//            }, function (err, data) {
-//                if (err) {
-//                    console.error('Failed center setup email for : ' + query.mainContact, err);
-//                    return;
-//                }
-//                console.log('Sucessfull email');
-//            });
         });
     })
     .post(function (req, res, next) {
@@ -490,14 +509,30 @@ app.route('/center[/]?(:id)?')
 
         DB.centers.update({_id: mongodb.ObjectID(req.params.id)}, _.omit(query, '_id'), {
             upsert:true,
-            w:1,
-            safe: true
+            w:1
         }, function (err, objects) {
             if (err) {
                 return next(err);
             }
             console.info('Center update : ', JSON.stringify(objects));
             res.status(202).end();
+        });
+    })
+    .delete(function (req, res, next) {
+        var query = req.body;
+        if (!req.params.id) {
+            return res.status(400).end();
+        }
+
+        DB.centers.remove({_id: mongodb.ObjectID(req.params.id)}, {
+            upsert:true,
+            w:1
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+            console.info('Center deleted : ', req.params.id);
+            res.status(204).end();
         });
     });
 
@@ -559,20 +594,16 @@ app.post('/recordings/:filename', function (req, res, next) {
 /**
  * dump will just dump req data to console.
  */
-//app.all('/dev/dump[/]?', function (req, res, next) {
-//    console.log('Params : ' + req.params);
-//    console.log('Method : ' + req.method);
-//    console.log('_method : ' + req._method);
-//    console.log('headers : ' + JSON.stringify(req.headers));
-//    console.log('Data : \n');
-//
-//    req.on('end', function () {
-//        res.write('<h1>Headers</h1>\n' + JSON.stringify(req.headers));
-//        res.write('<h1>Params</h1>\n' + JSON.stringify(req.params));
-//        res.write('<h1>Data</h1>\n' + JSON.stringify(req.data));
-//        res.send();
-//    });
-//});
+app.all('/dev/dump[/]?', function (req, res, next) {
+    console.log('Params : ', req.params);
+    console.log('Query : ', req.query);
+    console.log('Method : ', req.method);
+    console.log('_method : ', req._method);
+    console.log('headers : ', JSON.stringify(req.headers));
+    console.log('Data : \n');
+
+    res.status(200).end();
+});
 
 //app.all('/dev/crash[/]?', function(req, res, next) {
 //    console.error('This is a triggerd crash');
@@ -591,23 +622,6 @@ app.post('/recordings/:filename', function (req, res, next) {
 var options = {};
 options.autoreconnect = true;
 options.safe = true;
-options.logger = {};
-options.logger.doDebug = true;
-options.logger.debug = function (message, object) {
-    // print the mongo command:
-    // "writing command to mongodb"
-    console.log(message);
-
-    // print the collection name
-    console.log(object.json.collectionName);
-
-    // print the json query sent to MongoDB
-    console.log(object.json.query);
-
-    // // print the binary object
-    // console.log(object.binary)
-    // console.log(object.binary)
-};
 
 mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
     if (err) {

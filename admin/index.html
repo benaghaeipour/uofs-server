@@ -11,7 +11,12 @@
             <div class="page-header">
                 <h1>Centers <a class="fa pull-right fa-plus" href="new"></a></h1>
             </div>
-            <div class="row" ng-repeat="center in list">
+            <div class="row">
+                <label class="col-md-12">Search
+                    <input name="searchterm" class="form-control" ng-model="searchterm" type="text">
+                </label>
+            </div>
+            <div class="row" ng-repeat="center in list | filter:searchterm">
                 <i class="col-md-1 pull-left" href="#">
                     <i class="fa fa-4x" ng-class="iconTypeForCenterType(center.centerType)"></i>
                 </i>

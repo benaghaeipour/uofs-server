@@ -16,15 +16,24 @@
                    ng-click="incCenterType()"></i>
                 <div class="col-md-10 form-group">
                     <label class="col-md-6" ng-class="{'has-error': form.centerName.$invalid}">
-                        Name <input name="centerName" class="form-control" ng-model="center.name" type="text" required>
+                        Center name <input name="centerName" class="form-control" ng-model="center.name" type="text" required>
                     </label>
-                    <label class="col-md-6" ng-class="{'has-error': form.centerContact.$invalid}">
-                        Main Contact <input name="centerContact" class="form-control" ng-model="center.mainContact" type="email" required>
+                    <label class="col-md-6" ng-class="{'has-error': form.centerPurchaser.$invalid}">
+                        Purchaser <input name="centerPurchaser" class="form-control" ng-model="center.purchaser" type="email" placeholder="email address" required>
                     </label>
-                    <label class="col-md-6">Max No. Students <input class="form-control" ng-model="center.maxLicencedStudentsForThisCenter" type="number" min="0" max="99"></label>
+                    <label class="col-md-6">Max No. Students <input class="form-control" ng-model="center.maxLicencedStudentsForThisCenter" type="number" min="0"></label>
                     <label class="col-md-6">Expiry Date <input class="form-control" ng-model="center.expiryDate" type="date"></label>
                     <label class="col-md-6">Invoice Number <input class="form-control" ng-model="center.invoiceNumber" type="text"></label>
                     <label class="col-md-6">Invoice Value &pound; <input class="form-control" ng-model="center.invoiceValue" type="number" min="0"></label>
+                    <div class="col-md-6">
+                        <label>Dialect of students</label>
+                        <label class="radio-inline">
+                            <input type="radio" name="vd" ng-model="center.defaultVoice" value="0">UK</label>
+                        <label class="radio-inline">
+                            <input type="radio" name="vd" ng-model="center.defaultVoice" value="1">UK (North)</label>
+                        <label class="radio-inline">
+                            <input type="radio" name="vd" ng-model="center.defaultVoice" value="2">US</label>
+                    </div>
                 </div>
                 <button type="submit" class="col-md-2 col-md-offset-2 btn btn-primary pull-right">Create</button>
             </form>
