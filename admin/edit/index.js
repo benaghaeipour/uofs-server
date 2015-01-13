@@ -67,11 +67,11 @@ angular.module('editcenter', [])
                 method: 'POST',
                 url: '/student/find',
                 data: {
-                    username: res.data.mainContact
+                    username: res.data.mainContact || 'nothingatall'
                 }
             }).then(function (res) {
                 if (res.data.length !== 0) {
-                    $scope.user = res.data;
+                    $scope.user = res.data[0];
                 }
             });
 
@@ -107,5 +107,6 @@ angular.module('editcenter', [])
                     }
                 });
             });
+            sendSaveCommand();
         };
     });
