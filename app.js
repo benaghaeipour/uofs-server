@@ -363,7 +363,7 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
                 return next(err);
             }
             console.info('Student Created');
-            emailer.sendPasswordReset(objects[0]);
+//            emailer.sendPasswordReset(objects[0]);
             res.status(201).json(objects);
         });
     } else {
