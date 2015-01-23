@@ -494,11 +494,11 @@ app.route('/center[/]?(:id)?')
                 return next(err);
             }
             console.info('Center Created : ', JSON.stringify(objects));
-            emailer.sendCenterCreate(objects[0], function (err) {
-                if(err) {
-                    console.error('Failed to send notification of center creation', objects);
-                }
-            });
+            // emailer.sendCenterCreate(objects[0], function (err) {
+            //     if(err) {
+            //         console.error('Failed to send notification of center creation', objects);
+            //     }
+            // });
             res.status(201);
             res.send(objects[0]);
         });
