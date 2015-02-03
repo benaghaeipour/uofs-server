@@ -92,10 +92,6 @@ app.use(errorhandler({
 // *******************************************************
 //          Some standrad routes etc
 
-app.get('/u[k,s]/*', function (req, res, next) {
-    res.redirect(302, 'http://static.unitsofsound.net' + req.path);
-});
-
 app.get('/favicon.ico', function (req, res, next) {
     //no favicon avaliable, but dont want 404 errors
     res.status(200);
@@ -138,31 +134,6 @@ app.use('/admin', require('serve-static')('admin'));
 app.get('/admin/edit/[a-f0-9]{24}', function (req, res, next) {
     res.sendFile(process.cwd() + '/admin/edit/index.html');
 });
-
-app.get('/admin/setup/[a-f0-9]{24}', function (req, res, next) {
-    res.sendFile(process.cwd() + '/admin/setup/index.html');
-});
-
-// *******************************************************
-//          Tools Area
-
-app.use('/tools', function (req, res, next) {
-    var user = auth(req) || {},
-        authed = false;
-
-    _.defaults(user, {user: '', pass: ''});
-    authed = user.pass === 'dyslexiaactionuser';
-
-    if (!authed) {
-        res.set({'WWW-Authenticate': 'Basic'});
-        res.status(401).end();
-    } else {
-        next();
-    }
-});
-app.use('/tools', require('serve-static')('tools'));
-
-app.use('/setup', require('serve-static')('setup'));
 
 // *******************************************************
 //          Login endpoint
