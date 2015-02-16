@@ -4,7 +4,7 @@
 var app,
     request = require('supertest'),
     server = 'http://localhost:5000',
-    expect = require('expect.js');
+    expect = require('expect');
 
 describe('/login', function () {
 

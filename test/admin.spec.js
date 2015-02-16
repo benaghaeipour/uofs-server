@@ -4,7 +4,7 @@
 describe('route - admin/', function () {
     var request = require('supertest'),
         server = 'http://localhost:5000',
-        expect = require('expect.js');
+        expect = require('expect');
 
     it('should require auth', function (done) {
         request(server)

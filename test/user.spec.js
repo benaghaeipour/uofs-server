@@ -6,7 +6,7 @@ var app;
 describe('/student', function () {
     var request = require('supertest'),
         server = 'http://localhost:5000',
-        expect = require('expect.js');
+        expect = require('expect');
 
     var CreadtedUserId = '';
 
@@ -62,12 +62,12 @@ describe('/student', function () {
                 .expect(function (res) {
                     var CreadtedUser = res.body[0];
                     CreadtedUserId = CreadtedUser._id;
-                    expect(CreadtedUser._id).to.match(/[a-f0-9]{24}/);
-                    expect(CreadtedUser.spellingSyllabus.length).to.be(150);
-                    expect(CreadtedUser.memorySyllabus.length).to.be(150);
-                    expect(CreadtedUser.dictationSyllabus.length).to.be(150);
-                    expect(CreadtedUser.readingSyllabus.length).to.be(299);
-                    expect(CreadtedUser.voiceDialect).to.be(0);
+                    expect(CreadtedUser._id).toMatch(/[a-f0-9]{24}/);
+                    expect(CreadtedUser.spellingSyllabus.length).toBe(150);
+                    expect(CreadtedUser.memorySyllabus.length).toBe(150);
+                    expect(CreadtedUser.dictationSyllabus.length).toBe(150);
+                    expect(CreadtedUser.readingSyllabus.length).toBe(299);
+                    expect(CreadtedUser.voiceDialect).toBe(0);
                 })
                 .expect(201, done);
         });
@@ -103,12 +103,12 @@ describe('/student', function () {
                 .expect(function (res) {
                     var CreadtedUser = res.body[0];
                     CreadtedUserId = CreadtedUser._id;
-                    expect(CreadtedUser._id).to.match(/[a-f0-9]{24}/);
-                    expect(CreadtedUser.spellingSyllabus.length).to.be(150);
-                    expect(CreadtedUser.memorySyllabus.length).to.be(150);
-                    expect(CreadtedUser.dictationSyllabus.length).to.be(150);
-                    expect(CreadtedUser.readingSyllabus.length).to.be(299);
-                    expect(CreadtedUser.voiceDialect).to.be(0);
+                    expect(CreadtedUser._id).toMatch(/[a-f0-9]{24}/);
+                    expect(CreadtedUser.spellingSyllabus.length).toBe(150);
+                    expect(CreadtedUser.memorySyllabus.length).toBe(150);
+                    expect(CreadtedUser.dictationSyllabus.length).toBe(150);
+                    expect(CreadtedUser.readingSyllabus.length).toBe(299);
+                    expect(CreadtedUser.voiceDialect).toBe(0);
                 })
                 .expect(200, done);
         });
@@ -150,8 +150,8 @@ describe('/student', function () {
                 .set('Content-Type', 'application/json')
                 .expect('Content-Type', /application\/json/)
                 .expect(function (res) {
-                    expect(res.body).to.be.an('array');
-                    expect(res.body.length).to.be.greaterThan(0);
+                    expect(res.body).toBeAn('array');
+                    expect(res.body.length).toBe.greaterThan(0);
                 })
                 .expect(200, done);
         });
@@ -166,7 +166,7 @@ describe('/student', function () {
                 .set('Content-Type', 'application/json')
                 .expect('Content-Type', /application\/json/)
                 .expect(function (res) {
-                    expect(res.body._id).to.match(/[a-f0-9]{24}/);
+                    expect(res.body._id).toMatch(/[a-f0-9]{24}/);
                 })
                 .expect(200, done);
         });

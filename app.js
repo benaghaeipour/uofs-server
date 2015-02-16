@@ -1,4 +1,4 @@
-/*jslint node:true nomen:true */
+/*jslint node:true, nomen:true */
 /*globals console, process*/
 // *******************************************************
 // expressjs template

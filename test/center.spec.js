@@ -4,7 +4,7 @@
 describe('/center', function () {
     var request = require('supertest'),
         server = 'http://localhost:5000',
-        expect = require('expect.js');
+        expect = require('expect');
 
     var CreadtedCenterId = '';
 
@@ -33,12 +33,12 @@ describe('/center', function () {
             .expect('Content-Type', /application\/json/)
             .expect(function (res) {
                 CreadtedCenterId = res.body._id;
-                expect(CreadtedCenterId).to.match(/[a-f0-9]{24}/);
+                expect(CreadtedCenterId).toMatch(/[a-f0-9]{24}/);
 
                 var center = res.body;
-                expect(center.name).to.be('Manchester');
-                expect(center.purchaser).to.be('blah@blah.com');
-                expect(center.defaultVoice).to.be(0);
+                expect(center.name).toBe('Manchester');
+                expect(center.purchaser).toBe('blah@blah.com');
+                expect(center.defaultVoice).toBe(0);
             })
             .expect(201, done);
     });
@@ -52,8 +52,8 @@ describe('/center', function () {
             .expect('Content-Type', /application\/json/)
             .expect('Cache-Control', /no/)
             .expect(function (res) {
-                expect(res.body).to.be.an('array');
-                expect(res.body.length).to.be(1);
+                expect(res.body).toBeAn('array');
+                expect(res.body.length).toBe(1);
             })
             .expect(200, done);
     });
@@ -67,12 +67,12 @@ describe('/center', function () {
             .expect('Cache-Control', /no/)
             .expect(function (res) {
                 var center = res.body;
-                expect(center).to.be.an('object');
-                expect(center.maxLicencedStudentsForThisCenter).to.be(0);
-                expect(center.expiryDate).to.be(null);
-                expect(center.purchaser).to.match(/.+@.+\..+/);
-                expect(center.defaultVoice).to.be(0);
-                expect(center.sourceNumber).to.be(1);
+                expect(center).toBeAn('object');
+                expect(center.maxLicencedStudentsForThisCenter).toBe(0);
+                expect(center.expiryDate).toBe(null);
+                expect(center.purchaser).toMatch(/.+@.+\..+/);
+                expect(center.defaultVoice).toBe(0);
+                expect(center.sourceNumber).toBe(1);
             })
             .expect(200, done);
     });
@@ -89,9 +89,9 @@ describe('/center', function () {
             .set('Content-Type', 'application/json')
             .expect('Cache-Control', /no/)
             .expect(function (res) {
-                expect(res.body).to.be.an('object');
+                expect(res.body).toBeAn('object');
                 console.log(res.body);
-//                expect(res.body.purchaser).to.match(/nope/);
+//                expect(res.body.purchaser).toMatch(/nope/);
             })
             .expect(202, done);
     });
