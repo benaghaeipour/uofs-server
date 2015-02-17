@@ -3,10 +3,15 @@
 
 describe('/', function () {
     var request = require('supertest'),
-        server = 'http://localhost:5000';
+        app = require('../app');
+
+    beforeEach(function (done) {
+        this.timeout(15000);
+        app.listening ? done() : app.on('listening', done);
+    });
 
     it('should ignore favicon', function (done) {
-        request(server)
+        request(app)
             .get('/favicon.ico')
             .expect(200, done);
     });

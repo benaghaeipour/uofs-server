@@ -3,11 +3,16 @@
 
 describe('route - admin/', function () {
     var request = require('supertest'),
-        server = 'http://localhost:5000',
-        expect = require('expect');
+        expect = require('expect'),
+        app = require('../app');
+
+    beforeEach(function (done) {
+        this.timeout(15000);
+        app.listening ? done() : app.on('listening', done);
+    });
 
     it('should require auth', function (done) {
-        request(server)
+        request(app)
             .get('/admin')
             .expect('WWW-Authenticate', 'Basic')
             .expect(401, done);

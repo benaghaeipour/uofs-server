@@ -1,15 +1,6 @@
 /*jslint node:true, nomen:true */
 /*globals console, process*/
-// *******************************************************
-// expressjs template
-//
-// assumes: npm install express
-//
-// assumes these subfolders:
-//   www/
-//   tmp/
-//
-
+'use strict';
 
 // *******************************************************
 //          Application includes
@@ -78,11 +69,11 @@ app.use(function (req, res, next) {
 adjNoun.seed(401175);
 
 switch (process.env.NODE_ENV) {
-    case 'production':
-        app.use(timeout());
-        break;
-    default:
-        break;
+case 'production':
+    app.use(timeout());
+    break;
+default:
+    break;
 }
 app.use(errorhandler({
     dumpExceptions: true,
@@ -182,12 +173,12 @@ app.route('/login/reset')
         var tempPassword = adjNoun().join('-');
 
         console.log('reseting password for', {username: req.query.email});
-        DB.users.update({$or:[{username: req.query.email}, {email: req.query.email}]}, {
+        DB.users.update({$or: [{username: req.query.email}, {email: req.query.email}]}, {
             $set: {pw1: tempPassword}
         }, {
             upsert: false
         }, function (err, objects) {
-            if (err) { return next(err);}
+            if (err) { return next(err); }
             if (objects === 0) {
                 return res.status(404).end();
             }
@@ -323,7 +314,7 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 
         var hasRequiredFields = hasCenter && hasPassword && hasUsername;
         if (!hasRequiredFields) {
-            console.info('student create missing', {hasUsername:hasUsername, hasPassword:hasPassword, hasCenter:hasCenter});
+            console.info('student create missing', {hasUsername: hasUsername, hasPassword: hasPassword, hasCenter: hasCenter});
             return res.status(400).send();
         }
 
@@ -615,6 +606,19 @@ mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
     }
     DB = dbconnection; //make the db globally avaliable
 
+    DB.on('close', function () {
+        console.warn('DB-closed');
+    });
+    DB.on('error', function () {
+        console.error('DB-error');
+    });
+    DB.on('reconnect', function () {
+        console.info('DB-reconnect');
+    });
+    DB.on('timeout', function () {
+        console.warn('DB-timeout');
+    });
+
     DB.collection('users', function (err, collection) {
         if (err) {
             console.error('cannot open users collection');
@@ -632,17 +636,18 @@ mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
     });
 
     app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80).once('listening', function() {
+        app.listening = true;
+        app.emit('listening');
         console.info('listening on ' + process.env.PORT);
     });
 });
 
 process.on('uncaughtexception', function () {
-    console.fatal('UNCAUGHT EXCEPTION -  should not');
+    console.fatal('UNCAUGHT EXCEPTION - should not');
     process.exit(1);
 });
 
-process.on('SIGHUP', function () {
+process.on('SIGINT', function () {
     DB.close();
-    app.close();
     console.log('bye');
 });

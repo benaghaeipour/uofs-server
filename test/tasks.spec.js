@@ -2,21 +2,26 @@
 /*globals mocha, expect, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach, before, after*/
 
 
-before(function (done) {
-    this.timeout = 5000;
-
+function clearDown(done) {
     var mongodb = require('mongodb');
     mongodb.connect(process.env.DB_URI, {}, function (err, DB) {
         DB.dropCollection('users', function () {
             DB.dropCollection('centers', function () {
                 console.log('done clearing down db');
+                DB.close();
                 done();
             });
         });
     });
+}
+
+before(function (done) {
+    this.timeout(15000);
+    clearDown(done);
 });
 
 after(function (done) {
+    this.timeout(15000);
     var request = require('supertest');
 
         request('http://localhost:5000')
@@ -31,13 +36,6 @@ after(function (done) {
             .expect(201, done);
 });
 
-//before(function (done) {
-//    this.timeout = 5000;
-//
-//    var serverProcess;
-//    serverProcess = require('../app.js');
-//    serverProcess.on('listening', function () {
-//        console.log('app is listening');
-//        done();
-//    });
-//});
+module.exports = {
+    clearDB: clearDown
+}

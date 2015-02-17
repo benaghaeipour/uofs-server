@@ -3,13 +3,18 @@
 
 describe('/center', function () {
     var request = require('supertest'),
-        server = 'http://localhost:5000',
+        app = require('../app'),
         expect = require('expect');
 
     var CreadtedCenterId = '';
 
+    beforeEach(function (done) {
+        this.timeout(15000);
+        app.listening ? done() : app.on('listening', done);
+    });
+
     it('should bounce missing purchaser', function (done) {
-        request(server)
+        request(app)
             .put('/center')
             .send({
                 name: 'Manchester',
@@ -21,7 +26,7 @@ describe('/center', function () {
     });
 
     it('should create a center', function (done) {
-        request(server)
+        request(app)
             .put('/center')
             .send({
                 name: 'Manchester',
@@ -44,7 +49,7 @@ describe('/center', function () {
     });
 
     it('should query center with name', function (done) {
-        request(server)
+        request(app)
             .get('/center')
             .query({name: 'Manchester'})
             .set('Accept', 'application/json')
@@ -52,14 +57,14 @@ describe('/center', function () {
             .expect('Content-Type', /application\/json/)
             .expect('Cache-Control', /no/)
             .expect(function (res) {
-                expect(res.body).toBeAn('array');
-                expect(res.body.length).toBe(1);
+
+            expect(res.body.length).toBe(1);
             })
             .expect(200, done);
     });
 
     it('should get center by ID', function (done) {
-        request(server)
+        request(app)
             .get('/center/' + CreadtedCenterId)
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
@@ -67,7 +72,7 @@ describe('/center', function () {
             .expect('Cache-Control', /no/)
             .expect(function (res) {
                 var center = res.body;
-                expect(center).toBeAn('object');
+                expect(center).toBeAn(Object);
                 expect(center.maxLicencedStudentsForThisCenter).toBe(0);
                 expect(center.expiryDate).toBe(null);
                 expect(center.purchaser).toMatch(/.+@.+\..+/);
@@ -78,7 +83,7 @@ describe('/center', function () {
     });
 
     it('should update a center', function (done) {
-        request(server)
+        request(app)
             .post('/center/' + CreadtedCenterId)
             .send({
                 name: 'Manchester',
@@ -89,7 +94,7 @@ describe('/center', function () {
             .set('Content-Type', 'application/json')
             .expect('Cache-Control', /no/)
             .expect(function (res) {
-                expect(res.body).toBeAn('object');
+                expect(res.body).toBeAn(Object);
                 console.log(res.body);
 //                expect(res.body.purchaser).toMatch(/nope/);
             })
@@ -97,7 +102,7 @@ describe('/center', function () {
     });
 
     xit('should remove center', function (done) {
-        request(server)
+        request(app)
             .delete('/center/' + CreadtedCenterId)
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')

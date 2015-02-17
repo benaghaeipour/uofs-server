@@ -21,8 +21,8 @@ var proxyquire = require('proxyquire'),
 describe('emailer', function () {
 
     it('should expose a consistant API', function () {
-        expect(mailer.sendPasswordReset).toBeAn('function');
-        expect(mailer.sendCenterCreate).toBeAn('function');
+        expect(mailer.sendPasswordReset).toBeAn(Function);
+        expect(mailer.sendCenterCreate).toBeAn(Function);
     });
 
     it('should set up a transport', function () {
