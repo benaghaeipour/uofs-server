@@ -7,9 +7,11 @@
 var net = require('net'),
     http = require('http'),
     fs = require('fs'),
-    auth = require('basic-auth'),
+    decodeBasicAuth = require('basic-auth'),
+    auth = require('./auth'),
     express = require('express'),
     mongodb = require('mongodb'),
+    DB = require('./db'),
     adjNoun = require('adj-noun'),
     _ = require('lodash'),
     mustache = require('mustache'),
@@ -20,15 +22,15 @@ var net = require('net'),
 
 // *******************************************************
 //          Global Variables
-var DB = null,
-    app = express();
+var app = express();
 
 var pkg = require('./package.json');
 
 // set defaults to those needed for local dev
 _.defaults(process.env, {
-    NODE_ENV: 'local'
-}, pkg.env);
+    NODE_ENV: 'development',
+    SYSADMIN_KEY: 'test'
+});
 
 app.set('env', process.env.NODE_ENV);
 
@@ -62,8 +64,14 @@ app.use(function (req, res, next) {
 });
 
 app.use(function (req, res, next) {
-    req.user = auth(req) || {name: 'unknown', pass: 'unknown'};
-    return next();
+    req.user = decodeBasicAuth(req);
+    if (req.user) {
+        return next();
+    } else {
+        res.set({'WWW-Authenticate': 'Basic'});
+        res.status(401);
+        return res.end();
+    }
 });
 
 adjNoun.seed(401175);
@@ -97,8 +105,7 @@ app.get('/crossdomain.xml', function (req, res, next) {
     //no favicon avaliable, but dont want 404 errors
     res.set('Cache-Control', 'public');
     res.status(200);
-    res.send('' +
-        '<?xml version="1.0"?>' +
+    res.send('<?xml version="1.0"?>' +
         '<!DOCTYPE cross-domain-policy SYSTEM' +
         '"http://www.adobe.com/xml/dtds/cross-domain-policy.dtd">' +
         '<cross-domain-policy>' +
@@ -111,15 +118,7 @@ app.get('/crossdomain.xml', function (req, res, next) {
 // *******************************************************
 //          Admin Views
 
-app.use('/admin', function (req, res, next) {
-    var authed = req.user.name === process.env.ADMIN_USER && req.user.pass === process.env.ADMIN_PASS;
-    if (!authed) {
-        res.set({'WWW-Authenticate': 'Basic'});
-        res.status(401).end();//something
-    } else {
-        next();
-    }
-});
+app.use('/admin', auth);
 app.use('/admin', require('serve-static')('admin'));
 
 app.get('/admin/edit/[a-f0-9]{24}', function (req, res, next) {
@@ -370,7 +369,7 @@ app.post('/student/update[/]?', bodyParser, function (req, res, next) {
 //          Center endpoints
 
 app.route('/center/:id/welcome')
-    .get(function(req, res, next) {
+    .get(function (req, res, next) {
         async.parallel({
             sorry: function (cb) {
                 request.get('https://www.google.co.uk/404').end(function (html) {
@@ -380,11 +379,11 @@ app.route('/center/:id/welcome')
             },
             template: function (cb) {
                 request.get('http://help.unitsofsound.net/?document=center-welcome')
-                .redirects(2)
-                .end(function (html) {
-                    console.log('got template');
-                    cb(null, html);
-                });
+                    .redirects(2)
+                    .end(function (html) {
+                        console.log('got template');
+                        cb(null, html);
+                    });
             },
             center: function (cb) {
                 DB.centers.findOne({_id: new mongodb.ObjectID(req.params.id)}, cb);
@@ -418,7 +417,7 @@ app.route('/center[/]?(:id)?')
                 if (err) {
                     return next(err);
                 }
-                console.log('Returning : '+ JSON.stringify(record));
+                console.log('Returning : ', JSON.stringify(record));
                 res.status(200).send(record);
             });
         } else {
@@ -427,7 +426,7 @@ app.route('/center[/]?(:id)?')
                 if (err) {
                     return next(err);
                 }
-                console.log('Returning : '+ JSON.stringify(objects));
+                console.log('Returning : ', JSON.stringify(objects));
                 res.status(200).send(objects);
             });
         }
@@ -472,8 +471,8 @@ app.route('/center[/]?(:id)?')
         }
 
         DB.centers.update({_id: mongodb.ObjectID(req.params.id)}, _.omit(query, '_id'), {
-            upsert:true,
-            w:1
+            upsert: true,
+            w: 1
         }, function (err, objects) {
             if (err) {
                 return next(err);
@@ -489,8 +488,8 @@ app.route('/center[/]?(:id)?')
         }
 
         DB.centers.remove({_id: mongodb.ObjectID(req.params.id)}, {
-            upsert:true,
-            w:1
+            upsert: true,
+            w: 1
         }, function (err) {
             if (err) {
                 return next(err);
@@ -499,57 +498,6 @@ app.route('/center[/]?(:id)?')
             res.status(204).end();
         });
     });
-
-
-
-// *******************************************************
-//          Recordings enpoints
-
-/**
- * Returns a file from GrdFS
- */
-app.get('/recordings/:filename', function (req, res, next) {
-    console.log('request for ' + req.params.filename);
-    var storedRec = new mongodb.GridStore(DB, req.params.filename, 'r');
-    storedRec.open(function (err, gs) {
-        if (err) {
-            return res.status(404).end();
-        }
-
-        //file opened, can now do things with it
-        // Create a stream to the file
-        console.log('request for existing recording');
-        var stream = gs.stream(true);
-        stream.pipe(res);
-    });
-});
-
-/**
- * REST interface /<student id>/<lesson>/<page>/<block>/<word>/
- *
- * if the request gets to this function it has passed all verification and can
- * be acted upon
- *
- * saves post data sent to /recordings/123456/4/3/2/1/ to a file named /recordings/123456/4/3/2/1/
- * in the GridFS mongodb
- *
- * https://github.com/mongodb/node-mongodb-native/blob/master/docs/gridfs.md
- */
-app.post('/recordings/:filename', function (req, res, next) {
-    console.log('sending recording to mongo filename=' + req.params.filename);
-    var newRecording = new mongodb.GridStore(DB, req.params.filename, 'w', {
-        "content_type": "binary/octet-stream",
-        "chunk_size": 1024 * 4
-    });
-
-    newRecording.open(function (err, gridStore) {
-        if (err) {
-            console.error('could not open Gridstore item filename=' + req.params.filename);
-            return next(err);
-        }
-        req.pipe(gridStore);
-    });
-});
 
 
 // *******************************************************
@@ -604,22 +552,22 @@ mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
         console.error('error opening database');
         throw (err);
     }
-    DB = dbconnection; //make the db globally avaliable
+    DB.connection = dbconnection; //make the db globally avaliable
 
-    DB.on('close', function () {
+    dbconnection.on('close', function () {
         console.warn('DB-closed');
     });
-    DB.on('error', function () {
+    dbconnection.on('error', function () {
         console.error('DB-error');
     });
-    DB.on('reconnect', function () {
+    dbconnection.on('reconnect', function () {
         console.info('DB-reconnect');
     });
-    DB.on('timeout', function () {
+    dbconnection.on('timeout', function () {
         console.warn('DB-timeout');
     });
 
-    DB.collection('users', function (err, collection) {
+    dbconnection.collection('users', function (err, collection) {
         if (err) {
             console.error('cannot open users collection');
             throw (err);
@@ -627,7 +575,7 @@ mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
         DB.users = collection;
     });
 
-    DB.collection('centers', function (err, collection) {
+    dbconnection.collection('centers', function (err, collection) {
         if (err) {
             console.error('cannot open centers collection');
             throw (err);
@@ -635,7 +583,7 @@ mongodb.connect(process.env.DB_URI, options, function (err, dbconnection) {
         DB.centers = collection;
     });
 
-    app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80).once('listening', function() {
+    app.listen(process.env.PORT || process.env.VCAP_APP_PORT || 80).once('listening', function () {
         app.listening = true;
         app.emit('listening');
         console.info('listening on ' + process.env.PORT);
@@ -648,6 +596,6 @@ process.on('uncaughtexception', function () {
 });
 
 process.on('SIGINT', function () {
-    DB.close();
+    DB.connection.close();
     console.log('bye');
 });

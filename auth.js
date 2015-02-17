@@ -33,7 +33,7 @@ function auth(req, res, next) {
         if (err) {
             return next ? next(err) : null;
         }
-        if (results.length === 0) {
+        if (!results || results.length === 0) {
             res.status(404);
             return res.end();
         }
@@ -42,7 +42,7 @@ function auth(req, res, next) {
             req.user = studentRecord;
             return next ? next() : null;
         } else {
-            console.log('wrong pw1');
+            res.set({'WWW-Authenticate': 'Basic'});
             res.status(401);
             return res.end();
         }

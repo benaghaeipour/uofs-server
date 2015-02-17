@@ -1,5 +1,8 @@
-/*jshint node:true*/
+/*jslint node:true*/
 /*globals mocha, expect, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
+'use strict';
+
+var crypto = require('crypto');
 
 describe('route - admin/', function () {
     var request = require('supertest'),
@@ -8,13 +11,38 @@ describe('route - admin/', function () {
 
     beforeEach(function (done) {
         this.timeout(15000);
-        app.listening ? done() : app.on('listening', done);
+        return app.listening ? done() : app.on('listening', done);
     });
 
     it('should require auth', function (done) {
         request(app)
             .get('/admin')
+            .expect(401)
             .expect('WWW-Authenticate', 'Basic')
-            .expect(401, done);
+            .end(done);
+    });
+
+    it('should 404 an unknown user', function (done) {
+        request(app)
+            .get('/admin')
+            .auth('no-one-special', 'dont-even-care')
+            .expect(404)
+            .end(done);
+    });
+
+    it('should 401 when wrong password', function (done) {
+        request(app)
+            .get('/admin')
+            .auth('no-one-special', 'dont-even-care')
+            .expect(401)
+            .end(done);
+    });
+
+    it('should return the angular app', function (done) {
+        request(app)
+            .get('/admin')
+            .auth('chris@matheson.it', 'JjSlotnF49k8Qr1p3fPKmefCaC8Jpe/LoNrb5WSWtRI=')
+            .expect(303)
+            .end(done);
     });
 });
