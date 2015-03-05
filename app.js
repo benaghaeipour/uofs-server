@@ -63,17 +63,6 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.use(function (req, res, next) {
-    req.user = decodeBasicAuth(req);
-    if (req.user) {
-        return next();
-    } else {
-        res.set({'WWW-Authenticate': 'Basic'});
-        res.status(401);
-        return res.end();
-    }
-});
-
 adjNoun.seed(401175);
 
 switch (process.env.NODE_ENV) {
@@ -118,7 +107,16 @@ app.get('/crossdomain.xml', function (req, res, next) {
 // *******************************************************
 //          Admin Views
 
-app.use('/admin', auth);
+app.use('/admin', function (req, res, next) {
+    req.user = decodeBasicAuth(req);
+    if (req.user) {
+        return next();
+    } else {
+        res.set({'WWW-Authenticate': 'Basic'});
+        res.status(401);
+        return res.end();
+    }
+}, auth);
 app.use('/admin', require('serve-static')('admin'));
 
 app.get('/admin/edit/[a-f0-9]{24}', function (req, res, next) {
@@ -598,4 +596,5 @@ process.on('uncaughtexception', function () {
 process.on('SIGINT', function () {
     DB.connection.close();
     console.log('bye');
+    process.exit(0);
 });

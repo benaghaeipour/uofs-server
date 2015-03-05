@@ -21,6 +21,7 @@ describe('auth', function () {
                 }
             },
             res: {
+                set: function () {},
                 status: function () {},
                 end: function () {}
             },

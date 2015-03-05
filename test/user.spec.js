@@ -76,6 +76,8 @@ describe('/student', function () {
                 }).end(done);
         });
 
+        it('should default the type to the voiceDialect of the center');
+
         it('should not destroy syllabus', function (done) {
             request(app)
                 .post('/student/update')
@@ -201,5 +203,4 @@ describe('/student', function () {
                 .expect(202, done);
         });
     });
-
 });
