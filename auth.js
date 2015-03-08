@@ -23,7 +23,6 @@ function auth(req, res, next) {
     }
 
     if (req.user.pass === generateUserToken(req.user.name)) {
-        console.log('token login');
         return next();
     }
 

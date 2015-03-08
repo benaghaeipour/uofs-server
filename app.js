@@ -108,13 +108,7 @@ app.get('/crossdomain.xml', function (req, res, next) {
 // *******************************************************
 //          Admin Views
 
-app.use('/admin', function (req, res, next) {
-    console.log('auth started');
-    return next();
-}, auth, function (req, res, next) {
-    console.log('auth passed');
-    return next();
-});
+app.use('/admin', auth);
 app.use('/admin', require('serve-static')('admin'));
 
 app.get('/admin/edit/[a-f0-9]{24}', function (req, res, next) {

@@ -112,7 +112,7 @@ route.post('/update[/]?', bodyParser, function (req, res, next) {
 
     if (!query._id) {
         console.log('student create bcause no _id');
-        _.defaults(query, {pw1: adjNoun().join('-')}, defaultStudentRecord);
+        _.defaults(query, {pw1: adjNoun().join('-')});
 
         var hasUsername = !!query.username;
         var hasPassword = !!query.pw1;
@@ -126,11 +126,13 @@ route.post('/update[/]?', bodyParser, function (req, res, next) {
 
         //create new record
         console.info('student create :', _.pick(query, 'username', 'pw1', 'center'));
-        DB.centers.findOne({name: query.center}, {voiceDialect: true}, function (err, center) {
-            if (center) {
-                query.voiceDialect = query.voiceDialect || center.defaultVoice;
+        DB.centers.findOne({name: query.center}, function (err, center) {
+            if (center && center.defaultVoice && query.voiceDialect === undefined) {
+                console.log('setting voiceDialect to centers:', center.defaultVoice);
+                query.voiceDialect = center.defaultVoice;
             }
 
+            _.defaults(query, defaultStudentRecord);
             DB.users.insert(query, function (err, objects) {
                 if (err) {
                     return next(err);
