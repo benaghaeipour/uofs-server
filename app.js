@@ -35,6 +35,7 @@ _.defaults(process.env, {
 app.set('env', process.env.NODE_ENV);
 
 process.env.PORT = process.env.PORT || 5000;
+process.env.SYSADMIN_KEY = process.env.SYSADMIN_KEY || 'testing';
 
 // *******************************************************
 //          expose 'app' for testing
@@ -108,15 +109,12 @@ app.get('/crossdomain.xml', function (req, res, next) {
 //          Admin Views
 
 app.use('/admin', function (req, res, next) {
-    req.user = decodeBasicAuth(req);
-    if (req.user) {
-        return next();
-    } else {
-        res.set({'WWW-Authenticate': 'Basic'});
-        res.status(401);
-        return res.end();
-    }
-}, auth);
+    console.log('auth started');
+    return next();
+}, auth, function (req, res, next) {
+    console.log('auth passed');
+    return next();
+});
 app.use('/admin', require('serve-static')('admin'));
 
 app.get('/admin/edit/[a-f0-9]{24}', function (req, res, next) {

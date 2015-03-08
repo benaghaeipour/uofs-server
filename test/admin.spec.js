@@ -22,14 +22,6 @@ describe('route - admin/', function () {
             .end(done);
     });
 
-    it('should 404 an unknown user', function (done) {
-        request(app)
-            .get('/admin')
-            .auth('no-one-special', 'dont-even-care')
-            .expect(404)
-            .end(done);
-    });
-
     it('should return the angular app', function (done) {
         request(app)
             .get('/admin')

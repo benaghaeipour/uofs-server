@@ -3,15 +3,27 @@
 
 var crypto = require('crypto');
 var db = require('./db');
+var decodeBasicAuth = require('basic-auth');
 
 function generateUserToken(user) {
     var hash = crypto.createHmac('sha256', process.env.SYSADMIN_KEY);
     return hash.update(user).digest('base64');
 }
 
+function rejectAndPromptForPassword(req, res) {
+    res.set({'WWW-Authenticate': 'Basic'});
+    res.status(401);
+    return res.end();
+}
+
 function auth(req, res, next) {
+    req.user = decodeBasicAuth(req);
+    if (!req.user) {
+        return rejectAndPromptForPassword(req, res);
+    }
 
     if (req.user.pass === generateUserToken(req.user.name)) {
+        console.log('token login');
         return next();
     }
 
@@ -34,17 +46,14 @@ function auth(req, res, next) {
             return next ? next(err) : null;
         }
         if (!results || results.length === 0) {
-            res.status(404);
-            return res.end();
+            return rejectAndPromptForPassword(req, res);
         }
         var studentRecord = results[0];
         if (studentRecord.pw1 === req.user.pass) {
             req.user = studentRecord;
             return next ? next() : null;
         } else {
-            res.set({'WWW-Authenticate': 'Basic'});
-            res.status(401);
-            return res.end();
+            return rejectAndPromptForPassword(req, res);
         }
     });
 }

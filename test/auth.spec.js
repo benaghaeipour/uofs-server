@@ -15,9 +15,8 @@ describe('auth', function () {
         mocks = {
             next: function () {},
             req: {
-                user: {
-                    name: 'fred',
-                    pass: 'blah blah'
+                headers: {
+                    authorization: 'Basic ' + new Buffer('fred:blah blah', 'utf8').toString('base64')
                 }
             },
             res: {
@@ -40,7 +39,7 @@ describe('auth', function () {
 
     it('should allow sysadmins', function () {
         expect.spyOn(mocks, 'next');
-        mocks.req.user.pass = 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=';
+        mocks.req.headers.authorization = 'Basic ' + new Buffer('fred:lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=', 'utf8').toString('base64');
         auth(mocks.req, mocks.res, mocks.next);
 
         expect(mocks.next).toHaveBeenCalled();
@@ -52,7 +51,7 @@ describe('auth', function () {
         auth(mocks.req, mocks.res);
 
         expect(mocks.db.users.findOne).toHaveBeenCalled();
-        var dbQuery = mocks.db.users.findOne.calls[0].arguments[0];
+        var dbQuery = mocks.db.users.findOne.calls[0]['arguments'][0];
         expect(dbQuery.username).toBe('fred');
         expect(dbQuery.deleted.$exists).toBe(false);
     });
@@ -62,7 +61,7 @@ describe('auth', function () {
 
         auth(mocks.req, mocks.res);
 
-        var dbCallback = mocks.db.users.findOne.calls[0].arguments[2];
+        var dbCallback = mocks.db.users.findOne.calls[0]['arguments'][2];
         dbCallback(null, [{type: 'teacher', pw1: 'blah blah'}]);
 
         expect(mocks.req.user.type).toBe('teacher');
@@ -75,24 +74,24 @@ describe('auth', function () {
 
         auth(mocks.req, mocks.res);
 
-        var dbCallback = mocks.db.users.findOne.calls[0].arguments[2];
+        var dbCallback = mocks.db.users.findOne.calls[0]['arguments'][2];
         dbCallback(null, [{type: 'teacher', pw1: 'not correct'}]);
 
         expect(mocks.res.status).toHaveBeenCalledWith(401);
         expect(mocks.res.end).toHaveBeenCalled();
     });
 
-    it('should 404 if user is not found', function () {
+    it('should 401 if user is not found', function () {
         expect.spyOn(mocks.db.users, 'findOne');
         expect.spyOn(mocks.res, 'status');
         expect.spyOn(mocks.res, 'end');
 
         auth(mocks.req, mocks.res);
 
-        var dbCallback = mocks.db.users.findOne.calls[0].arguments[2];
+        var dbCallback = mocks.db.users.findOne.calls[0]['arguments'][2];
         dbCallback(null, []);
 
-        expect(mocks.res.status).toHaveBeenCalledWith(404);
+        expect(mocks.res.status).toHaveBeenCalledWith(401);
         expect(mocks.res.end).toHaveBeenCalled();
     });
 });
