@@ -46,7 +46,6 @@ console.info('Configuring for DB : ' + process.env.DB_URI);
 
 app.set('view engine', 'html');
 
-var morgan = require('morgan');
 var bodyParser = require('body-parser')({limit: 300000});
 var compress = require('compression');
 var errorhandler = require('errorhandler');
