@@ -1,55 +1,23 @@
-/*jshint node:true*/
-/*globals mocha, expect, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
+'use strict';
+/*globals mocha, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
 
-var app;
+var app = require('../app');
+var expect = require('expect');
+var request = require('supertest');
+var proxyquire = require('proxyquire');
 
 describe('/student', function () {
-    var request = require('supertest'),
-        server = 'http://localhost:5000',
-        expect = require('expect.js');
-
     var CreadtedUserId = '';
+
+    beforeEach(function (done) {
+        this.timeout(15000);
+        return app.listening ? done() : app.on('listening', done);
+    });
 
     describe('/update', function () {
 
-        it('should reject missing username', function (done) {
-            request(server)
-                .post('/student/update')
-                .send({
-                    pw1: 'iii',
-                    center: 'blah'
-                })
-                .set('Accept', 'application/json')
-                .set('Content-Type', 'application/json')
-                .expect(400, done);
-        });
-
-        xit('should reject missing password', function (done) {
-            request(server)
-                .post('/student/update')
-                .send({
-                    username: 'scott',
-                    center: 'blah'
-                })
-                .set('Accept', 'application/json')
-                .set('Content-Type', 'application/json')
-                .expect(400, done);
-        });
-
-        it('should reject missing center', function (done) {
-            request(server)
-                .post('/student/update')
-                .send({
-                    username: 'scott',
-                    pw1: 'iii'
-                })
-                .set('Accept', 'application/json')
-                .set('Content-Type', 'application/json')
-                .expect(400, done);
-        });
-
         it('should create a user', function (done) {
-            request(server)
+            request(app)
                 .post('/student/update')
                 .send({
                     username: 'scott',
@@ -58,22 +26,22 @@ describe('/student', function () {
                 })
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
+                .expect(201)
                 .expect('Content-Type', /application\/json/)
                 .expect(function (res) {
                     var CreadtedUser = res.body[0];
                     CreadtedUserId = CreadtedUser._id;
-                    expect(CreadtedUser._id).to.match(/[a-f0-9]{24}/);
-                    expect(CreadtedUser.spellingSyllabus.length).to.be(150);
-                    expect(CreadtedUser.memorySyllabus.length).to.be(150);
-                    expect(CreadtedUser.dictationSyllabus.length).to.be(150);
-                    expect(CreadtedUser.readingSyllabus.length).to.be(299);
-                    expect(CreadtedUser.voiceDialect).to.be(0);
-                })
-                .expect(201, done);
+                    expect(CreadtedUser._id).toMatch(/[a-f0-9]{24}/);
+                    expect(CreadtedUser.spellingSyllabus.length).toBe(150);
+                    expect(CreadtedUser.memorySyllabus.length).toBe(150);
+                    expect(CreadtedUser.dictationSyllabus.length).toBe(150);
+                    expect(CreadtedUser.readingSyllabus.length).toBe(299);
+                    expect(CreadtedUser.voiceDialect).toBe(0);
+                }).end(done);
         });
 
         it('should not destroy syllabus', function (done) {
-            request(server)
+            request(app)
                 .post('/student/update')
                 .send({
                     _id: CreadtedUserId,
@@ -87,36 +55,38 @@ describe('/student', function () {
                 })
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
+                .expect(201, done)
                 .expect('Content-Type', /application\/json/)
-                .expect(201, done);
+                .end(done);
         });
 
         it('should still have syllabus info', function (done) {
-            request(server)
+            request(app)
                 .post('/student/find')
                 .send({
                     _id: CreadtedUserId
                 })
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
+                .expect(200)
                 .expect('Content-Type', /application\/json/)
                 .expect(function (res) {
                     var CreadtedUser = res.body[0];
                     CreadtedUserId = CreadtedUser._id;
-                    expect(CreadtedUser._id).to.match(/[a-f0-9]{24}/);
-                    expect(CreadtedUser.spellingSyllabus.length).to.be(150);
-                    expect(CreadtedUser.memorySyllabus.length).to.be(150);
-                    expect(CreadtedUser.dictationSyllabus.length).to.be(150);
-                    expect(CreadtedUser.readingSyllabus.length).to.be(299);
-                    expect(CreadtedUser.voiceDialect).to.be(0);
+                    expect(CreadtedUser._id).toMatch(/[a-f0-9]{24}/);
+                    expect(CreadtedUser.spellingSyllabus.length).toBe(150);
+                    expect(CreadtedUser.memorySyllabus.length).toBe(150);
+                    expect(CreadtedUser.dictationSyllabus.length).toBe(150);
+                    expect(CreadtedUser.readingSyllabus.length).toBe(299);
+                    expect(CreadtedUser.voiceDialect).toBe(0);
                 })
-                .expect(200, done);
+                .end(done);
         });
     });
 
     describe('creation', function () {
         it('should not allow duplicates', function (done) {
-            request(server)
+            request(app)
                 .post('/student/')
                 .send({
                     username: 'scott',
@@ -128,7 +98,7 @@ describe('/student', function () {
         });
 
         it('should respond OK to new username/pw combinations', function (done) {
-            request(server)
+            request(app)
                 .post('/student/')
                 .send({
                     username: 'not-here',
@@ -143,47 +113,49 @@ describe('/student', function () {
     describe('/find', function () {
 
         it('should now have one student', function (done) {
-            request(server)
+            request(app)
                 .post('/student/find')
                 .send({})
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
+                .expect(200)
                 .expect('Content-Type', /application\/json/)
                 .expect(function (res) {
-                    expect(res.body).to.be.an('array');
-                    expect(res.body.length).to.be.greaterThan(0);
+                    expect(res.body).toBeAn(Array);
+                    expect(res.body.length).toBeGreaterThan(0);
                 })
-                .expect(200, done);
+                .end(done);
         });
     });
 
     describe('/login', function () {
         it('should login', function (done) {
-            request(server)
+            request(app)
                 .post('/login')
-                .send({pw1:"iii",username:"scott"})
+                .send({pw1: "iii", username: "scott"})
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
+                .expect(200)
                 .expect('Content-Type', /application\/json/)
                 .expect(function (res) {
-                    expect(res.body._id).to.match(/[a-f0-9]{24}/);
+                    expect(res.body._id).toMatch(/[a-f0-9]{24}/);
                 })
-                .expect(200, done);
+                .end(done);
         });
     });
 
     describe('/delete', function () {
         it('should fail to login', function (done) {
-            request(server)
+            request(app)
                 .post('/login')
-                .send({username: 'no-one', pw1:'nothing'})
+                .send({username: 'no-one', pw1: 'nothing'})
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
                 .expect(401, done);
         });
 
-         it('should remove student', function (done) {
-            request(server)
+        it('should remove student', function (done) {
+            request(app)
                 .post('/student/delete')
                 .send({
                     _id: CreadtedUserId
@@ -193,5 +165,62 @@ describe('/student', function () {
                 .expect(202, done);
         });
     });
+});
 
+describe('/users', function () {
+    var route, mocks;
+
+    beforeEach(function () {
+        mocks = {
+            db: {
+                centers: {
+                    findOne: function (query, opts, cb) {
+                        cb(null, { center: 'blah', defaultVoice: 2});
+                    }
+                },
+                users: {
+                    insert: function (query, cb) {
+                        cb(null, {});
+                    }
+                },
+                '@noCallThru': true
+            }
+        };
+        route = require('express')().use(proxyquire('../users', {
+            './db': mocks.db
+        }));
+    });
+
+    it('should use center defaultDialect for new user voice', function (done) {
+        request(route)
+            .post('/update')
+            .send({ username: 'a-user', pw1: 'iii', center: 'blah' })
+            .expect(200, function () {
+                done();
+            });
+    });
+
+    it('should reject missing username', function (done) {
+        request(route)
+            .post('/update')
+            .send({
+                pw1: 'iii',
+                center: 'blah'
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect(400, done);
+    });
+
+    it('should reject missing center', function (done) {
+        request(route)
+            .post('/update')
+            .send({
+                username: 'scott',
+                pw1: 'iii'
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect(400, done);
+    });
 });
