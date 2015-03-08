@@ -13,7 +13,7 @@ function formatUser(user) {
     var cleaner = _.clone(user);
     cleaner.readingSyllabus = cleaner.readingSyllabus ? cleaner.readingSyllabus.length : undefined;
     cleaner.spellingSyllabus = cleaner.spellingSyllabus ? cleaner.spellingSyllabus.length : undefined;
-    cleaner.memorySyllabus = cleaner.memorySyllabus? cleaner.memorySyllabus.length : undefined;
+    cleaner.memorySyllabus = cleaner.memorySyllabus ? cleaner.memorySyllabus.length : undefined;
     cleaner.dictationSyllabus = cleaner.dictationSyllabus ? cleaner.dictationSyllabus.length : undefined;
     return cleaner;
 }
@@ -126,13 +126,19 @@ route.post('/update[/]?', bodyParser, function (req, res, next) {
 
         //create new record
         console.info('student create :', _.pick(query, 'username', 'pw1', 'center'));
-        DB.users.insert(query, function (err, objects) {
-            if (err) {
-                return next(err);
+        DB.centers.findOne({name: query.center}, {voiceDialect: true}, function (err, center) {
+            if (center) {
+                query.voiceDialect = query.voiceDialect || center.defaultVoice;
             }
-            console.info('Student Created');
-//            emailer.sendPasswordReset(objects[0]);
-            res.status(201).json(objects);
+
+            DB.users.insert(query, function (err, objects) {
+                if (err) {
+                    return next(err);
+                }
+                console.info('Student Created');
+    //            emailer.sendPasswordReset(objects[0]);
+                res.status(201).json(objects);
+            });
         });
     } else {
         console.log('student update _id:', query._id);

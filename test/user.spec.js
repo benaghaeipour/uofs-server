@@ -1,56 +1,20 @@
-/*jshint node:true*/
-/*globals mocha, expect, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
+'use strict';
+/*globals mocha, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
 
-var app = require('../app');;
+var app = require('../app');
+var expect = require('expect');
+var request = require('supertest');
+var proxyquire = require('proxyquire');
 
 describe('/student', function () {
-    var request = require('supertest'),
-        expect = require('expect');
-
     var CreadtedUserId = '';
 
     beforeEach(function (done) {
         this.timeout(15000);
-        app.listening ? done() : app.on('listening', done);
+        return app.listening ? done() : app.on('listening', done);
     });
 
     describe('/update', function () {
-
-        it('should reject missing username', function (done) {
-            request(app)
-                .post('/student/update')
-                .send({
-                    pw1: 'iii',
-                    center: 'blah'
-                })
-                .set('Accept', 'application/json')
-                .set('Content-Type', 'application/json')
-                .expect(400, done);
-        });
-
-        xit('should reject missing password', function (done) {
-            request(app)
-                .post('/student/update')
-                .send({
-                    username: 'scott',
-                    center: 'blah'
-                })
-                .set('Accept', 'application/json')
-                .set('Content-Type', 'application/json')
-                .expect(400, done);
-        });
-
-        it('should reject missing center', function (done) {
-            request(app)
-                .post('/student/update')
-                .send({
-                    username: 'scott',
-                    pw1: 'iii'
-                })
-                .set('Accept', 'application/json')
-                .set('Content-Type', 'application/json')
-                .expect(400, done);
-        });
 
         it('should create a user', function (done) {
             request(app)
@@ -75,8 +39,6 @@ describe('/student', function () {
                     expect(CreadtedUser.voiceDialect).toBe(0);
                 }).end(done);
         });
-
-        it('should default the type to the voiceDialect of the center');
 
         it('should not destroy syllabus', function (done) {
             request(app)
@@ -170,7 +132,7 @@ describe('/student', function () {
         it('should login', function (done) {
             request(app)
                 .post('/login')
-                .send({pw1:"iii",username:"scott"})
+                .send({pw1: "iii", username: "scott"})
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
                 .expect(200)
@@ -186,13 +148,13 @@ describe('/student', function () {
         it('should fail to login', function (done) {
             request(app)
                 .post('/login')
-                .send({username: 'no-one', pw1:'nothing'})
+                .send({username: 'no-one', pw1: 'nothing'})
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
                 .expect(401, done);
         });
 
-         it('should remove student', function (done) {
+        it('should remove student', function (done) {
             request(app)
                 .post('/student/delete')
                 .send({
@@ -202,5 +164,63 @@ describe('/student', function () {
                 .set('Content-Type', 'application/json')
                 .expect(202, done);
         });
+    });
+});
+
+describe('/users', function () {
+    var route, mocks;
+
+    beforeEach(function () {
+        mocks = {
+            db: {
+                centers: {
+                    findOne: function (query, opts, cb) {
+                        cb(null, { center: 'blah', defaultVoice: 2});
+                    }
+                },
+                users: {
+                    insert: function (query, cb) {
+                        cb(null, {});
+                    }
+                },
+                '@noCallThru': true
+            }
+        };
+        route = require('express')().use(proxyquire('../users', {
+            './db': mocks.db
+        }));
+    });
+
+    it('should use center defaultDialect for new user voice', function (done) {
+        request(route)
+            .post('/update')
+            .send({ username: 'a-user', pw1: 'iii', center: 'blah' })
+            .expect(200, function () {
+                done();
+            });
+    });
+
+    it('should reject missing username', function (done) {
+        request(route)
+            .post('/update')
+            .send({
+                pw1: 'iii',
+                center: 'blah'
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect(400, done);
+    });
+
+    it('should reject missing center', function (done) {
+        request(route)
+            .post('/update')
+            .send({
+                username: 'scott',
+                pw1: 'iii'
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect(400, done);
     });
 });

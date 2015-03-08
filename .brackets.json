@@ -5,12 +5,12 @@
         "devel": true,
         "nomen": true,
         "maxerr": 50,
-        "es5": true
+        "node": true
     },
     "defaultExtension": "js",
     "language": {
         "javascript": {
-            "linting.prefer": ["JSLint", "JSHint"],
+            "linting.prefer": ["JSLint"],
             "linting.usePreferredOnly": true
         }
     },
