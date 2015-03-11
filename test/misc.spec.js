@@ -3,25 +3,16 @@
 
 describe('/', function () {
     var request = require('supertest'),
-        server = 'http://localhost:5000';
+        app = require('../app');
+
+    beforeEach(function (done) {
+        this.timeout(15000);
+        app.listening ? done() : app.on('listening', done);
+    });
 
     it('should ignore favicon', function (done) {
-        request(server)
+        request(app)
             .get('/favicon.ico')
             .expect(200, done);
-    });
-
-    it('should redirect /us', function (done) {
-        request(server)
-            .get('/us/something')
-            .expect('Location', /static\.unitsofsound\.net\/us\/something/)
-            .expect(302, done);
-    });
-
-    it('should redirect /uk', function (done) {
-        request(server)
-            .get('/uk/something')
-            .expect('Location', /static\.unitsofsound\.net\/uk\/something/)
-            .expect(302, done);
     });
 });

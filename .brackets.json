@@ -1,0 +1,19 @@
+{
+    "jslint.options": {
+        "vars": true,
+        "plusplus": true,
+        "devel": true,
+        "nomen": true,
+        "maxerr": 50,
+        "node": true
+    },
+    "defaultExtension": "js",
+    "language": {
+        "javascript": {
+            "linting.prefer": ["JSLint"],
+            "linting.usePreferredOnly": true
+        }
+    },
+    "spaceUnits": 4,
+    "useTabChar": false
+}
