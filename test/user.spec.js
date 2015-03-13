@@ -55,7 +55,7 @@ describe('/student', function () {
                 })
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
-                .expect(201, done)
+                .expect(201)
                 .expect('Content-Type', /application\/json/)
                 .end(done);
         });
