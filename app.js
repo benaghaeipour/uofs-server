@@ -16,7 +16,6 @@ var net = require('net'),
     _ = require('lodash'),
     mustache = require('mustache'),
     async = require('async'),
-    request = require('superagent'),
     emailer = require('./emailer'),
     proxy = require('http-proxy').createProxyServer();
 
@@ -194,38 +193,38 @@ app.use('/user', require('./users'));
 // *******************************************************
 //          Center endpoints
 
-app.route('/center/:id/welcome')
-    .get(function (req, res, next) {
-        async.parallel({
-            sorry: function (cb) {
-                request.get('https://www.google.co.uk/404').end(function (html) {
-                    console.log('got sorry');
-                    cb(null, html);
-                });
-            },
-            template: function (cb) {
-                request.get('http://help.unitsofsound.net/?document=center-welcome')
-                    .redirects(2)
-                    .end(function (html) {
-                        console.log('got template');
-                        cb(null, html);
-                    });
-            },
-            center: function (cb) {
-                DB.centers.findOne({_id: new mongodb.ObjectID(req.params.id)}, cb);
-            }
-        }, function (err, results) {
-            var didntFindCenter = !results.center;
-            var centerHasNoPurchaser = results.center && !results.center.purchaser;
-            if (err || didntFindCenter || centerHasNoPurchaser) {
-                console.log('rendering sorry foundCenter: ', didntFindCenter, ' hasContact: ', centerHasNoPurchaser);
-                res.status(200).end(results.sorry.text);
-            } else {
-                console.log('rendering template with ', results.center);
-                res.status(200).end(mustache.render(results.template.text, results.center));
-            }
-        });
-    });
+//app.route('/center/:id/welcome')
+//    .get(function (req, res, next) {
+//        async.parallel({
+//            sorry: function (cb) {
+//                request.get('https://www.google.co.uk/404').end(function (html) {
+//                    console.log('got sorry');
+//                    cb(null, html);
+//                });
+//            },
+//            template: function (cb) {
+//                request.get('http://help.unitsofsound.net/?document=center-welcome')
+//                    .redirects(2)
+//                    .end(function (html) {
+//                        console.log('got template');
+//                        cb(null, html);
+//                    });
+//            },
+//            center: function (cb) {
+//                DB.centers.findOne({_id: new mongodb.ObjectID(req.params.id)}, cb);
+//            }
+//        }, function (err, results) {
+//            var didntFindCenter = !results.center;
+//            var centerHasNoPurchaser = results.center && !results.center.purchaser;
+//            if (err || didntFindCenter || centerHasNoPurchaser) {
+//                console.log('rendering sorry foundCenter: ', didntFindCenter, ' hasContact: ', centerHasNoPurchaser);
+//                res.status(200).end(results.sorry.text);
+//            } else {
+//                console.log('rendering template with ', results.center);
+//                res.status(200).end(mustache.render(results.template.text, results.center));
+//            }
+//        });
+//    });
 
 app.route('/center[/]?(:id)?')
     .all(bodyParser, function (req, res, next) {

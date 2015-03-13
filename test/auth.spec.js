@@ -62,7 +62,7 @@ describe('auth', function () {
         auth(mocks.req, mocks.res);
 
         var dbCallback = mocks.db.users.findOne.calls[0]['arguments'][2];
-        dbCallback(null, [{type: 'teacher', pw1: 'blah blah'}]);
+        dbCallback(null, {type: 'teacher', pw1: 'blah blah'});
 
         expect(mocks.req.user.type).toBe('teacher');
     });
@@ -75,7 +75,7 @@ describe('auth', function () {
         auth(mocks.req, mocks.res);
 
         var dbCallback = mocks.db.users.findOne.calls[0]['arguments'][2];
-        dbCallback(null, [{type: 'teacher', pw1: 'not correct'}]);
+        dbCallback(null, {type: 'teacher', pw1: 'not correct'});
 
         expect(mocks.res.status).toHaveBeenCalledWith(401);
         expect(mocks.res.end).toHaveBeenCalled();
@@ -89,7 +89,7 @@ describe('auth', function () {
         auth(mocks.req, mocks.res);
 
         var dbCallback = mocks.db.users.findOne.calls[0]['arguments'][2];
-        dbCallback(null, []);
+        dbCallback(null, undefined);
 
         expect(mocks.res.status).toHaveBeenCalledWith(401);
         expect(mocks.res.end).toHaveBeenCalled();

@@ -40,16 +40,16 @@ function auth(req, res, next) {
             'readingSyllabus': 0,
             'memorySyllabus': 0
         }
-    }, function (err, results) {
+    }, function (err, result) {
         if (err) {
             return next ? next(err) : null;
         }
-        if (!results || results.length === 0) {
+        if (!result || result.length === 0) {
             return rejectAndPromptForPassword(req, res);
         }
-        var studentRecord = results[0];
-        if (studentRecord.pw1 === req.user.pass) {
-            req.user = studentRecord;
+        console.log(result);
+        if (result.pw1 === req.user.pass) {
+            req.user = result;
             return next ? next() : null;
         } else {
             return rejectAndPromptForPassword(req, res);
