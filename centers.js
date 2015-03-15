@@ -6,7 +6,6 @@ var mongodb = require('mongodb');
 var _ = require('lodash');
 var DB = require('./db');
 var async = require('async');
-var request = require('superagent');
 
 route.use(bodyParser);
 

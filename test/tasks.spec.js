@@ -21,21 +21,21 @@ before(function (done) {
     clearDown(done);
 });
 
-after(function (done) {
-    this.timeout(15000);
-    var request = require('supertest');
-
-    request('http://localhost:5000')
-        .post('/student/update')
-        .send({
-            username: 'scott',
-            center: 'Manchester',
-            pw1: 'iii'
-        })
-        .set('Accept', 'application/json')
-        .set('Content-Type', 'application/json')
-        .expect(201, done);
-});
+//after(function (done) {
+//    this.timeout(15000);
+//    var request = require('supertest');
+//
+//    request(process.env.DB_URI)
+//        .post('/student/update')
+//        .send({
+//            username: 'scott',
+//            center: 'Manchester',
+//            pw1: 'iii'
+//        })
+//        .set('Accept', 'application/json')
+//        .set('Content-Type', 'application/json')
+//        .expect(201, done);
+//});
 
 module.exports = {
     clearDB: clearDown

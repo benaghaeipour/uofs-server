@@ -1,3 +1,4 @@
+sudo: false
 language: node_js
 node_js:
   - '0.10'
@@ -8,14 +9,14 @@ deploy:
   - provider: heroku
     api_key:
       secure: HTevOVyDZ+AdyZtmwGLK3rJbmxNvnqveV7v7kQJcuiSiWBJaebcXOWXXlrdeMp8NR2nVr/VXAoQo8PdQbG4KVpo6t/5LcCHjwOJdiGw7Q60Q/dfDupodWhae7BL3DlOH8pwwosjqcLL76xm0+h6og8YjLyY3k5ji1KTcpKeYUkY=
-    app:
-      online: uos-online
-      preview: uos-preview
-      dev: uos-dev
+    app: uos-dev
     on:
-      branch:
-        - online
-        - preview
-        - dev
+      all_branches: true
+  - provider: heroku
+    api_key:
+      secure: HTevOVyDZ+AdyZtmwGLK3rJbmxNvnqveV7v7kQJcuiSiWBJaebcXOWXXlrdeMp8NR2nVr/VXAoQo8PdQbG4KVpo6t/5LcCHjwOJdiGw7Q60Q/dfDupodWhae7BL3DlOH8pwwosjqcLL76xm0+h6og8YjLyY3k5ji1KTcpKeYUkY=
+    app: uos-preview
+    on:
+      tags: true
 notifications:
   email: false
