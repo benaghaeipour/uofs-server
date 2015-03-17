@@ -185,6 +185,7 @@ app.route('/login/reset')
 //          Student endpoints
 
 app.use('/users', require('./users'));
+app.use('/student', require('./users'));
 app.use('/center', require('./centers'));
 app.use('/centers', require('./centers'));
 

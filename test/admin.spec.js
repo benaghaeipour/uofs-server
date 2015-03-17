@@ -4,7 +4,7 @@
 
 var crypto = require('crypto');
 
-describe.only('route - admin/', function () {
+describe('route - admin/', function () {
     var request = require('supertest'),
         expect = require('expect'),
         app = require('../app');
