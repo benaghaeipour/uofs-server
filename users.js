@@ -18,7 +18,7 @@ function formatUser(user) {
     return cleaner;
 }
 
-route.post('/', bodyParser, function (req, res, next) {
+function rejectExistingUsernames(req, res, next) {
     var query = req.body;
     var options = {};
     if (query.username) {
@@ -39,10 +39,14 @@ route.post('/', bodyParser, function (req, res, next) {
             console.log('Student allready exists : ', JSON.stringify(_.pluck(records, 'username', 'pw1')));
             res.status(409).end();
         } else {
-            console.info('Student creds ok to create');
-            res.status(200).end();
+            next();
         }
     });
+}
+
+route.post('/', bodyParser, rejectExistingUsernames, function (req, res, next) {
+    console.info('Student creds ok to create');
+    res.status(200).end();
 });
 
 route.post('/find[/]?', bodyParser, function (req, res, next) {
@@ -100,6 +104,49 @@ route.post('/delete[/]?', bodyParser, function (req, res, next) {
     });
 });
 
+function createStudent(req, res, next) {
+    var query = req.body;
+
+    if (query.username) {
+        query.username = query.username.toLowerCase();
+    }
+    if (query.pw1) {
+        query.pw1 = query.pw1.toLowerCase();
+    }
+
+    console.log('student create bcause no _id');
+    _.defaults(query, {pw1: adjNoun().join('-')});
+
+    var hasUsername = !!query.username;
+    var hasPassword = !!query.pw1;
+    var hasCenter = !!query.center;
+
+    var hasRequiredFields = hasCenter && hasPassword && hasUsername;
+    if (!hasRequiredFields) {
+        console.info('student create missing', {hasUsername: hasUsername, hasPassword: hasPassword, hasCenter: hasCenter});
+        return res.status(400).send();
+    }
+
+    //create new record
+    console.info('student create :', _.pick(query, 'username', 'pw1', 'center'));
+    DB.centers.findOne({name: query.center}, function (err, center) {
+        if (center && center.defaultVoice && query.voiceDialect === undefined) {
+            console.log('setting voiceDialect to centers:', center.defaultVoice);
+            query.voiceDialect = center.defaultVoice;
+        }
+
+        _.defaults(query, defaultStudentRecord);
+        DB.users.insert(query, function (err, objects) {
+            if (err) {
+                return next(err);
+            }
+            console.info('Student Created');
+//            emailer.sendPasswordReset(objects[0]);
+            res.status(201).json(objects);
+        });
+    });
+}
+
 route.post('/update[/]?', bodyParser, function (req, res, next) {
     var query = req.body;
 
@@ -110,39 +157,7 @@ route.post('/update[/]?', bodyParser, function (req, res, next) {
         query.pw1 = query.pw1.toLowerCase();
     }
 
-    if (!query._id) {
-        console.log('student create bcause no _id');
-        _.defaults(query, {pw1: adjNoun().join('-')});
-
-        var hasUsername = !!query.username;
-        var hasPassword = !!query.pw1;
-        var hasCenter = !!query.center;
-
-        var hasRequiredFields = hasCenter && hasPassword && hasUsername;
-        if (!hasRequiredFields) {
-            console.info('student create missing', {hasUsername: hasUsername, hasPassword: hasPassword, hasCenter: hasCenter});
-            return res.status(400).send();
-        }
-
-        //create new record
-        console.info('student create :', _.pick(query, 'username', 'pw1', 'center'));
-        DB.centers.findOne({name: query.center}, function (err, center) {
-            if (center && center.defaultVoice && query.voiceDialect === undefined) {
-                console.log('setting voiceDialect to centers:', center.defaultVoice);
-                query.voiceDialect = center.defaultVoice;
-            }
-
-            _.defaults(query, defaultStudentRecord);
-            DB.users.insert(query, function (err, objects) {
-                if (err) {
-                    return next(err);
-                }
-                console.info('Student Created');
-    //            emailer.sendPasswordReset(objects[0]);
-                res.status(201).json(objects);
-            });
-        });
-    } else {
+    if (req.body._id) {
         console.log('student update _id:', query._id);
         //update record by matchin _id
         query._id = new mongodb.ObjectID(query._id);
@@ -176,7 +191,9 @@ route.post('/update[/]?', bodyParser, function (req, res, next) {
             }
             res.status(201).json(objects);
         });
+    } else {
+        next();
     }
-});
+}, rejectExistingUsernames, createStudent);
 
 module.exports = route;

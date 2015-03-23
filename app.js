@@ -26,13 +26,9 @@ var pkg = require('./package.json');
 // set defaults to those needed for local dev
 _.defaults(process.env, {
     NODE_ENV: 'development',
-    SYSADMIN_KEY: 'test'
+    SYSADMIN_KEY: 'test',
+    PORT: 5000
 });
-
-app.set('env', process.env.NODE_ENV);
-
-process.env.PORT = process.env.PORT || 5000;
-process.env.SYSADMIN_KEY = process.env.SYSADMIN_KEY || 'testing';
 
 // *******************************************************
 //          expose 'app' for testing

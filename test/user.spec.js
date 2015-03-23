@@ -97,6 +97,18 @@ describe('/student', function () {
                 .expect(409, done);
         });
 
+        it('[lazy] should not allow duplicates', function (done) {
+            request(app)
+                .post('/student/update')
+                .send({
+                    username: 'scott',
+                    pw1: 'iii'
+                })
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .expect(409, done);
+        });
+
         it('should respond OK to new username/pw combinations', function (done) {
             request(app)
                 .post('/student/')
@@ -181,6 +193,13 @@ describe('/users', function () {
                 users: {
                     insert: function (query, cb) {
                         cb(null, {});
+                    },
+                    find: function (query) {
+                        return {
+                            toArray: function (cb) {
+                                cb(null, []);
+                            }
+                        };
                     }
                 },
                 '@noCallThru': true
