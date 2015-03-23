@@ -1,3 +1,4 @@
+'use strict';
 /*jshint node:true*/
 /*globals mocha, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
 
@@ -9,7 +10,7 @@ describe('/login', function () {
 
     beforeEach(function (done) {
         this.timeout(15000);
-        app.listening ? done() : app.on('listening', done);
+        return app.listening ? done() : app.on('listening', done);
     });
 
     //re-enable when ive figured out how to do better tests
@@ -29,5 +30,12 @@ describe('/login', function () {
         request(app)
             .get('/login/reset?email=does-not-exists@nowhere.com')
             .expect(404, done);
+    });
+
+    it('should work with basic auth', function (done) {
+        request(app)
+            .post('/login/')
+            .auth('chris', 'n6fB4Bis/27/qX1Jhqt8/1y4zr9wNSyaTTaiH7FKpFA=')
+            .expect(200, done);
     });
 });

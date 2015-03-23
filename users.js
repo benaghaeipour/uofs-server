@@ -19,17 +19,18 @@ function formatUser(user) {
 }
 
 function rejectExistingUsernames(req, res, next) {
-    var query = req.body;
+    var query = {};
     var options = {};
-    if (query.username) {
-        query.username.toLowerCase();
+    if (req.body.username) {
+        query.username = req.body.username.toLowerCase();
     }
-    if (query.pw1) {
-        query.pw1.toLowerCase();
+    if (req.body.pw1) {
+        query.pw1 = req.body.pw1.toLowerCase();
     }
     console.log('Create student : ', JSON.stringify(query));
     console.info('Create student req ');
 
+//    query.deleted = {$exists: false};
     DB.users.find(query, options).toArray(function (err, records) {
         if (err) {
             return next(err);

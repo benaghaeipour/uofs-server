@@ -4,14 +4,10 @@
 
 // *******************************************************
 //          Application includes
-var net = require('net'),
-    http = require('http'),
-    fs = require('fs'),
-    decodeBasicAuth = require('basic-auth'),
+var express = require('express'),
     auth = require('./auth'),
-    express = require('express'),
-    mongodb = require('mongodb'),
     DB = require('./db'),
+    mongodb = require('mongodb'),
     adjNoun = require('adj-noun'),
     _ = require('lodash'),
     emailer = require('./emailer'),
@@ -117,31 +113,15 @@ app.get('/admin/edit/[a-f0-9]{24}', function (req, res, next) {
  */
 app.post('/login[/]?', bodyParser, function (req, res, next) {
     //sanitize
-    var query = _.extend({
-        username: "",
-        pw1: "",
-        deleted: {
-            $exists: false
-        }
-    }, _.pick(req.body, 'username', 'pw1'));
-    query.username.toLowerCase();
-    query.pw1.toLowerCase();
 
-    DB.users.findOne(query, {
-        limit: 1
-    }, function (err, studentRecord) {
-        if (err) {
-            return next(err);
-        }
+    if (req.body.username) {
+        console.warn('Needed to fix auth header on login route');
+        req.headers.authorization = 'Basic ' + new Buffer(req.body.username.toLowerCase() + ':' + req.body.pw1.toLowerCase(), 'utf8').toString('base64');
+    }
 
-        if (studentRecord) {
-            console.info('Login Sucess : ', studentRecord.username, studentRecord._id);
-            res.send(studentRecord);
-        } else {
-            console.warn('Login Failed : ', JSON.stringify(query));
-            res.status(401).end();
-        }
-    });
+    next();
+}, auth, function (req, res, next) {
+    res.status(200).json(req.user);
 });
 
 app.route('/login/reset')

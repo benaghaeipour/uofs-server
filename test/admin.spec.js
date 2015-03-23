@@ -17,6 +17,7 @@ describe('route - admin/', function () {
     it('should require auth', function (done) {
         request(app)
             .get('/admin')
+            .set('Accept', 'text/html')
             .expect(401)
             .expect('WWW-Authenticate', 'Basic')
             .end(done);
@@ -25,6 +26,7 @@ describe('route - admin/', function () {
     it('should return the angular app', function (done) {
         request(app)
             .get('/admin')
+            .set('Accept', 'text/html')
             .auth('chris@matheson.it', 'JjSlotnF49k8Qr1p3fPKmefCaC8Jpe/LoNrb5WSWtRI=')
             .expect(303)
             .end(done);
