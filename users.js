@@ -137,13 +137,13 @@ function createStudent(req, res, next) {
         }
 
         _.defaults(query, defaultStudentRecord);
-        DB.users.insert(query, function (err, objects) {
+        DB.users.insert(query, function (err, insert) {
             if (err) {
                 return next(err);
             }
             console.info('Student Created');
 //            emailer.sendPasswordReset(objects[0]);
-            res.status(201).json(objects);
+            res.status(201).json(insert.ops);
         });
     });
 }
@@ -180,17 +180,15 @@ route.post('/update[/]?', bodyParser, function (req, res, next) {
             delete query.readingSyllabus;
         }
 
-        console.info('Student Updated : ', query._id);
-        // console.log('Update query : ', JSON.stringify(query));
-
         DB.users.update(_.pick(query, '_id'), {
             $set: _.omit(query, '_id')
-        }, function (err, objects) {
-            if (err) {
+        }, function (err, update) {
+            console.log(arguments);
+            if (err || update.result.n !== 1) {
                 console.error('Update error : ', JSON.stringify(err));
                 return next(err);
             }
-            res.status(201).json(objects);
+            res.status(201).json(query);
         });
     } else {
         next();

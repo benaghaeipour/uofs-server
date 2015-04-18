@@ -138,9 +138,9 @@ app.route('/login/reset')
             $set: {pw1: tempPassword}
         }, {
             upsert: false
-        }, function (err, objects) {
+        }, function (err, update) {
             if (err) { return next(err); }
-            if (objects === 0) {
+            if (update.result.n === 0) {
                 return res.status(404).end();
             }
 

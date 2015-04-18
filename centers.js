@@ -52,18 +52,18 @@ route.put('/', function (req, res, next) {
     console.info('Center create');
     console.log(query);
 
-    DB.centers.insert(query, function (err, objects) {
+    DB.centers.insertOne(query, function (err, result) {
         if (err) {
             return next(err);
         }
-        console.info('Center Created : ', JSON.stringify(objects));
-        // emailer.sendCenterCreate(objects[0], function (err) {
-        //     if(err) {
-        //         console.error('Failed to send notification of center creation', objects);
-        //     }
-        // });
+        console.info('Center Created : ', JSON.stringify(result.insertedId));
+//        emailer.sendCenterCreate(objects[0], function (err) {
+//             if(err) {
+//                 console.error('Failed to send notification of center creation', objects);
+//             }
+//        });
         res.status(201);
-        res.send(objects[0]);
+        res.send(result.ops[0]);
     });
 });
 
