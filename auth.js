@@ -21,12 +21,12 @@ function rejectAndPromptForPassword(req, res) {
 function auth(req, res, next) {
     req.user = decodeBasicAuth(req);
     if (!req.user) {
-        console.warn('Could not decode auth:user');
+        console.info({login: 'fail', reason: 'Could not decode auth:user'});
         return rejectAndPromptForPassword(req, res);
     }
 
     if (req.user.pass === generateUserToken(req.user.name)) {
-        console.info('Successfull token login');
+        console.info({login: 'success', type: 'token'});
         return next();
     }
 

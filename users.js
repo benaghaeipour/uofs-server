@@ -27,8 +27,8 @@ function rejectExistingUsernames(req, res, next) {
     if (req.body.pw1) {
         query.pw1 = req.body.pw1.toLowerCase();
     }
-    console.log('Create student : ', JSON.stringify(query));
-    console.info('Create student req ');
+    console.info({student : 'create'});
+    console.log({query: query});
 
 //    query.deleted = {$exists: false};
     DB.users.find(query, options).toArray(function (err, records) {
@@ -36,8 +36,8 @@ function rejectExistingUsernames(req, res, next) {
             return next(err);
         }
         if (records.length) {
-            console.info('Student allready exists');
-            console.log('Student allready exists : ', JSON.stringify(_.pluck(records, 'username', 'pw1')));
+            console.info({student: 'allready exists'});
+            console.log({exists : _.pluck(records, 'username', 'pw1')});
             res.status(409).end();
         } else {
             next();
@@ -46,7 +46,7 @@ function rejectExistingUsernames(req, res, next) {
 }
 
 route.post('/', bodyParser, rejectExistingUsernames, function (req, res, next) {
-    console.info('Student creds ok to create');
+    console.info({student: 'creds ok to create'});
     res.status(200).end();
 });
 
@@ -76,20 +76,20 @@ route.post('/find[/]?', bodyParser, function (req, res, next) {
         $exists: false
     };
 
-    console.info('Student lookup : ', formatUser(query));
+    console.info({student: formatUser(query)});
 
     DB.users.find(query, options).toArray(function (err, records) {
         if (err) {
             return next(err);
         }
-        console.log('Returning : ', records.map(formatUser));
+        console.log({student: {returning: JSON.stringify(records.map(formatUser))}});
         res.send(records);
     });
 });
 
 route.post('/delete[/]?', bodyParser, function (req, res, next) {
     var query = req.body;
-    console.info('Student Deleted : ', query._id);
+    console.info({student : 'create', id: query._id});
     query._id = new mongodb.ObjectID(query._id);
 
     DB.users.update(_.pick(query, '_id'), {
@@ -115,7 +115,7 @@ function createStudent(req, res, next) {
         query.pw1 = query.pw1.toLowerCase();
     }
 
-    console.log('student create bcause no _id');
+    console.log({student : 'create', reason: 'no-id'});
     _.defaults(query, {pw1: adjNoun().join('-')});
 
     var hasUsername = !!query.username;

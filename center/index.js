@@ -14,22 +14,22 @@ route.get('/(:id)?', function (req, res, next) {
     req.query.deleted = {$exists: false};
     if (req.params.id) {
         req.query._id = new mongodb.ObjectID(req.params.id);
-        console.info('Center query : ', JSON.stringify(req.query));
+        console.info(JSON.stringify({query: req.query, route: 'center', action: 'get'}));
         DB.centers.findOne(req.query, function (err, record) {
             if (err) {
                 return next(err);
             }
-            console.log('Returning : ', JSON.stringify(record));
+            console.info(JSON.stringify({query: req.query, route: 'center', action: 'get', result: record}));
             res.status(200).send(record);
         });
     } else {
-        console.info('Center query : ', JSON.stringify(req.query));
-        DB.centers.find(req.query).toArray(function (err, objects) {
+        console.info(JSON.stringify({query: req.query, route: 'center', action: 'search'}));
+        DB.centers.find(req.query).toArray(function (err, records) {
             if (err) {
                 return next(err);
             }
-            console.log('Returning : ', JSON.stringify(objects));
-            res.status(200).send(objects);
+            console.info(JSON.stringify({query: req.query, route: 'center', action: 'search', result: records}));
+            res.status(200).send(records);
         });
     }
 });
@@ -46,18 +46,18 @@ route.put('/', function (req, res, next) {
     //bail if no email for user
     var hasValidMainContact = /.+@.+\..+/.test(query.purchaser);
     if (!hasValidMainContact) {
+        console.info(JSON.stringify({query: query, route: 'center', action: 'create', result: 'rejected, invalid main contact'}));
         res.status(400).send();
         return;
     }
 
-    console.info('Center create');
-    console.log(query);
+    console.info(JSON.stringify({query: query, route: 'center', action: 'create'}));
 
     DB.centers.insertOne(query, function (err, result) {
         if (err) {
             return next(err);
         }
-        console.info('Center Created : ', JSON.stringify(result.insertedId));
+        console.info(JSON.stringify({query: query, route: 'center', action: 'create', result: result.insertedId}));
 //        emailer.sendCenterCreate(objects[0], function (err) {
 //             if(err) {
 //                 console.error('Failed to send notification of center creation', objects);
@@ -81,7 +81,7 @@ route.post('/:id', function (req, res, next) {
         if (err) {
             return next(err);
         }
-        console.info('Center update : ', JSON.stringify(objects));
+        console.info(JSON.stringify({query: objects, route: 'center', action: 'update'}));
         res.status(202).end();
     });
 });
@@ -99,7 +99,7 @@ route.delete('/:id', function (req, res, next) {
         if (err) {
             return next(err);
         }
-        console.info('Center deleted : ', req.params.id);
+        console.info(JSON.stringify({query: req.params.id, route: 'center', action: 'delete'}));
         res.status(204).end();
     });
 });
