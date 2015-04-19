@@ -162,8 +162,8 @@ app.route('/login/reset')
 
 app.use('/users', require('./users'));
 app.use('/student', require('./users'));
-app.use('/center', require('./centers'));
-app.use('/centers', require('./centers'));
+app.use('/center', require('./center'));
+app.use('/centers', require('./center'));
 
 // *******************************************************
 //          Compose.io proxy

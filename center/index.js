@@ -4,8 +4,9 @@ var route = require('express').Router();
 var bodyParser = require('body-parser')({limit: 300000});
 var mongodb = require('mongodb');
 var _ = require('lodash');
-var DB = require('./db');
+var DB = require('../db');
 var async = require('async');
+var auth = require('../auth');
 
 route.use(bodyParser);
 
