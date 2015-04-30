@@ -19,6 +19,7 @@ describe('/student', function () {
         it('should create a user', function (done) {
             request(app)
                 .post('/student/update')
+                .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
                 .send({
                     username: 'scott',
                     center: 'blah',
@@ -43,6 +44,7 @@ describe('/student', function () {
         it('should not destroy syllabus', function (done) {
             request(app)
                 .post('/student/update')
+                .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
                 .send({
                     _id: CreadtedUserId,
                     username: 'scott',
@@ -63,6 +65,7 @@ describe('/student', function () {
         it('should still have syllabus info', function (done) {
             request(app)
                 .post('/student/find')
+                .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
                 .send({
                     _id: CreadtedUserId
                 })
@@ -88,6 +91,7 @@ describe('/student', function () {
         it('should not allow duplicates', function (done) {
             request(app)
                 .post('/student/')
+                .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
                 .send({
                     username: 'scott',
                     pw1: 'iii'
@@ -100,6 +104,7 @@ describe('/student', function () {
         it('[lazy] should not allow duplicates', function (done) {
             request(app)
                 .post('/student/update')
+                .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
                 .send({
                     username: 'scott',
                     pw1: 'iii'
@@ -112,6 +117,7 @@ describe('/student', function () {
         it('should respond OK to new username/pw combinations', function (done) {
             request(app)
                 .post('/student/')
+                .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
                 .send({
                     username: 'not-here',
                     pw1: 'iii'
@@ -127,6 +133,7 @@ describe('/student', function () {
         it('should now have one student', function (done) {
             request(app)
                 .post('/student/find')
+                .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
                 .send({})
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
@@ -144,6 +151,7 @@ describe('/student', function () {
         it('should login', function (done) {
             request(app)
                 .post('/login')
+                .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
                 .send({pw1: "iii", username: "scott"})
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
@@ -160,6 +168,7 @@ describe('/student', function () {
         it('should fail to login', function (done) {
             request(app)
                 .post('/login')
+                .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
                 .send({username: 'no-one', pw1: 'nothing'})
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
@@ -169,6 +178,7 @@ describe('/student', function () {
         it('should remove student', function (done) {
             request(app)
                 .post('/student/delete')
+                .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
                 .send({
                     _id: CreadtedUserId
                 })

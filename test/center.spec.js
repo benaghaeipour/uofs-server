@@ -16,6 +16,7 @@ describe('/center', function () {
     it('should bounce missing purchaser', function (done) {
         request(app)
             .put('/center')
+            .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
             .send({
                 name: 'Manchester',
                 centerType: 'home'
@@ -28,6 +29,7 @@ describe('/center', function () {
     it('should create a center', function (done) {
         request(app)
             .put('/center')
+            .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
             .send({
                 name: 'Manchester',
                 centerType: 'home',
@@ -51,6 +53,7 @@ describe('/center', function () {
     it('should query center with name', function (done) {
         request(app)
             .get('/center')
+            .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
             .query({name: 'Manchester'})
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
@@ -66,6 +69,7 @@ describe('/center', function () {
     it('should get center by ID', function (done) {
         request(app)
             .get('/center/' + CreadtedCenterId)
+            .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
             .expect('Content-Type', /application\/json/)
@@ -85,6 +89,7 @@ describe('/center', function () {
     it('should update a center', function (done) {
         request(app)
             .post('/center/' + CreadtedCenterId)
+            .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
             .send({
                 name: 'Manchester',
                 centerType: 'home',
@@ -104,6 +109,7 @@ describe('/center', function () {
     xit('should remove center', function (done) {
         request(app)
             .delete('/center/' + CreadtedCenterId)
+            .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
             .expect('Content-Type', /application\/json/)
