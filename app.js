@@ -98,7 +98,6 @@ app.get('/crossdomain.xml', function (req, res, next) {
 
 app.use(auth);
 app.use('/admin', require('serve-static')('admin'));
-
 app.get('/admin/edit/[a-f0-9]{24}', function (req, res, next) {
     res.sendFile(process.cwd() + '/admin/edit/index.html');
 });
@@ -112,15 +111,6 @@ app.get('/admin/edit/[a-f0-9]{24}', function (req, res, next) {
  * check that req includes user, center & pass
  */
 app.post('/login[/]?', bodyParser, function (req, res, next) {
-    //sanitize
-
-    if (req.body.username) {
-        console.warn('Needed to fix auth header on login route');
-        req.headers.authorization = 'Basic ' + new Buffer(req.body.username.toLowerCase() + ':' + req.body.pw1.toLowerCase(), 'utf8').toString('base64');
-    }
-
-    next();
-}, auth, function (req, res, next) {
     res.status(200).json(req.user);
 });
 

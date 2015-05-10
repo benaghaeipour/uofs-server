@@ -11,7 +11,7 @@ function generateUserToken(user) {
 }
 
 function rejectAndPromptForPassword(req, res) {
-    if (req.accepts('html')) {
+    if (!req.is('json')) {
         res.set({'WWW-Authenticate': 'Basic'});
     }
     res.status(401);

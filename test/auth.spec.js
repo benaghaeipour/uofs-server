@@ -18,7 +18,7 @@ describe('auth', function () {
                 headers: {
                     authorization: 'Basic ' + new Buffer('fred:blah blah', 'utf8').toString('base64')
                 },
-                accepts: function () { return true; }
+                is: function () { return true; }
             },
             res: {
                 set: function () {},

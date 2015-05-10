@@ -147,34 +147,7 @@ describe('/student', function () {
         });
     });
 
-    describe('/login', function () {
-        it('should login', function (done) {
-            request(app)
-                .post('/login')
-                .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
-                .send({pw1: "iii", username: "scott"})
-                .set('Accept', 'application/json')
-                .set('Content-Type', 'application/json')
-                .expect(200)
-                .expect('Content-Type', /application\/json/)
-                .expect(function (res) {
-                    expect(res.body._id).toMatch(/[a-f0-9]{24}/);
-                })
-                .end(done);
-        });
-    });
-
     describe('/delete', function () {
-        it('should fail to login', function (done) {
-            request(app)
-                .post('/login')
-                .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
-                .send({username: 'no-one', pw1: 'nothing'})
-                .set('Accept', 'application/json')
-                .set('Content-Type', 'application/json')
-                .expect(401, done);
-        });
-
         it('should remove student', function (done) {
             request(app)
                 .post('/student/delete')

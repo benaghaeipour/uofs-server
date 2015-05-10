@@ -32,4 +32,5 @@ describe('/login', function () {
             .auth('chris', 'n6fB4Bis/27/qX1Jhqt8/1y4zr9wNSyaTTaiH7FKpFA=')
             .expect(200, done);
     });
+
 });
