@@ -32,6 +32,7 @@ function auth(req, res, next) {
 
     db.users.findOne({
         username: req.user.name,
+        pw1: req.user.pass,
         deleted: {
             $exists: false
         }
@@ -41,15 +42,11 @@ function auth(req, res, next) {
         if (err) {
             return next ? next(err) : null;
         }
-        if (!result || result.length === 0) {
+        if (!result) {
             return rejectAndPromptForPassword(req, res);
         }
-        if (result.pw1 === req.user.pass) {
-            req.user = result;
-            return next ? next() : null;
-        } else {
-            return rejectAndPromptForPassword(req, res);
-        }
+        req.user = result;
+        return next ? next() : null;
     });
 }
 

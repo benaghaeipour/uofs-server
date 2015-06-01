@@ -68,20 +68,6 @@ describe('auth', function () {
         expect(mocks.req.user.type).toBe('teacher');
     });
 
-    it('should 401 if password is incorrect', function () {
-        expect.spyOn(mocks.db.users, 'findOne');
-        expect.spyOn(mocks.res, 'status');
-        expect.spyOn(mocks.res, 'end');
-
-        auth(mocks.req, mocks.res);
-
-        var dbCallback = mocks.db.users.findOne.calls[0]['arguments'][2];
-        dbCallback(null, {type: 'teacher', pw1: 'not correct'});
-
-        expect(mocks.res.status).toHaveBeenCalledWith(401);
-        expect(mocks.res.end).toHaveBeenCalled();
-    });
-
     it('should 401 if user is not found', function () {
         expect.spyOn(mocks.db.users, 'findOne');
         expect.spyOn(mocks.res, 'status');
