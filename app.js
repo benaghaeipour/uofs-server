@@ -110,7 +110,11 @@ app.get('/admin/edit/[a-f0-9]{24}', function (req, res, next) {
  *
  * check that req includes user, center & pass
  */
+app.get('/login[/]?', bodyParser, function (req, res, next) {
+    res.status(200).json(req.user);
+});
 app.post('/login[/]?', bodyParser, function (req, res, next) {
+    console.warn('[depreciated] POST /login');
     res.status(200).json(req.user);
 });
 

@@ -28,9 +28,15 @@ describe('/login', function () {
 
     it('should work with basic auth', function (done) {
         request(app)
-            .post('/login/')
+            .get('/login/')
             .auth('chris', 'n6fB4Bis/27/qX1Jhqt8/1y4zr9wNSyaTTaiH7FKpFA=')
             .expect(200, done);
     });
 
+    it('[depreciated] should work with basic auth', function (done) {
+        request(app)
+            .post('/login/')
+            .auth('chris', 'n6fB4Bis/27/qX1Jhqt8/1y4zr9wNSyaTTaiH7FKpFA=')
+            .expect(200, done);
+    });
 });

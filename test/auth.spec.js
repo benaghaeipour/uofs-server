@@ -68,7 +68,7 @@ describe('auth', function () {
         expect(mocks.req.user.type).toBe('teacher');
     });
 
-    it('should 401 if user is not found', function () {
+    it('should 401 if user&pass combo is not found', function () {
         expect.spyOn(mocks.db.users, 'findOne');
         expect.spyOn(mocks.res, 'status');
         expect.spyOn(mocks.res, 'end');
