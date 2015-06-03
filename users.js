@@ -183,7 +183,6 @@ route.post('/update[/]?', bodyParser, function (req, res, next) {
         DB.users.update(_.pick(query, '_id'), {
             $set: _.omit(query, '_id')
         }, function (err, update) {
-            console.log(arguments);
             if (err || update.result.n !== 1) {
                 console.error('Update error : ', JSON.stringify(err));
                 return next(err);
