@@ -110,13 +110,29 @@ app.get('/admin/edit/[a-f0-9]{24}', function (req, res, next) {
  *
  * check that req includes user, center & pass
  */
-app.get('/login[/]?', bodyParser, function (req, res, next) {
-    res.status(200).json(req.user);
-});
-app.post('/login[/]?', bodyParser, function (req, res, next) {
+function sendFullUserObject(req, res, next) {
     console.warn('[depreciated] POST /login');
-    res.status(200).json(req.user);
-});
+    DB.users.findOne({
+        username: req.user.username,
+        pw1: req.user.pw1,
+        deleted: {
+            $exists: false
+        }
+    }, function (err, fullUserObject) {
+        if (err) {
+            return next ? next(err) : null;
+        }
+        if (res.headersSent) {
+            console.error({req: 'headers allready sent'});
+            return res.end();
+        }
+        res.status(200).json(fullUserObject);
+    });
+}
+
+app.get('/login[/]?', bodyParser, sendFullUserObject);
+app.post('/login[/]?', bodyParser, sendFullUserObject);
+
 
 app.route('/login/reset')
     .get(function (req, res, next) {

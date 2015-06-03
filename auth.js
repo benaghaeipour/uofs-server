@@ -37,7 +37,13 @@ function auth(req, res, next) {
             $exists: false
         }
     }, {
-        limit: 1
+        fields: {
+            dictationSyllabus: 0,
+            autoSyllabus: 0,
+            spellingSyllabus: 0,
+            readingSyllabus: 0,
+            memorySyllabus: 0
+        }
     }, function (err, result) {
         if (err) {
             return next ? next(err) : null;
