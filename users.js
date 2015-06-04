@@ -76,13 +76,13 @@ route.post('/find[/]?', bodyParser, function (req, res, next) {
         $exists: false
     };
 
-    console.info({student: formatUser(query)});
+//    console.info({student: formatUser(query)});
 
     DB.users.find(query, options).toArray(function (err, records) {
         if (err) {
             return next(err);
         }
-        console.log({student: {returning: JSON.stringify(records.map(formatUser))}});
+//        console.log({student: {returning: JSON.stringify(records.map(formatUser))}});
         res.send(records);
     });
 });
