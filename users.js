@@ -20,7 +20,7 @@ function formatUser(user) {
 
 function rejectExistingUsernames(req, res, next) {
     var query = {};
-
+    var options = {};
     if (req.body.username) {
         query.username = req.body.username.toLowerCase();
     }
@@ -31,13 +31,12 @@ function rejectExistingUsernames(req, res, next) {
     console.log({query: query});
 
 //    query.deleted = {$exists: false};
-    DB.users.findOne(query, function (err, record) {
+    DB.users.findOne(query, function (err, existing) {
         if (err) {
             return next(err);
         }
-        if (record) {
+        if (existing) {
             console.info({student: 'allready exists'});
-            console.log({exists : _.pluck(records, 'username', 'pw1')});
             res.status(409).end();
         } else {
             next();
