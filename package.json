@@ -43,7 +43,7 @@
     "uuid": "^1.4.1"
   },
   "engines": {
-    "node": "0.10.x"
+    "node": "0.12.x"
   },
   "description": "HTTP server for Units of Sound online app",
   "directories": {
