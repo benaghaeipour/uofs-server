@@ -19,7 +19,7 @@ route.get('/(:id)?', function (req, res, next) {
             if (err) {
                 return next(err);
             }
-            console.info(JSON.stringify({query: req.query, route: 'center', action: 'get', result: record}));
+            console.info(JSON.stringify({query: req.query, route: 'center', action: 'get'}));
             res.status(200).send(record);
         });
     } else {
@@ -28,7 +28,7 @@ route.get('/(:id)?', function (req, res, next) {
             if (err) {
                 return next(err);
             }
-            console.info(JSON.stringify({query: req.query, route: 'center', action: 'search', result: records}));
+            console.info(JSON.stringify({query: req.query, route: 'center', action: 'search'}));
             res.status(200).send(records);
         });
     }

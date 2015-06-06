@@ -94,6 +94,7 @@ describe('/student', function () {
                 .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
                 .send({
                     username: 'scott',
+                    center: 'blah',
                     pw1: 'iii'
                 })
                 .set('Accept', 'application/json')
@@ -107,6 +108,7 @@ describe('/student', function () {
                 .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
                 .send({
                     username: 'scott',
+                    center: 'blah',
                     pw1: 'iii'
                 })
                 .set('Accept', 'application/json')
@@ -120,7 +122,8 @@ describe('/student', function () {
                 .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
                 .send({
                     username: 'not-here',
-                    pw1: 'iii'
+                    pw1: 'iii',
+                    center: 'blah'
                 })
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
@@ -177,12 +180,8 @@ describe('/users', function () {
                     insert: function (query, cb) {
                         cb(null, {});
                     },
-                    find: function (query) {
-                        return {
-                            toArray: function (cb) {
-                                cb(null, []);
-                            }
-                        };
+                    findOne: function (query, cb) {
+                        cb(null, {});
                     }
                 },
                 '@noCallThru': true

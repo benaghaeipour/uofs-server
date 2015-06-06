@@ -9,15 +9,6 @@ var DB = require('./db');
 var defaultStudentRecord = require('./default-user.json');
 var util = require('util');
 
-function formatUser(user) {
-    var cleaner = _.clone(user);
-    cleaner.readingSyllabus = cleaner.readingSyllabus ? cleaner.readingSyllabus.length : undefined;
-    cleaner.spellingSyllabus = cleaner.spellingSyllabus ? cleaner.spellingSyllabus.length : undefined;
-    cleaner.memorySyllabus = cleaner.memorySyllabus ? cleaner.memorySyllabus.length : undefined;
-    cleaner.dictationSyllabus = cleaner.dictationSyllabus ? cleaner.dictationSyllabus.length : undefined;
-    return cleaner;
-}
-
 function rejectExistingUsernames(req, res, next) {
     var query = {};
     var options = {};
@@ -30,7 +21,6 @@ function rejectExistingUsernames(req, res, next) {
     console.info({student : 'create'});
     console.log({query: query});
 
-//    query.deleted = {$exists: false};
     DB.users.findOne(query, function (err, existing) {
         if (err) {
             return next(err);
@@ -44,7 +34,23 @@ function rejectExistingUsernames(req, res, next) {
     });
 }
 
-route.post('/', bodyParser, rejectExistingUsernames, function (req, res, next) {
+function rejectMissingRequiredFields(req, res, next) {
+    if (!req.body.username) {
+        console.log({student: 'create', rejected: 'missing username'});
+        return res.status(400).end();
+    }
+    if (!req.body.pw1) {
+        console.log({student: 'create', rejected: 'missing pw1'});
+        return res.status(400).end();
+    }
+    if (!req.body.center) {
+        console.log({student: 'create', rejected: 'missing center'});
+        return res.status(400).end();
+    }
+    next();
+}
+
+route.post('/', bodyParser, rejectMissingRequiredFields, rejectExistingUsernames, function (req, res, next) {
     console.info({student: 'creds ok to create'});
     res.status(200).end();
 });
@@ -75,20 +81,15 @@ route.post('/find[/]?', bodyParser, function (req, res, next) {
         $exists: false
     };
 
-//    console.info({student: formatUser(query)});
-
     DB.users.find(query, options).toArray(function (err, records) {
-        if (err) {
-            return next(err);
-        }
-//        console.log({student: {returning: JSON.stringify(records.map(formatUser))}});
+        if (err) { return next(err); }
         res.send(records);
     });
 });
 
 route.post('/delete[/]?', bodyParser, function (req, res, next) {
     var query = req.body;
-    console.info({student : 'create', id: query._id});
+    console.info({student : 'delete', id: query._id});
     query._id = new mongodb.ObjectID(query._id);
 
     DB.users.update(_.pick(query, '_id'), {
@@ -141,7 +142,6 @@ function createStudent(req, res, next) {
                 return next(err);
             }
             console.info('Student Created');
-//            emailer.sendPasswordReset(objects[0]);
             res.status(201).json(insert.ops);
         });
     });
@@ -191,6 +191,6 @@ route.post('/update[/]?', bodyParser, function (req, res, next) {
     } else {
         next();
     }
-}, rejectExistingUsernames, createStudent);
+}, rejectMissingRequiredFields, rejectExistingUsernames, createStudent);
 
 module.exports = route;

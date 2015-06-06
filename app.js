@@ -54,13 +54,7 @@ app.use(function (req, res, next) {
 
 adjNoun.seed(401175);
 
-switch (process.env.NODE_ENV) {
-case 'production':
-    app.use(timeout());
-    break;
-default:
-    break;
-}
+app.use(timeout());
 app.use(errorhandler({
     dumpExceptions: true,
     showStack: true
