@@ -10,16 +10,25 @@ var defaultStudentRecord = require('./default-user.json');
 var util = require('util');
 
 function rejectExistingUsernames(req, res, next) {
-    var query = {};
-    var options = {};
+    var query = {
+        $or: []
+    };
+
     if (req.body.username) {
-        query.username = req.body.username.toLowerCase();
+        query.$or.push({
+            username: req.body.username.toLowerCase(),
+            pw1: req.body.pw1.toLowerCase()
+        });
     }
-    if (req.body.pw1) {
-        query.pw1 = req.body.pw1.toLowerCase();
+    if (req.body.email) {
+        query.$or.push({
+            email: req.body.email.toLowerCase(),
+            pw1: req.body.pw1.toLowerCase()
+        });
     }
-    console.info({student : 'create'});
-    console.log({query: query});
+
+    console.info({student : 'checking for existing'});
+    console.log({query: JSON.stringify(query)});
 
     DB.users.findOne(query, function (err, existing) {
         if (err) {
@@ -35,8 +44,8 @@ function rejectExistingUsernames(req, res, next) {
 }
 
 function rejectMissingRequiredFields(req, res, next) {
-    if (!req.body.username) {
-        console.log({student: 'create', rejected: 'missing username'});
+    if (!req.body.username && !req.body.email) {
+        console.log({student: 'create', rejected: 'missing username/email'});
         return res.status(400).end();
     }
     if (!req.body.pw1) {
@@ -60,7 +69,6 @@ route.post('/find[/]?', bodyParser, function (req, res, next) {
     var options = {};
     if (query._id) {
         query._id = new mongodb.ObjectID(query._id);
-
     } else {
         //dont fetch syllabus's when doing big query
         options.fields = {
@@ -113,6 +121,9 @@ function createStudent(req, res, next) {
     }
     if (query.pw1) {
         query.pw1 = query.pw1.toLowerCase();
+    }
+    if (query.email) {
+        query.email = query.email.toLowerCase();
     }
 
     console.log({student : 'create', reason: 'no-id'});

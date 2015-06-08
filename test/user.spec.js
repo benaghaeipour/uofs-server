@@ -22,6 +22,7 @@ describe('/student', function () {
                 .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
                 .send({
                     username: 'scott',
+                    email: 'scott@example.com',
                     center: 'blah',
                     pw1: 'iii'
                 })
@@ -88,7 +89,7 @@ describe('/student', function () {
     });
 
     describe('creation', function () {
-        it('should not allow duplicates', function (done) {
+        it('should not allow duplicate username/pw', function (done) {
             request(app)
                 .post('/student/')
                 .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
@@ -99,7 +100,23 @@ describe('/student', function () {
                 })
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
-                .expect(409, done);
+                .expect(409)
+                .end(done);
+        });
+
+        it('should not allow duplicate email/pw', function (done) {
+            request(app)
+                .post('/student/')
+                .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
+                .send({
+                    email: 'scott@example.com',
+                    center: 'blah',
+                    pw1: 'iii'
+                })
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .expect(409)
+                .end(done);
         });
 
         it('[lazy] should not allow duplicates', function (done) {
@@ -113,7 +130,8 @@ describe('/student', function () {
                 })
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
-                .expect(409, done);
+                .expect(409)
+                .end(done);
         });
 
         it('should respond OK to new username/pw combinations', function (done) {
@@ -127,7 +145,23 @@ describe('/student', function () {
                 })
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
-                .expect(200, done);
+                .expect(200)
+                .end(done);
+        });
+
+        it('should respond OK to new email/pw combinations', function (done) {
+            request(app)
+                .post('/student/')
+                .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
+                .send({
+                    email: 'newuser@example.com',
+                    pw1: 'iii',
+                    center: 'blah'
+                })
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .expect(200)
+                .end(done);
         });
     });
 
@@ -172,7 +206,7 @@ describe('/users', function () {
         mocks = {
             db: {
                 centers: {
-                    findOne: function (query, opts, cb) {
+                    findOne: function (query, cb) {
                         cb(null, { center: 'blah', defaultVoice: 2});
                     }
                 },
@@ -193,12 +227,12 @@ describe('/users', function () {
     });
 
     it('should use center defaultDialect for new user voice', function (done) {
+        mocks.db.users.findOne = function (query, cb) { cb(null); };
         request(route)
             .post('/update')
             .send({ username: 'a-user', pw1: 'iii', center: 'blah' })
-            .expect(200, function () {
-                done();
-            });
+            .expect(201)
+            .end(done);
     });
 
     it('should reject missing username', function (done) {
@@ -210,7 +244,8 @@ describe('/users', function () {
             })
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
-            .expect(400, done);
+            .expect(400)
+            .end(done);
     });
 
     it('should reject missing center', function (done) {
@@ -222,6 +257,7 @@ describe('/users', function () {
             })
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
-            .expect(400, done);
+            .expect(400)
+            .end(done);
     });
 });
