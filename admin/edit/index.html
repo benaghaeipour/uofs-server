@@ -2,15 +2,15 @@
 
     <head>
         <script type="application/javascript" src="//cdn.jsdelivr.net/angularjs/1.2.17/angular.min.js"></script>
-        <link type="text/css" rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.2.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.1.0/css/font-awesome.min.css">
+        <link type="text/css" rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/fontawesome/4.3.0/css/font-awesome.min.css">
         <script type="application/javascript" src="index.js"></script>
     </head>
 
     <body ng-app="editcenter" class="container">
         <section ng-controller="editcenter">
             <div class="page-header">
-                <h1>Edit Center</h1>
+                <h1><a ng-href="../index.html"><i class="fa fa-angle-left"></i></a> Edit Center</h1>
             </div>
             <form name="form" class="row" ng-submit="submit()">
                 <i class="fa fa-4x col-md-1" ng-class="iconTypeForCenterType(center.centerType)" ng-click="incCenterType()"></i>
@@ -18,11 +18,8 @@
                     <label class="col-md-6" ng-class="{'has-error': form.centerName.$invalid}">Name
                         <input name="centerName" disabled class="form-control" ng-model="center.name" type="text" required>
                     </label>
-                    <label class="col-md-5" ng-class="{'has-error': form.centerContact.$invalid}">Main Contact
+                    <label class="col-md-6" ng-class="{'has-error': form.centerContact.$invalid}">Main Contact
                         <input name="centerContact" class="form-control" ng-model="center.mainContact" type="text" required>
-                    </label>
-                    <label ng-if="!user">
-                        <button type="button" class="col-md-1 btn btn-default form-control" ng-click="createUser()">create</button>
                     </label>
                     <label class="col-md-6" ng-class="{'has-error': form.centerPurchaser.$invalid}">
                         Purchaser <input name="centerPurchaser" class="form-control" ng-model="center.purchaser" type="email" disabled>
@@ -60,6 +57,17 @@
                     <th>username</th><th>email</th><th>password</th>
                 </thead>
                 <tbody>
+                    <tr ng-class="{'has-error': possibleNewUser.failed, 'form-group': true}">
+                        <td>
+                            <input name="username" class="form-control" ng-model="possibleNewUser.username" type="text" ng-required="!form.email.$valid" ng-disabled="creatingUser">
+                        </td>
+                        <td>
+                            <input name="email" class="form-control" ng-model="possibleNewUser.email" type="email" ng-required="!form.username.$valid" ng-disabled="creatingUser">
+                        </td>
+                        <td>
+                            <a class="btn btn-default" ng-disabled="creatingUser" ng-click="createUser()">Create <i class="fa fa-user-plus"></i></a>
+                        </td>
+                    </tr>
                     <tr ng-repeat="user in userList">
                         <td>{{user.username}}</td><td>{{user.email}}</td><td>{{user.pw1}}</td>
                     </tr>

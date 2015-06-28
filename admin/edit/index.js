@@ -1,3 +1,4 @@
+'use strict';
 /*globals angular*/
 angular.module('editcenter', [])
     .config(function ($locationProvider) {
@@ -9,7 +10,7 @@ angular.module('editcenter', [])
         $scope.iconTypeForCenterType = function (centerType) {
             var mapping = {
                 school: 'fa-building',
-                home :'fa-home'
+                home: 'fa-home'
             };
             return mapping[centerType];
         };
@@ -54,27 +55,14 @@ angular.module('editcenter', [])
         $scope.delete = sendDeleteCommand;
 
         var centerGuid = $location.path().match(/edit\/([a-f0-9]{24})\/?$/)[1];
+//        var centerGuid = '';
         $http({
             method: 'GET',
             url: '/center/' + centerGuid
-        })
-        .then(function (res) {
+        }).then(function (res) {
             $scope.center = res.data;
             return res;
-        })
-        .then(function (res) {
-            $http({
-                method: 'POST',
-                url: '/student/find',
-                data: {
-                    username: res.data.mainContact || 'nothingatall'
-                }
-            }).then(function (res) {
-                if (res.data.length !== 0) {
-                    $scope.user = res.data[0];
-                }
-            });
-
+        }).then(function (res) {
             $http({
                 method: 'POST',
                 url: '/student/find',
@@ -88,25 +76,27 @@ angular.module('editcenter', [])
             });
         });
 
-        $scope.createUser =  function () {
-            $http({
+        $scope.possibleNewUser = {};
+        $scope.createUser = function () {
+            if ($scope.creatingUser) {
+                return;
+            }
+            $scope.creatingUser = $http({
                 method: 'POST',
                 url: '/student/update',
                 data: {
                     center: $scope.center.name,
-                    username: $scope.center.mainContact,
+                    username: $scope.possibleNewUser.username,
+                    email: $scope.possibleNewUser.email,
                     pw1: 'changeme'
                 }
-            }).then(function (res) {
-                $scope.user = res.data;
-                $http({
-                    method: 'GET',
-                    url: '/login/reset',
-                    params:{
-                        email: $scope.center.mainContact
-                    }
-                });
+            }).then(function successfullyCreatedUser() {
+                $scope.userList.push($scope.possibleNewUser);
+                $scope.possibleNewUser = {};
+            }).catch(function problemCreatingUser() {
+                $scope.possibleNewUser.failed = true;
+            }).finally(function finishedTryingToCreateUser() {
+                $scope.creatingUser = null;
             });
-            sendSaveCommand();
         };
     });

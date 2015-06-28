@@ -1,3 +1,4 @@
+'use strict';
 /*globals describe, module, inject, beforeEach, afterEach, it, expect*/
 describe('edit center', function () {
     beforeEach(module('editcenter'));
@@ -56,34 +57,5 @@ describe('edit center', function () {
 
         $rootScope.center.name = 'New York';
         $rootScope.submit();
-    }));
-
-    it('should check mainContact exists', inject(function ($controller, $rootScope, $httpBackend, $location) {
-        $location.url('/edit/aaaaaaaaaaaaaaaaaaaaaaaa');
-        $httpBackend.whenGET('/center/aaaaaaaaaaaaaaaaaaaaaaaa').respond({
-            name: 'London',
-            mainContact: 'some@person.com',
-            centerType: 'home'
-        });
-
-        $httpBackend.expectPOST('/student/find', {
-            username: 'some@person.com'
-        }).respond({
-            username: 'some@person.com',
-            pw1: 'iii'
-        });
-
-        $controller('editcenter', {
-            $scope: $rootScope
-        });
-
-        $httpBackend.expectPOST('/student/find', {
-            center: 'London'
-        }).respond([{
-            username: 'some@person.com',
-            pw1: 'iii'
-        }]);
-
-        $httpBackend.flush();
     }));
 });
