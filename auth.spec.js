@@ -33,7 +33,7 @@ describe('auth', function () {
             }
         };
 
-        auth = proxyquire('../auth', {
+        auth = proxyquire('./auth', {
             "./db": mocks.db
         });
     });

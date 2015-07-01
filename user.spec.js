@@ -1,7 +1,7 @@
 'use strict';
 /*globals mocha, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
 
-var app = require('../app');
+var app = require('./app');
 var expect = require('expect');
 var request = require('supertest');
 var proxyquire = require('proxyquire');
@@ -221,7 +221,7 @@ describe('/users', function () {
                 '@noCallThru': true
             }
         };
-        route = require('express')().use(proxyquire('../users', {
+        route = require('express')().use(proxyquire('./users', {
             './db': mocks.db
         }));
     });

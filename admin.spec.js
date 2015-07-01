@@ -7,7 +7,7 @@ var crypto = require('crypto');
 describe('route - admin/', function () {
     var request = require('supertest'),
         expect = require('expect'),
-        app = require('../app');
+        app = require('./app');
 
     beforeEach(function (done) {
         this.timeout(15000);

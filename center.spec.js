@@ -3,7 +3,7 @@
 
 describe('/center', function () {
     var request = require('supertest'),
-        app = require('../app'),
+        app = require('./app'),
         expect = require('expect');
 
     var CreadtedCenterId = '';

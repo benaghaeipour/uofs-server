@@ -2,7 +2,7 @@
 /*jshint node:true*/
 /*globals mocha, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
 
-var app = require('../app'),
+var app = require('./app'),
     request = require('supertest'),
     expect = require('expect');
 

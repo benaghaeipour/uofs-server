@@ -7,7 +7,7 @@ var proxyquire = require('proxyquire'),
     sendMail = sinon.spy(),
     createTransport = sinon.stub(),
     sendPasswordReset = sinon.stub(),
-    mailer = proxyquire('../emailer', {
+    mailer = proxyquire('./emailer', {
         nodemailer: {
             createTransport: createTransport.returns({
                 sendMail: sendMail
