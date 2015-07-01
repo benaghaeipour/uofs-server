@@ -10,6 +10,7 @@ describe('/student', function () {
     var CreadtedUserId = '';
 
     beforeEach(function (done) {
+        process.env.SYSADMIN_KEY = 'testing';
         this.timeout(15000);
         return app.listening ? done() : app.on('listening', done);
     });
@@ -258,6 +259,16 @@ describe('/users', function () {
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
             .expect(400)
+            .end(done);
+    });
+
+    it('should return scotts user', function (done) {
+        mocks.db.users.findOne = function (query, opts, cb) { cb(null, {}); };
+        request(route)
+            .get('/scott')
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect(200)
             .end(done);
     });
 });

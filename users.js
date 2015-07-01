@@ -1,7 +1,9 @@
 'use strict';
 
 var route = require('express').Router();
-var bodyParser = require('body-parser')({limit: 300000});
+var bodyParser = require('body-parser')({
+    limit: 300000
+});
 var mongodb = require('mongodb');
 var _ = require('lodash');
 var adjNoun = require('adj-noun');
@@ -27,15 +29,21 @@ function rejectExistingUsernames(req, res, next) {
         });
     }
 
-    console.info({student : 'checking for existing'});
-    console.log({query: JSON.stringify(query)});
+    console.info({
+        student: 'checking for existing'
+    });
+    console.log({
+        query: JSON.stringify(query)
+    });
 
     DB.users.findOne(query, function (err, existing) {
         if (err) {
             return next(err);
         }
         if (existing) {
-            console.info({student: 'allready exists'});
+            console.info({
+                student: 'allready exists'
+            });
             res.status(409).end();
         } else {
             next();
@@ -45,22 +53,33 @@ function rejectExistingUsernames(req, res, next) {
 
 function rejectMissingRequiredFields(req, res, next) {
     if (!req.body.username && !req.body.email) {
-        console.log({student: 'create', rejected: 'missing username/email'});
+        console.log({
+            student: 'create',
+            rejected: 'missing username/email'
+        });
         return res.status(400).end();
     }
     if (!req.body.pw1) {
-        console.log({student: 'create', rejected: 'missing pw1'});
+        console.log({
+            student: 'create',
+            rejected: 'missing pw1'
+        });
         return res.status(400).end();
     }
     if (!req.body.center) {
-        console.log({student: 'create', rejected: 'missing center'});
+        console.log({
+            student: 'create',
+            rejected: 'missing center'
+        });
         return res.status(400).end();
     }
     next();
 }
 
 route.post('/', bodyParser, rejectMissingRequiredFields, rejectExistingUsernames, function (req, res, next) {
-    console.info({student: 'creds ok to create'});
+    console.info({
+        student: 'creds ok to create'
+    });
     res.status(200).end();
 });
 
@@ -90,14 +109,19 @@ route.post('/find', bodyParser, function (req, res, next) {
     };
 
     DB.users.find(query, options).toArray(function (err, records) {
-        if (err) { return next(err); }
+        if (err) {
+            return next(err);
+        }
         res.send(records);
     });
 });
 
 route.post('/delete[/]?', bodyParser, function (req, res, next) {
     var query = req.body;
-    console.info({student : 'delete', id: query._id});
+    console.info({
+        student: 'delete',
+        id: query._id
+    });
     query._id = new mongodb.ObjectID(query._id);
 
     DB.users.update(_.pick(query, '_id'), {
@@ -126,22 +150,33 @@ function createStudent(req, res, next) {
         query.email = query.email.toLowerCase();
     }
 
-    console.log({student : 'create', reason: 'no-id'});
-    _.defaults(query, {pw1: adjNoun().join('-')});
+    console.log({
+        student: 'create',
+        reason: 'no-id'
+    });
+    _.defaults(query, {
+        pw1: adjNoun().join('-')
+    });
 
-    var hasUsername = !!query.username;
-    var hasPassword = !!query.pw1;
-    var hasCenter = !!query.center;
+    var hasUsername = !! query.username;
+    var hasPassword = !! query.pw1;
+    var hasCenter = !! query.center;
 
     var hasRequiredFields = hasCenter && hasPassword && hasUsername;
     if (!hasRequiredFields) {
-        console.info('student create missing', {hasUsername: hasUsername, hasPassword: hasPassword, hasCenter: hasCenter});
+        console.info('student create missing', {
+            hasUsername: hasUsername,
+            hasPassword: hasPassword,
+            hasCenter: hasCenter
+        });
         return res.status(400).send();
     }
 
     //create new record
     console.info('student create :', _.pick(query, 'username', 'pw1', 'center'));
-    DB.centers.findOne({name: query.center}, function (err, center) {
+    DB.centers.findOne({
+        name: query.center
+    }, function (err, center) {
         if (center && center.defaultVoice && query.voiceDialect === undefined) {
             console.log('setting voiceDialect to centers:', center.defaultVoice);
             query.voiceDialect = center.defaultVoice;
@@ -203,5 +238,31 @@ route.post('/update[/]?', bodyParser, function (req, res, next) {
         next();
     }
 }, rejectMissingRequiredFields, rejectExistingUsernames, createStudent);
+
+
+route.get('/:username', bodyParser, function (req, res, next) {
+    var opts = {}
+    if (req.query.short) {
+        opts.fields = {
+            'dictationSyllabus': 0,
+            'autoSyllabus': 0,
+            'spellingSyllabus': 0,
+            'readingSyllabus': 0,
+            'memorySyllabus': 0
+        };
+    }
+    DB.users.findOne({
+        username: req.params.username
+    }, opts, function (err, existing) {
+        if (err) {
+            return next(err);
+        }
+        if (existing) {
+            res.status(200).json(existing);
+        } else {
+            res.status(404).end();
+        }
+    });
+});
 
 module.exports = route;
