@@ -64,7 +64,7 @@ route.post('/', bodyParser, rejectMissingRequiredFields, rejectExistingUsernames
     res.status(200).end();
 });
 
-route.post('/find[/]?', bodyParser, function (req, res, next) {
+route.post('/find', bodyParser, function (req, res, next) {
     var query = req.body;
     var options = {};
     if (query._id) {

@@ -124,8 +124,8 @@ function sendFullUserObject(req, res, next) {
     });
 }
 
-app.get('/login[/]?', bodyParser, sendFullUserObject);
-app.post('/login[/]?', bodyParser, sendFullUserObject);
+app.get('/login', bodyParser, sendFullUserObject);
+app.post('/login', bodyParser, sendFullUserObject);
 
 
 app.route('/login/reset')
