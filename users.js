@@ -29,21 +29,15 @@ function rejectExistingUsernames(req, res, next) {
         });
     }
 
-    console.info({
-        student: 'checking for existing'
-    });
-    console.log({
-        query: JSON.stringify(query)
-    });
+    console.info({student: 'checking for existing'});
+    console.log({query: query});
 
     DB.users.findOne(query, function (err, existing) {
         if (err) {
             return next(err);
         }
         if (existing) {
-            console.info({
-                student: 'allready exists'
-            });
+            console.info({student: 'allready exists'});
             res.status(409).end();
         } else {
             next();
@@ -77,9 +71,7 @@ function rejectMissingRequiredFields(req, res, next) {
 }
 
 route.post('/', bodyParser, rejectMissingRequiredFields, rejectExistingUsernames, function (req, res, next) {
-    console.info({
-        student: 'creds ok to create'
-    });
+    console.info({student: 'creds ok to create'});
     res.status(200).end();
 });
 
@@ -116,7 +108,7 @@ route.post('/find', bodyParser, function (req, res, next) {
     });
 });
 
-route.post('/delete[/]?', bodyParser, function (req, res, next) {
+route.post('/delete', bodyParser, function (req, res, next) {
     var query = req.body;
     console.info({
         student: 'delete',
@@ -193,7 +185,7 @@ function createStudent(req, res, next) {
     });
 }
 
-route.post('/update[/]?', bodyParser, function (req, res, next) {
+route.post('/update', bodyParser, function (req, res, next) {
     var query = req.body;
 
     if (query.username) {

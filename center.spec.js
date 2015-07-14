@@ -1,7 +1,7 @@
 /*jshint node:true*/
 /*globals mocha, expect, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
 
-describe('/center', function () {
+describe('/centers', function () {
     var request = require('supertest'),
         app = require('./app'),
         expect = require('expect');
@@ -15,7 +15,7 @@ describe('/center', function () {
 
     it('should bounce missing purchaser', function (done) {
         request(app)
-            .put('/center')
+            .put('/centers')
             .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
             .send({
                 name: 'Manchester',
@@ -28,7 +28,7 @@ describe('/center', function () {
 
     it('should create a center', function (done) {
         request(app)
-            .put('/center')
+            .put('/centers')
             .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
             .send({
                 name: 'Manchester',
@@ -52,7 +52,7 @@ describe('/center', function () {
 
     it('should query center with name', function (done) {
         request(app)
-            .get('/center')
+            .get('/centers')
             .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
             .query({name: 'Manchester'})
             .set('Accept', 'application/json')
@@ -68,7 +68,7 @@ describe('/center', function () {
 
     it('should get center by ID', function (done) {
         request(app)
-            .get('/center/' + CreadtedCenterId)
+            .get('/centers/' + CreadtedCenterId)
             .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
             .set('Accept', 'application/json')
             .set('Content-Type', 'application/json')
@@ -88,7 +88,7 @@ describe('/center', function () {
 
     it('should update a center', function (done) {
         request(app)
-            .post('/center/' + CreadtedCenterId)
+            .post('/centers/' + CreadtedCenterId)
             .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
             .send({
                 name: 'Manchester',

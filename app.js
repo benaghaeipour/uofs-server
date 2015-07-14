@@ -169,16 +169,6 @@ app.use('/student', require('./users'));
 app.use('/center', require('./center'));
 app.use('/centers', require('./center'));
 
-// *******************************************************
-//          Compose.io proxy
-
-app.use('/mongo/:uri', function (req, res) {
-    req.headers.Authorization = 'Bearer ' + process.env.COMPOSE_API_TOKEN;
-    req.headers['Accept-Version'] = '2014-06';
-    proxy.web(req, res, {
-        target: 'https://api.compose.io/deployments/chris-matheson-it/online/mongodb/online/collections/' + req.param.uri
-    });
-});
 
 // *******************************************************
 //          Start of application doing things
