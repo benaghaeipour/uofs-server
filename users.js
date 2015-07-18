@@ -11,6 +11,9 @@ var DB = require('./db');
 var defaultStudentRecord = require('./default-user.json');
 var util = require('util');
 
+var voiceDialects = [0,1,2];
+var accountTypes = [0,1,2];
+
 function rejectExistingUsernames(req, res, next) {
     var query = {
         $or: []
@@ -67,7 +70,25 @@ function rejectMissingRequiredFields(req, res, next) {
         });
         return res.status(400).end();
     }
-    next();
+    return next();
+}
+
+function validateShema(req, res, next) {
+    var errorMessage = {
+      student: 'validate'
+    };
+    if (req.body.voiceDialect && !(req.body.voiceDialect in voiceDialects)) {
+      errorMessage.rejected = 'bad voiceDialect value. Value should be one of ' + voiceDialects.join(',');
+      console.log(errorMessage);
+      return res.status(400).json(errorMessage);
+    }
+
+    if (req.body.accountType && !(req.body.accountType in accountTypes)) {
+      errorMessage.rejected = 'bad accountType value. Value should be one of ' + accountTypes.join(',');
+      console.log(errorMessage);
+      return res.status(400).json(errorMessage);
+    }
+    return next();
 }
 
 route.post('/', bodyParser, rejectMissingRequiredFields, rejectExistingUsernames, function (req, res, next) {
@@ -185,7 +206,7 @@ function createStudent(req, res, next) {
     });
 }
 
-route.post('/update', bodyParser, function (req, res, next) {
+route.post('/update', bodyParser, validateShema, function (req, res, next) {
     var query = req.body;
 
     if (query.username) {
@@ -232,7 +253,7 @@ route.post('/update', bodyParser, function (req, res, next) {
 }, rejectMissingRequiredFields, rejectExistingUsernames, createStudent);
 
 
-route.get('/:username', bodyParser, function (req, res, next) {
+route.get('/:username', bodyParser, validateShema, function (req, res, next) {
     var opts = {}
     if (req.query.short) {
         opts.fields = {

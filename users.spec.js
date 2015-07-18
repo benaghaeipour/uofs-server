@@ -271,4 +271,34 @@ describe('/users', function () {
             .expect(200)
             .end(done);
     });
+
+    it('should reject voiceDialect values that are not a known dialect enum', function (done) {
+        request(route)
+            .post('/update')
+            .send({
+                username: 'scott',
+                center: 'some center',
+                pw1: 'iii',
+                voiceDialect: 5
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect(400)
+            .end(done);
+    });
+
+    it('should reject accountType values that are not a known dialect enum', function (done) {
+        request(route)
+            .post('/update')
+            .send({
+                username: 'scott',
+                center: 'some center',
+                pw1: 'iii',
+                accountType: 5
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect(400)
+            .end(done);
+    });
 });
