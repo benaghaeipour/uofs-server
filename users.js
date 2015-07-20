@@ -11,8 +11,8 @@ var DB = require('./db');
 var defaultStudentRecord = require('./default-user.json');
 var util = require('util');
 
-var voiceDialects = [0,1,2];
-var accountTypes = [0,1,2];
+var voiceDialects = [0, 1, 2];
+var accountTypes = [0, 1, 2];
 
 function rejectExistingUsernames(req, res, next) {
     var query = {
@@ -75,7 +75,7 @@ function rejectMissingRequiredFields(req, res, next) {
 
 function validateShema(req, res, next) {
     var errorMessage = {
-      student: 'validate'
+        student: 'validate'
     };
     if (req.body.voiceDialect && !(req.body.voiceDialect in voiceDialects)) {
         errorMessage.rejected = 'bad voiceDialect value. Value should be one of ' + voiceDialects.join(',');
@@ -111,8 +111,13 @@ function validateShema(req, res, next) {
     return next();
 }
 
-route.post('/', bodyParser, rejectMissingRequiredFields, rejectExistingUsernames, function (req, res, next) {
+route.head('/', bodyParser, rejectMissingRequiredFields, rejectExistingUsernames, function (req, res, next) {
     console.info({student: 'creds ok to create'});
+    res.status(200).end();
+});
+
+route.post('/', bodyParser, rejectMissingRequiredFields, rejectExistingUsernames, function (req, res, next) {
+    console.info({depreciated:'use HEAD method instead', student: 'creds ok to create'});
     res.status(200).end();
 });
 
@@ -191,9 +196,9 @@ function createStudent(req, res, next) {
         pw1: adjNoun().join('-')
     });
 
-    var hasUsername = !! query.username;
-    var hasPassword = !! query.pw1;
-    var hasCenter = !! query.center;
+    var hasUsername = !!query.username;
+    var hasPassword = !!query.pw1;
+    var hasCenter = !!query.center;
 
     var hasRequiredFields = hasCenter && hasPassword && hasUsername;
     if (!hasRequiredFields) {
@@ -274,7 +279,7 @@ route.post('/update', bodyParser, validateShema, function (req, res, next) {
 
 
 route.get('/:username', bodyParser, validateShema, function (req, res, next) {
-    var opts = {}
+    var opts = {};
     if (req.query.short) {
         opts.fields = {
             'dictationSyllabus': 0,
