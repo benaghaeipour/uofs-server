@@ -301,4 +301,76 @@ describe('/users', function () {
             .expect(400)
             .end(done);
     });
+
+    it('should reject readingSyllabus with less than 148 lessons', function (done) {
+        var syllabus = [];
+        syllabus[190] = null;
+
+        request(route)
+            .post('/update')
+            .send({
+                username: 'scott',
+                center: 'some center',
+                pw1: 'iii',
+                readingSyllabus: syllabus
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect(400)
+            .end(done);
+    });
+
+    it('should reject spellingSyllabus with less than 148 lessons', function (done) {
+        var syllabus = [];
+        syllabus[140] = null;
+
+        request(route)
+            .post('/update')
+            .send({
+                username: 'scott',
+                center: 'some center',
+                pw1: 'iii',
+                spellingSyllabus: syllabus
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect(400)
+            .end(done);
+    });
+
+    it('should reject memorySyllabus with less than 148 lessons', function (done) {
+        var syllabus = [];
+        syllabus[140] = null;
+
+        request(route)
+            .post('/update')
+            .send({
+                username: 'scott',
+                center: 'some center',
+                pw1: 'iii',
+                memorySyllabus: syllabus
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect(400)
+            .end(done);
+    });
+
+    it('should reject dictationSyllabus with less than 148 lessons', function (done) {
+        var syllabus = [];
+        syllabus[140] = null;
+
+        request(route)
+            .post('/update')
+            .send({
+                username: 'scott',
+                center: 'some center',
+                pw1: 'iii',
+                dictationSyllabus: syllabus
+            })
+            .set('Accept', 'application/json')
+            .set('Content-Type', 'application/json')
+            .expect(400)
+            .end(done);
+    });
 });

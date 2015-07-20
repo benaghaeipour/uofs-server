@@ -78,15 +78,35 @@ function validateShema(req, res, next) {
       student: 'validate'
     };
     if (req.body.voiceDialect && !(req.body.voiceDialect in voiceDialects)) {
-      errorMessage.rejected = 'bad voiceDialect value. Value should be one of ' + voiceDialects.join(',');
-      console.log(errorMessage);
-      return res.status(400).json(errorMessage);
+        errorMessage.rejected = 'bad voiceDialect value. Value should be one of ' + voiceDialects.join(',');
+        console.log(errorMessage);
+        return res.status(400).json(errorMessage);
     }
 
     if (req.body.accountType && !(req.body.accountType in accountTypes)) {
-      errorMessage.rejected = 'bad accountType value. Value should be one of ' + accountTypes.join(',');
-      console.log(errorMessage);
-      return res.status(400).json(errorMessage);
+        errorMessage.rejected = 'bad accountType value. Value should be one of ' + accountTypes.join(',');
+        console.log(errorMessage);
+        return res.status(400).json(errorMessage);
+    }
+    if (req.body.readingSyllabus && req.body.readingSyllabus.length < 200) {
+        errorMessage.rejected = 'readingSyllabus has only ' + req.body.readingSyllabus.length + ' lessons but should have >=200';
+        console.log(errorMessage);
+        return res.status(400).json(errorMessage);
+    }
+    if (req.body.spellingSyllabus && req.body.spellingSyllabus.length < 148) {
+        errorMessage.rejected = 'readingSyllabus has only ' + req.body.spellingSyllabus.length + ' lessons but should have >=148';
+        console.log(errorMessage);
+        return res.status(400).json(errorMessage);
+    }
+    if (req.body.memorySyllabus && req.body.memorySyllabus.length < 148) {
+        errorMessage.rejected = 'readingSyllabus has only ' + req.body.memorySyllabus.length + ' lessons but should have >=148';
+        console.log(errorMessage);
+        return res.status(400).json(errorMessage);
+    }
+    if (req.body.dictationSyllabus && req.body.dictationSyllabus.length < 148) {
+        errorMessage.rejected = 'readingSyllabus has only ' + req.body.dictationSyllabus.length + ' lessons but should have >=148';
+        console.log(errorMessage);
+        return res.status(400).json(errorMessage);
     }
     return next();
 }
