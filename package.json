@@ -1,6 +1,6 @@
 {
   "name": "uofs-server",
-  "version": "0.6.9",
+  "version": "0.6.10",
   "repository": "https://github.com/peachproductions/uofs-server",
   "dependencies": {
     "adj-noun": "^0.1.0",
@@ -39,8 +39,7 @@
     "node": "0.12.x"
   },
   "description": "HTTP server for Units of Sound online app",
-  "directories": {
-  },
+  "directories": {},
   "jshintConfig": {
     "undef": true,
     "unused": true,
