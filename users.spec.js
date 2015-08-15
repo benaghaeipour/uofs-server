@@ -1,5 +1,5 @@
 'use strict';
-/*globals mocha, jasmine, it, xit, describe, xdescribe, beforeEach, afterEach*/
+/*globals it, describe, beforeEach*/
 
 var app = require('./app');
 var expect = require('expect');
