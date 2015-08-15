@@ -9,7 +9,6 @@ var _ = require('lodash');
 var adjNoun = require('adj-noun');
 var DB = require('./db');
 var defaultStudentRecord = require('./default-user.json');
-var util = require('util');
 
 var voiceDialects = [0, 1, 2];
 var accountTypes = [0, 1, 2];
@@ -111,12 +110,12 @@ function validateShema(req, res, next) {
     return next();
 }
 
-route.head('/', bodyParser, rejectMissingRequiredFields, rejectExistingUsernames, function (req, res, next) {
+route.head('/', bodyParser, rejectMissingRequiredFields, rejectExistingUsernames, function (req, res) {
     console.info({student: 'creds ok to create'});
     res.status(200).end();
 });
 
-route.post('/', bodyParser, rejectMissingRequiredFields, rejectExistingUsernames, function (req, res, next) {
+route.post('/', bodyParser, rejectMissingRequiredFields, rejectExistingUsernames, function (req, res) {
     console.info({depreciated:'use HEAD method instead', student: 'creds ok to create'});
     res.status(200).end();
 });
@@ -166,7 +165,7 @@ route.post('/delete', bodyParser, function (req, res, next) {
         $set: {
             deleted: new Date()
         }
-    }, function (err, objects) {
+    }, function (err) {
         if (err) {
             return next(err);
         }
@@ -290,7 +289,8 @@ route.get('/:username', bodyParser, validateShema, function (req, res, next) {
         };
     }
     DB.users.findOne({
-        username: req.params.username
+        username: req.params.username,
+        deleted: {$exists: false}
     }, opts, function (err, existing) {
         if (err) {
             return next(err);
