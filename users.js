@@ -278,18 +278,22 @@ route.post('/update', bodyParser, validateShema, function (req, res, next) {
 
 
 route.get('/:username', bodyParser, validateShema, function (req, res, next) {
+
+  //TODO bug fix: this route is used for login. but cannot support multiple usernames so just respond with "self" until fixed
+
     var opts = {};
     if (req.query.short) {
         opts.fields = {
-            'dictationSyllabus': 0,
-            'autoSyllabus': 0,
-            'spellingSyllabus': 0,
-            'readingSyllabus': 0,
-            'memorySyllabus': 0
+            dictationSyllabus: 0,
+            autoSyllabus: 0,
+            spellingSyllabus: 0,
+            readingSyllabus: 0,
+            memorySyllabus: 0
         };
     }
     DB.users.findOne({
-        username: req.params.username,
+        username: req.user.username,
+        pw1: req.user.pw1,
         deleted: {$exists: false}
     }, opts, function (err, existing) {
         if (err) {

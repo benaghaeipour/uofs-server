@@ -10,8 +10,7 @@ var express = require('express'),
     mongodb = require('mongodb'),
     adjNoun = require('adj-noun'),
     _ = require('lodash'),
-    emailer = require('./emailer'),
-    proxy = require('http-proxy').createProxyServer();
+    emailer = require('./emailer');
 
 // *******************************************************
 //          Global Variables

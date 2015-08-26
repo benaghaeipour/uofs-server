@@ -1,6 +1,6 @@
 {
   "name": "uofs-server",
-  "version": "0.6.12",
+  "version": "0.6.13",
   "repository": "https://github.com/peachproductions/uofs-server",
   "dependencies": {
     "adj-noun": "^0.1.0",
@@ -20,6 +20,7 @@
     "serve-static": "^1.3.0"
   },
   "devDependencies": {
+    "expect": "^1.9.0",
     "expect.js": "^0.3.1",
     "gulp": "^3.8.6",
     "gulp-util": "^2.2.20",
