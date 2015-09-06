@@ -1,0 +1,63 @@
+<head>
+  <script src="//cdn.jsdelivr.net/react/0.13.3/react-with-addons.js" charset="utf-8"></script>
+  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/semantic-ui/2.0.8/semantic.min.css">
+  <style type="text/css">
+    section {
+      min-height: 30em;
+    }
+  </style>
+</head>
+<body class="ui container">
+  <header><h1>Units-of-sound Stats</h1></header>
+  <hr>
+  <section id="totals"></section>
+  <hr>
+  <section id="duplicates"></section>
+  <hr>
+  <section id="limits"></section>
+  <hr>
+  <script type="text/javascript">
+
+    window.render = function (statsData) {
+      React.render(
+        React.DOM.div(null,
+          React.DOM.h1(null, statsData.duplicateUserNames.length + ' duplicated usernames'),
+          React.DOM.ul(null,
+            statsData.duplicateUserNames.map(function (dupUser) {
+             return React.DOM.li(null, dupUser._id);
+            })
+          )
+        ),
+        document.querySelector('#duplicates')
+      );
+
+      var userCount = statsData.teacherCount + statsData.studentCount;
+      var percentStudents = (statsData.studentCount / userCount) * 100;
+      React.render(
+        React.DOM.div(null,
+          React.DOM.p({
+            key: 'userCounts',
+            className: 'ui clearing'
+          },
+            React.DOM.span({className: 'ui left floated'}, statsData.studentCount + ' Students'),
+            React.DOM.span({className: 'ui right floated'}, statsData.teacherCount + ' Teachers')
+          ),
+          React.DOM.div({
+            'className': 'ui big teal progress',
+            'data-percent': percentStudents},
+            React.DOM.div({
+              className: 'bar',
+              style: {
+                'transition': '300ms',
+                'width': percentStudents + '%'
+              }
+            })
+          ),
+          React.DOM.p({key: 'centerCount'}, 'Centers: ' + statsData.centerCount)
+        ),
+        document.querySelector('#totals')
+      );
+    }
+  </script>
+  <script src="data?callback=render" charset="utf-8"></script>
+</body>

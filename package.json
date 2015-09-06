@@ -43,6 +43,7 @@
   "description": "HTTP server for Units of Sound online app",
   "directories": {},
   "jshintConfig": {
+    "predef": ["Promise"],
     "undef": true,
     "unused": true,
     "node": true

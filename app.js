@@ -84,6 +84,8 @@ app.get('/crossdomain.xml', function (req, res, next) {
         '</cross-domain-policy>');
 });
 
+app.use('/stats', require('./stats'));
+
 app.route('/login/reset')
     .get(function (req, res, next) {
 
@@ -171,7 +173,6 @@ app.use('/users', require('./users'));
 app.use('/student', require('./users'));
 app.use('/center', require('./center'));
 app.use('/centers', require('./center'));
-
 
 // *******************************************************
 //          Start of application doing things
