@@ -166,6 +166,44 @@ describe('/student', function () {
         });
     });
 
+    describe('/', function () {
+      it('should not find student', function (done) {
+          request(app)
+              .get('/student/not-there-at-all')
+              .auth('scott', 'iii')
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'application/json')
+              .expect(404, done);
+      });
+
+      it('should find by username', function (done) {
+          request(app)
+              .get('/student/scott')
+              .auth('scott', 'iii')
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'application/json')
+              .expect(200, done);
+      });
+
+      it('should find by email', function (done) {
+          request(app)
+              .get('/student/scott@example.com')
+              .auth('scott', 'iii')
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'application/json')
+              .expect(200, done);
+      });
+
+      it('should not find partial student name', function (done) {
+          request(app)
+              .get('/student/sco')
+              .auth('scott', 'iii')
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'application/json')
+              .expect(404, done);
+      });
+    });
+
     describe('/find', function () {
 
         it('should now have one student', function (done) {

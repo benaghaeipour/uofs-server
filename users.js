@@ -291,11 +291,13 @@ route.get('/:username', bodyParser, validateShema, function (req, res, next) {
             memorySyllabus: 0
         };
     }
-    DB.users.findOne({
-        username: req.user.username,
-        pw1: req.user.pw1,
+    DB.users.findOne({ $or: [{
+        username: req.params.username.toLowerCase(),
         deleted: {$exists: false}
-    }, opts, function (err, existing) {
+    }, {
+        email: req.params.username.toLowerCase(),
+        deleted: {$exists: false}
+    }]}, opts, function (err, existing) {
         if (err) {
             return next(err);
         }
