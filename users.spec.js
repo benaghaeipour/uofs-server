@@ -5,6 +5,24 @@ var app = require('./app');
 var expect = require('expect');
 var request = require('supertest');
 var proxyquire = require('proxyquire');
+var db = require('./db');
+var adjNoun = require('adj-noun');
+
+function seedDB(done) {
+  console.log('creating a bunch of legacy data');
+  db.users.insertMany([
+    {username: 'existing-deleted', email: 'unique2@Example.com', center: 'Manchester', pw1: 'unique2', deleted: 'some-date'},
+    {username: 'existing-dup-username-and-pass', email: 'unique3@Example.com', center: 'Manchester', pw1: 'dup-pass'},
+    {username: 'existing-dup-username-and-pass', email: 'unique4@Example.com', center: 'Manchester', pw1: 'dup-pass'},
+    {username: 'unique1', email: 'dup-email@Example.com', center: 'Manchester', pw1: 'unique3'},
+    {username: 'unique2', email: 'dup-email@Example.com', center: 'Manchester', pw1: 'unique4'},
+    {username: 'dup-with-prev-deleted', email: 'unique5@Example.com', center: 'Manchester', pw1: 'unique5', deleted: 'some-date'},
+    {username: 'dup-with-prev-deleted', email: 'unique6@Example.com', center: 'Manchester', pw1: 'unique6'},
+    {username: 'existing-dup-username', email: 'unique7@Example.com', center: 'Manchester', pw1: 'unique7'},
+    {username: 'existing-dup-username', email: 'unique8@Example.com', center: 'Manchester', pw1: 'unique8'},
+    {username: 'unique3', email: 'existing@Example.com', center: 'Manchester', pw1: 'unique9'},
+  ], done);
+}
 
 describe('/student', function () {
     var CreadtedUserId = '';
@@ -23,7 +41,7 @@ describe('/student', function () {
                 .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
                 .send({
                     username: 'scott',
-                    email: 'scott@example.com',
+                    email: 'scott@Example.com',
                     center: 'blah',
                     pw1: 'iii'
                 })
@@ -166,8 +184,89 @@ describe('/student', function () {
         });
     });
 
-    describe('/', function () {
-      it('should not find student', function (done) {
+    describe('/:username', function () {
+      it('should find an existing user by username', function (done) {
+        db.users.insert({
+          username: 'existing',
+          email: adjNoun().join('') + '@Example.com',
+          center: 'Manchester',
+          pw1: adjNoun()
+        }, function (err) {
+          if (err) { return done(err); }
+          request(app)
+              .get('/users/existing')
+              .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'application/json')
+              .expect(200, done);
+        });
+      });
+
+      it('should find an existing user by email', function (done) {
+        db.users.insert({
+          username: adjNoun(),
+          email: 'existing-email@example.com',
+          center: 'Manchester',
+          pw1: adjNoun()
+        }, function (err) {
+          if (err) { return done(err); }
+          request(app)
+              .get('/users/existing-email@Example.com')
+              .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'application/json')
+              .expect(200, done);
+        });
+      });
+
+      it('should return the non deleted user', function (done) {
+        db.users.insertMany([{
+          username: 'dup-with-prev-deleted',
+          email: 'wrong@Example.com',
+          center: 'Manchester',
+          pw1: adjNoun(),
+          deleted: 'some-date'
+        }, {
+          username: 'dup-with-prev-deleted',
+          email: 'correct@Example.com',
+          center: 'Manchester',
+          pw1: adjNoun()
+        }], function (err) {
+          if (err) { return done(err); }
+          request(app)
+              .get('/users/dup-with-prev-deleted')
+              .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'application/json')
+              .expect(200)
+              .expect(/correct/, done);
+        });
+      });
+
+      it('should return me', function (done) {
+        db.users.insertMany([{
+          username: 'dup-user',
+          email: 'wrong@Example.com',
+          center: 'Manchester',
+          pw1: 'first-password'
+        }, {
+          username: 'dup-user',
+          email: 'correct@Example.com',
+          center: 'Manchester',
+          pw1: 'second-password'
+        }], function (err) {
+          if (err) { return done(err); }
+          request(app)
+              .get('/users/dup-user')
+              .auth('dup-user', 'second-password')
+              .set('Accept', 'application/json')
+              .set('Content-Type', 'application/json')
+              .expect(200)
+              .expect(/second-password/, done);
+        });
+      });
+
+      it('should not find username', function (done) {
           request(app)
               .get('/student/not-there-at-all')
               .auth('scott', 'iii')
@@ -176,22 +275,13 @@ describe('/student', function () {
               .expect(404, done);
       });
 
-      it('should find by username', function (done) {
+      it('should not find email', function (done) {
           request(app)
-              .get('/student/scott')
+              .get('/student/not-there-at-all@blah.com')
               .auth('scott', 'iii')
               .set('Accept', 'application/json')
               .set('Content-Type', 'application/json')
-              .expect(200, done);
-      });
-
-      it('should find by email', function (done) {
-          request(app)
-              .get('/student/scott@example.com')
-              .auth('scott', 'iii')
-              .set('Accept', 'application/json')
-              .set('Content-Type', 'application/json')
-              .expect(200, done);
+              .expect(404, done);
       });
 
       it('should not find partial student name', function (done) {

@@ -278,9 +278,6 @@ route.post('/update', bodyParser, validateShema, function (req, res, next) {
 
 
 route.get('/:username', bodyParser, validateShema, function (req, res, next) {
-
-  //TODO bug fix: this route is used for login. but cannot support multiple usernames so just respond with "self" until fixed
-
     var opts = {};
     if (req.query.short) {
         opts.fields = {
@@ -291,13 +288,22 @@ route.get('/:username', bodyParser, validateShema, function (req, res, next) {
             memorySyllabus: 0
         };
     }
-    DB.users.findOne({ $or: [{
+    var mongoQuery = { $or: [{
         username: req.params.username.toLowerCase(),
         deleted: {$exists: false}
     }, {
         email: req.params.username.toLowerCase(),
         deleted: {$exists: false}
-    }]}, opts, function (err, existing) {
+    }]};
+
+    console.log({student: 'fetch', username: req.params.username});
+
+    if (req.params.username.toLowerCase() === req.user.username) {
+      console.log({user:'asking for myself'});
+      mongoQuery = { _id: new mongodb.ObjectID(req.user._id)};
+    }
+
+    DB.users.findOne(mongoQuery, opts, function (err, existing) {
         if (err) {
             return next(err);
         }
