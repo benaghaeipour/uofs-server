@@ -52,6 +52,7 @@ function auth(req, res, next) {
             return rejectAndPromptForPassword(req, res);
         }
         req.user = result;
+        console.info({login: 'success', type: 'password'});
         return next ? next() : null;
     });
 }
