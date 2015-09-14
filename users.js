@@ -20,14 +20,12 @@ function rejectExistingUsernames(req, res, next) {
 
     if (req.body.username) {
         query.$or.push({
-            username: req.body.username.toLowerCase(),
-            pw1: req.body.pw1.toLowerCase()
+            username: req.body.username.toLowerCase()
         });
     }
     if (req.body.email) {
         query.$or.push({
-            email: req.body.email.toLowerCase(),
-            pw1: req.body.pw1.toLowerCase()
+            email: req.body.email.toLowerCase()
         });
     }
 

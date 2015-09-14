@@ -8,22 +8,6 @@ var proxyquire = require('proxyquire');
 var db = require('./db');
 var adjNoun = require('adj-noun');
 
-function seedDB(done) {
-  console.log('creating a bunch of legacy data');
-  db.users.insertMany([
-    {username: 'existing-deleted', email: 'unique2@Example.com', center: 'Manchester', pw1: 'unique2', deleted: 'some-date'},
-    {username: 'existing-dup-username-and-pass', email: 'unique3@Example.com', center: 'Manchester', pw1: 'dup-pass'},
-    {username: 'existing-dup-username-and-pass', email: 'unique4@Example.com', center: 'Manchester', pw1: 'dup-pass'},
-    {username: 'unique1', email: 'dup-email@Example.com', center: 'Manchester', pw1: 'unique3'},
-    {username: 'unique2', email: 'dup-email@Example.com', center: 'Manchester', pw1: 'unique4'},
-    {username: 'dup-with-prev-deleted', email: 'unique5@Example.com', center: 'Manchester', pw1: 'unique5', deleted: 'some-date'},
-    {username: 'dup-with-prev-deleted', email: 'unique6@Example.com', center: 'Manchester', pw1: 'unique6'},
-    {username: 'existing-dup-username', email: 'unique7@Example.com', center: 'Manchester', pw1: 'unique7'},
-    {username: 'existing-dup-username', email: 'unique8@Example.com', center: 'Manchester', pw1: 'unique8'},
-    {username: 'unique3', email: 'existing@Example.com', center: 'Manchester', pw1: 'unique9'},
-  ], done);
-}
-
 describe('/student', function () {
     var CreadtedUserId = '';
 
@@ -131,6 +115,21 @@ describe('/student', function () {
                     email: 'scott@example.com',
                     center: 'blah',
                     pw1: 'iii'
+                })
+                .set('Accept', 'application/json')
+                .set('Content-Type', 'application/json')
+                .expect(409)
+                .end(done);
+        });
+
+        it('should not allow duplicate email', function (done) {
+            request(app)
+                .post('/student/')
+                .auth('fred', 'lmZFGr19D6RP4SLx0rliV4IgiDHhTww27mxjDbsi/To=')
+                .send({
+                    email: 'scott@example.com',
+                    center: 'blah',
+                    pw1: adjNoun().join('')
                 })
                 .set('Accept', 'application/json')
                 .set('Content-Type', 'application/json')
