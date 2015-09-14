@@ -26,6 +26,12 @@
             statsData.duplicateUserNames.map(function (dupUser) {
              return React.DOM.li(null, dupUser._id);
             })
+          ),
+          React.DOM.h1(null, statsData.duplicateUserNames.length + ' duplicated emails'),
+          React.DOM.ul(null,
+            statsData.duplicateEmails.map(function (dupEmail) {
+             return React.DOM.li(null, dupEmail._id);
+            })
           )
         ),
         document.querySelector('#duplicates')

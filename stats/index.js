@@ -16,6 +16,20 @@ var duplicateUserNames = function () {
   });
 };
 
+var duplicateEmails = function () {
+  return new Promise(function (resolve, reject) {
+    db.users.aggregate([
+      { $match: {deleted : { $exists : false } } },
+      { $group: {_id : "$email", total : { $sum : 1 } } },
+      { $match: {total : { $gte : 2 } } },
+      { $sort:  {total:1 }}
+    ], function cb(err, results) {
+        if (err) { return reject(err); }
+        resolve(results);
+    });
+  });
+};
+
 var studentCount = function () {
   return new Promise(function (resolve, reject) {
     db.users.count({
@@ -51,13 +65,14 @@ var centerCount = function () {
 };
 
 route.get('/data', function (req, res, next) {
-  Promise.all([duplicateUserNames(), studentCount(), teacherCount(), centerCount()])
+  Promise.all([duplicateUserNames(), studentCount(), teacherCount(), centerCount(), duplicateEmails()])
     .then(function (results) {
       res.status(200).jsonp({
         duplicateUserNames: results[0],
         studentCount: results[1],
         teacherCount: results[2],
-        centerCount: results[3]
+        centerCount: results[3],
+        duplicateEmails: results[4]
       });
     })
     .catch(next);
