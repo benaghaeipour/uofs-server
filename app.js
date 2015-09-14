@@ -86,6 +86,39 @@ app.get('/crossdomain.xml', function (req, res, next) {
         '</cross-domain-policy>');
 });
 
+app.route('/login/reset')
+    .get(function (req, res, next) {
+
+        if (!req.query.email) {
+            return next(new Error('Password reset requires an email parameter'));
+        }
+
+        var tempPassword = adjNoun().join('-');
+
+        console.log('reseting password for', {username: req.query.email});
+        DB.users.update({$or: [{username: req.query.email}, {email: req.query.email}]}, {
+            $set: {pw1: tempPassword}
+        }, {
+            upsert: false
+        }, function (err, update) {
+            if (err) { return next(err); }
+            if (update.result.n === 0) {
+                return res.status(404).end();
+            }
+
+            emailer.sendPasswordReset({
+                username: req.query.email,
+                pw1: tempPassword
+            }, function (err) {
+                if (err) {
+                    console.error('Failed email sending for', req.query.email);
+                    return next(err);
+                }
+                res.status(200).end();
+            });
+        });
+    });
+
 // *******************************************************
 //          Admin Views
 
@@ -125,40 +158,6 @@ function sendFullUserObject(req, res, next) {
 
 app.get('/login', bodyParser, sendFullUserObject);
 app.post('/login', bodyParser, sendFullUserObject);
-
-
-app.route('/login/reset')
-    .get(function (req, res, next) {
-
-        if (!req.query.email) {
-            return next(new Error('Password reset requires an email parameter'));
-        }
-
-        var tempPassword = adjNoun().join('-');
-
-        console.log('reseting password for', {username: req.query.email});
-        DB.users.update({$or: [{username: req.query.email}, {email: req.query.email}]}, {
-            $set: {pw1: tempPassword}
-        }, {
-            upsert: false
-        }, function (err, update) {
-            if (err) { return next(err); }
-            if (update.result.n === 0) {
-                return res.status(404).end();
-            }
-
-            emailer.sendPasswordReset({
-                username: req.query.email,
-                pw1: tempPassword
-            }, function (err) {
-                if (err) {
-                    console.error('Failed email sending for', req.query.email);
-                    return next(err);
-                }
-                res.status(200).end();
-            });
-        });
-    });
 
 // *******************************************************
 //          Student endpoints
