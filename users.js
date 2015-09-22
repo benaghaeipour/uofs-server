@@ -147,7 +147,7 @@ route.post('/find', bodyParser, function (req, res, next) {
         if (err) {
             return next(err);
         }
-        res.send(records);
+        res.jsonp(records);
     });
 });
 
@@ -223,7 +223,7 @@ function createStudent(req, res, next) {
                 return next(err);
             }
             console.info('Student Created');
-            res.status(201).json(insert.ops);
+            res.status(201).jsonp(insert.ops);
         });
     });
 }
@@ -267,7 +267,7 @@ route.post('/update', bodyParser, validateShema, function (req, res, next) {
                 console.error('Update error : ', JSON.stringify(err));
                 return next(err);
             }
-            res.status(201).json(query);
+            res.status(201).jsonp(query);
         });
     } else {
         next();
@@ -306,7 +306,7 @@ route.get('/:username', bodyParser, validateShema, function (req, res, next) {
             return next(err);
         }
         if (existing) {
-            res.status(200).json(existing);
+            res.status(200).jsonp(existing);
         } else {
             res.status(404).end();
         }

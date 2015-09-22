@@ -152,7 +152,7 @@ function sendFullUserObject(req, res, next) {
             console.error({req: 'headers allready sent'});
             return res.end();
         }
-        res.status(200).json(fullUserObject);
+        res.status(200).jsonp(fullUserObject);
     });
 }
 

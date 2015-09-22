@@ -20,7 +20,7 @@ route.get('/(:id)?', function (req, res, next) {
                 return next(err);
             }
             console.info(JSON.stringify({query: req.query, route: 'center', action: 'get'}));
-            res.status(200).send(record);
+            res.status(200).jsonp(record);
         });
     } else {
         console.info(JSON.stringify({query: req.query, route: 'center', action: 'search'}));
@@ -29,7 +29,7 @@ route.get('/(:id)?', function (req, res, next) {
                 return next(err);
             }
             console.info(JSON.stringify({query: req.query, route: 'center', action: 'search'}));
-            res.status(200).send(records);
+            res.status(200).jsonp(records);
         });
     }
 });
@@ -64,7 +64,7 @@ route.put('/', function (req, res, next) {
 //             }
 //        });
         res.status(201);
-        res.send(result.ops[0]);
+        res.jsonp(result.ops[0]);
     });
 });
 
