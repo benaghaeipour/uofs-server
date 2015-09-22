@@ -12,6 +12,8 @@
   <hr>
   <section id="totals"></section>
   <hr>
+  <section id="problems"></section>
+  <hr>
   <section id="duplicates"></section>
   <hr>
   <section id="limits"></section>
@@ -24,13 +26,13 @@
           React.DOM.h1(null, statsData.duplicateUserNames.length + ' duplicated usernames'),
           React.DOM.ul(null,
             statsData.duplicateUserNames.map(function (dupUser) {
-             return React.DOM.li(null, dupUser._id);
+             return React.DOM.li(null, 'Users: ' + dupUser._id + ' - in centers: ' + dupUser.center.join(','));
             })
           ),
-          React.DOM.h1(null, statsData.duplicateUserNames.length + ' duplicated emails'),
+          React.DOM.h1(null, statsData.duplicateEmails.length + ' duplicated emails'),
           React.DOM.ul(null,
             statsData.duplicateEmails.map(function (dupEmail) {
-             return React.DOM.li(null, dupEmail._id);
+             return React.DOM.li(null, 'Email: ' + dupEmail._id + ' - in centers: ' + dupEmail.center.join(','));
             })
           )
         ),
@@ -45,8 +47,8 @@
             key: 'userCounts',
             className: 'ui clearing'
           },
-            React.DOM.span({className: 'ui left floated'}, statsData.studentCount + ' Students'),
-            React.DOM.span({className: 'ui right floated'}, statsData.teacherCount + ' Teachers')
+            React.DOM.h2({className: 'ui left floated'}, statsData.studentCount + ' Students'),
+            React.DOM.h2({className: 'ui right floated'}, statsData.teacherCount + ' Teachers')
           ),
           React.DOM.div({
             'className': 'ui big teal progress',
@@ -59,9 +61,19 @@
               }
             })
           ),
-          React.DOM.p({key: 'centerCount'}, 'Centers: ' + statsData.centerCount)
+          React.DOM.h2({key: 'centerCount'}, statsData.centerCount + ' Centers')
         ),
         document.querySelector('#totals')
+      );
+
+      React.render(
+        React.DOM.div(null, [
+          React.DOM.h2(null, 'Centers missing invoice numbers'),
+          React.DOM.ul(null, statsData.missingInvoices.map(function (center) {
+            return React.DOM.li(null, center.name)
+          }))
+        ]),
+        document.querySelector('#problems')
       );
     }
   </script>
