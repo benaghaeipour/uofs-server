@@ -35,8 +35,6 @@ module.exports = app;
 console.info('Configuring Application for NODE_ENV: ' + app.get('env'));
 console.info('Configuring for DB : ' + process.env.DB_URI);
 
-app.set('view engine', 'html');
-
 var bodyParser = require('body-parser')({limit: 300000});
 var compress = require('compression');
 var errorhandler = require('errorhandler');
