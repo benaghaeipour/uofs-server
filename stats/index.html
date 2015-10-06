@@ -1,14 +1,17 @@
 <head>
   <script src="//cdn.jsdelivr.net/react/0.13.3/react-with-addons.js" charset="utf-8"></script>
-  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/semantic-ui/2.0.8/semantic.min.css">
-  <style type="text/css">
-    section {
-      min-height: 30em;
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/semantic-ui/2.1.4/semantic.min.css">
 </head>
 <body class="ui container">
-  <header><h1>Units-of-sound Stats</h1></header>
+  <header>
+    <h1 class="ui center aligned green icon header">
+      <i class="pie chart icon"></i>
+      <div class="content">
+        Units-of-sound Stats
+        <div class="sub header">Some useful information about the unitsof sound web application.</div>
+      </div>
+    </h1>
+  </header>
   <hr>
   <section id="totals"></section>
   <hr>
@@ -19,6 +22,16 @@
   <section id="limits"></section>
   <hr>
   <script type="text/javascript">
+
+    function stat(val, label, icon) {
+      return React.DOM.div({className:'ui huge statistic'}, [
+        React.DOM.div({className:'value'}, [
+          icon ? React.DOM.i({className: icon}, '') : null,
+          val
+        ]),
+        React.DOM.div({className:'label'}, label),
+      ]);
+    }
 
     window.render = function (statsData) {
       React.render(
@@ -42,35 +55,21 @@
       var userCount = statsData.teacherCount + statsData.studentCount;
       var percentStudents = (statsData.studentCount / userCount) * 100;
       React.render(
-        React.DOM.div(null,
-          React.DOM.p({
-            key: 'userCounts',
-            className: 'ui clearing'
-          },
-            React.DOM.h2({className: 'ui left floated'}, statsData.studentCount + ' Students'),
-            React.DOM.h2({className: 'ui right floated'}, statsData.teacherCount + ' Teachers')
-          ),
-          React.DOM.div({
-            'className': 'ui big teal progress',
-            'data-percent': percentStudents},
-            React.DOM.div({
-              className: 'bar',
-              style: {
-                'transition': '300ms',
-                'width': percentStudents + '%'
-              }
-            })
-          ),
-          React.DOM.h2({key: 'centerCount'}, statsData.centerCount + ' Centers')
-        ),
+        React.DOM.div(null,[
+          stat(statsData.studentCount, ' Students', 'student icon'),
+          stat(statsData.teacherCount, ' Teachers', 'user icon'),
+          stat(statsData.centerCount, ' Centers', 'building outline icon')
+        ]),
         document.querySelector('#totals')
       );
 
       React.render(
         React.DOM.div(null, [
           React.DOM.h2(null, 'Centers missing invoice numbers'),
-          React.DOM.ul(null, statsData.missingInvoices.map(function (center) {
-            return React.DOM.li(null, center.name)
+          React.DOM.div({className: 'ui horizontal bulleted link list'}, statsData.missingInvoices.map(function (center) {
+            return React.DOM.a({
+              className: 'ui item',
+              href: '/admin/edit/' + center._id}, center.name)
           }))
         ]),
         document.querySelector('#problems')
