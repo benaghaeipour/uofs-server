@@ -164,6 +164,9 @@ app.use('/users/:username/report', require('./report'));
 app.use('/users/default', function (req, res) {
   res.status(200).jsonp(require('./default-user.json'));
 });
+app.use('/users/example', function (req, res) {
+  res.status(200).jsonp(require('./example-user.json'));
+});
 app.use('/users', require('./users'));
 app.use('/student', require('./users'));
 app.use('/center', require('./center'));
