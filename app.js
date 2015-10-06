@@ -84,8 +84,6 @@ app.get('/crossdomain.xml', function (req, res, next) {
         '</cross-domain-policy>');
 });
 
-app.use('/stats', require('./stats'));
-
 app.route('/login/reset')
     .get(function (req, res, next) {
 
@@ -123,6 +121,9 @@ app.route('/login/reset')
 //          Admin Views
 
 app.use(auth);
+
+app.use('/stats', require('./stats'));
+
 app.use('/admin', require('serve-static')('admin'));
 app.get('/admin/edit/[a-f0-9]{24}', function (req, res, next) {
     res.sendFile(process.cwd() + '/admin/edit/index.html');
