@@ -2,8 +2,43 @@
   <script src="//cdn.jsdelivr.net/react/0.13.3/react.min.js" charset="utf-8"></script>
   <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/semantic-ui/2.0.8/semantic.min.css">
   <style type="text/css">
-    section {
+    header {
+      min-height: 15em;
+    }
+
+    #progress {
       min-height: 30em;
+    }
+
+    .stage1.background {
+        background-color: #75D474;
+    }
+
+    .stage2.background {
+        background-color: #55B8FF;
+    }
+
+    .stage3.background {
+        background-color: #FFAB45;
+    }
+
+    .grey.background {
+        background-color: #BBBBBB;
+    }
+
+    .blue.background {
+        background-color: #444444;
+    }
+
+    .syllabus.progress.indicator {
+        position: absolute;
+        width: 100%;
+        min-height: 3em;
+    }
+
+    .syllabus.progress.indicator span {
+        float: left;
+        min-height: 3em;
     }
   </style>
 </head>
@@ -12,61 +47,7 @@
   <hr>
   <section id="progress"></section>
   <hr>
-  <script type="text/javascript">
-    window.render = function (user) {
-      var header = React.DOM.h1({className: 'ui center aligned icon header'}, [
-        React.DOM.i({className: 'circular bar chart icon'}),
-        user.firstName + ' ' + user.surname + ' - Progress Report'
-      ]);
-      React.render(header, document.getElementById('header'));
 
-      var positionSummary = {
-        spelling: 34,
-        dictation: 120,
-        reading: 3,
-        memory: 230
-      };
-
-      function capatalize(str) {
-        return str.slice(0, 1).toUpperCase() + str.slice(1);
-      }
-
-      function percentOf(total, value) {
-        return Math.min(100, Math.max(0, ((value/total) * 100))).toString();
-      }
-
-      function progressBar(percentage) {
-        return React.DOM.div({
-          className: 'ui progress',
-          dataPercent: percentage
-        }, React.DOM.div({
-          className: 'bar',
-          style: {
-            'transition': '300ms',
-            'width': percentage + '%'
-          }
-        }));
-      }
-
-      function barIndicator(syllabus) {
-        return React.DOM.div({className: 'row'}, [
-            React.DOM.div({className: 'two wide column'}, capatalize(syllabus)),
-            React.DOM.div({className: 'four wide column'}, progressBar(percentOf(50, positionSummary[syllabus]))),
-            React.DOM.div({className: 'four wide column'}, progressBar(percentOf(50, positionSummary[syllabus]))),
-            React.DOM.div({className: 'four wide column'}, progressBar(percentOf(50, positionSummary[syllabus])))
-          ]);
-      };
-
-      var progress = React.DOM.div({className: 'ui celled grid'}, [
-        React.DOM.div({className: 'row'}, [
-          React.DOM.div({className: 'two wide column'}),
-          React.DOM.div({className: 'four wide column'}, 'Stage 1'),
-          React.DOM.div({className: 'four wide column'}, 'Stage 2'),
-          React.DOM.div({className: 'four wide column'}, 'Stage 3')
-        ])
-      ].concat(Object.keys(positionSummary).map(barIndicator)));
-      React.render(progress, document.getElementById('progress'));
-    }
-  </script>
+  <script src="index.js" charset="utf-8"></script>
   <script type="text/javascript" src="../../?callback=render" charset="utf-8"></script>
 </body>
