@@ -53,7 +53,7 @@ app.use(function (req, res, next) {
 
 adjNoun.seed(401175);
 
-app.use(timeout());
+app.use(timeout(10000));
 app.use(errorhandler({
     dumpExceptions: true,
     showStack: true
