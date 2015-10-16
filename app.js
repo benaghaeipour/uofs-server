@@ -123,7 +123,6 @@ app.route('/login/reset')
 app.use(auth);
 
 app.use('/stats', require('./stats'));
-app.use('/riotstats', require('./riotstats'));
 
 app.use('/admin', require('serve-static')('admin'));
 app.get('/admin/edit/[a-f0-9]{24}', function (req, res, next) {
