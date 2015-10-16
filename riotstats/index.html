@@ -1,0 +1,38 @@
+<head>
+
+  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/semantic-ui/2.1.4/semantic.min.css">
+</head>
+<body class="ui container">
+  <header>
+    <h1 class="ui center aligned green icon header">
+      <i class="pie chart icon"></i>
+      <div class="content">
+        Units-of-sound Stats
+        <div class="sub header">Some useful information about the unitsof sound web application.</div>
+      </div>
+    </h1>
+  </header>
+  <hr>
+  <totals></totals>
+  <hr>
+  <problems></problems>
+  <hr>
+  <duplicates></duplicates>
+  <hr>
+  <section id="limits"></section>
+  <hr>
+
+
+  <script type="text/javascript">
+    window.render = function (data) {
+      console.log(data)
+      riot.mount('*', {stats: data})
+    }
+  </script>
+
+  <script src="tags.js" type="riot/tag"></script>
+
+  <script src="//cdn.jsdelivr.net/g/riot@2.2(riot.min.js+compiler.min.js)"></script>
+
+  <script src="/stats/data?callback=render" charset="utf-8"></script>
+</body>
